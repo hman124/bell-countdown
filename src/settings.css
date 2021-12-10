@@ -1,6 +1,5 @@
 .settings {
-  top:100vh;
-  transition:0.3s;
+  top: 0;
   left: 0;
   width: 100vw;
   overflow: auto;
@@ -11,8 +10,6 @@
   z-index: 999;
   text-align: center;
   color: black;
-  padding-top:100vh;
-  border-radius:50%;
 }
 
 .settings input,
@@ -24,18 +21,28 @@
   width: 50%;
 }
 
+.settings-fallback {
+  position: fixed;
+  height: 100%;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.6);
+  top: 0;
+  left: 0;
+  z-index: 888;
+}
+
 .settings-close {
   float: left;
   cursor: pointer;
   display: block;
   font-size: 1.3rem;
-  transition:0.3s;
-  border-radius:5px;
-  padding:10px;
+  transition: 0.3s;
+  border-radius: 5px;
+  padding: 10px;
 }
 
-.settings-close:hover{
-  background:#444;
+.settings-close:hover {
+  background: #444;
   color: white;
 }
 

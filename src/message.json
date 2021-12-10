@@ -1,5 +1,5 @@
 {
     "show": false,
-    "content": "HI",
-    "//note": "this file sets a popup to show with a message, if the show key is true"
+    "content": "The bell schedule has been updated for the finals schedule",
+    "//note": "this file sets a popup to show with a message, if the 'show' key is 'true'"
 }

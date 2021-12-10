@@ -48,35 +48,21 @@ export default class Settings extends React.Component {
     }
   }
 
-  toggleNotifs() {
-    if (this.state.notifications) {
-      window.localStorage.removeItem("notifications");
-      this.setState(() => ({ notifications: false }));
-    } else {
-      console.log("requesting");
-      Notification.requestPermission().then(r => {
-        if (r === "granted") {
-          window.localStorage.setItem("notifications", "true");
-          this.setState(() => ({ notifications: true }));
-        } else {
-          alert("you need to allow notifications in order to recieve them");
-        }
-      });
-    }
-  }
-
   close() {
+    this.setState(() => ({ page: 1 }));
     this.props.close();
-    setTimeout(()=>
-    this.setState(() => ({ page: 1 })), 700);
   }
   
   dateSub(e){
     e.preventDefault();
     var a = e.target.date.value.split("-");
-    a.push(a.shift());
-    this.props.changeDate(e.target.countdowntitle.value, a.join("/"));
-    this.close();
+    if(a[0]>3000){
+      alert("please choose a year less than 3000");
+    } else {
+      a.push(a.shift());
+      this.props.changeDate(e.target.countdowntitle.value, a.join("/"));
+      this.close();
+    }
   }
 
   renderPage() {
@@ -97,15 +83,6 @@ export default class Settings extends React.Component {
               type="button"
               value="Set Background"
               onClick={() => this.switchPage(3)}
-            />
-            <input
-              className="menu"
-              type="button"
-              value={
-                (this.props.notifs ? "Disable" : "Enable") + " Notifications"
-              }
-              style={window.innerWidth < 1000 ? { display: "none" } : {}}
-              onClick={this.props.toggleNotifs}
             />
             <input
               className="menu"
@@ -218,14 +195,19 @@ export default class Settings extends React.Component {
 
   render() {
     return (
-      <>    <div className="settings" style={this.props.isOpen?{top: 0,left:0, paddingTop: "20px",borderRadius:0}:{}}>
+      <>
+        {this.props.isOpen && (
+          <>
+            <div className="settings-fallback" onClick={this.close}></div>
+            <div className="settings">
               <span className="settings-close" onClick={this.close}>
                 X
               </span>
               {this.renderPage()}
             </div>
           </>
-        
+        )}
+      </>
     );
   }
 }
