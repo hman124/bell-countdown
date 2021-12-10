@@ -1,0 +1,19 @@
+Fix styling to look nicer - done?
+Fix Multiple Hours support
+Optimize code to be shorter and less buggy
+Move from buttons to more streamlined navigation
+Add custom scheduling, figure out time/date picker - (we can use input type="time")
+Popup messages - done
+Work on browser compatibility and styling differences
+Accept suggestions
+Set up analytics
+Add better options for background
+Move away from local storage to a better storage source
+Possibly lunch menu?
+
+adjust time offset
+notifications - done
+
+Working version by someone else - https://schooltimer.glitch.me/
+
+Make finals week times
