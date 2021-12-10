@@ -197,9 +197,17 @@ class App extends React.Component {
           /^(5|2|1|0)$/.test(mins_left.toString())
         ) {
           if (l == 60) {
-            new Notification(`${mins_left.toString()} minutes left`);
+            try {
+              new Notification(`${mins_left.toString()} minutes left`);
+            } catch(err){
+              window.localStorage.removeItem("notifications");
+            }
           } else if (mins_left == 0 && l == 30) {
-            new Notification(`30 seconds left`);
+            try {
+              new Notification(`30 seconds left`);
+            } catch(err){
+              window.localStorage.removeItem("notifications");
+            }
           }
         }
 
