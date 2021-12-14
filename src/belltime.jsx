@@ -1,10 +1,15 @@
 import React from "react";
 
-import pack from "./schedules/pack.js";
+//import pack from "./schedules/pack.js";
 import normal from "./schedules/normal.js";
-import psat from "./schedules/psat.js";
-import pep from "./schedules/pep-rally.js";
-import finals from "./schedules/finals.js";
+//import psat from "./schedules/psat.js";
+//import pep from "./schedules/pep-rally.js";
+
+import finals_tues from "./schedules/finals-tues.js";
+import finals_wed from "./schedules/finals-wed.js";
+import finals_thurs from "./schedules/finals-thurs.js";
+import finals_fri from "./schedules/finals-fri.js";
+
 
 export default class BellTime extends React.Component {
   constructor(props) {
@@ -48,12 +53,17 @@ export default class BellTime extends React.Component {
       return i + "th";
     }
   }
-
+  
+  getSchedule() {
+    const scheds = [null, normal, finals_tues, finals_wed, finals_thurs, finals_fri];
+    return scheds[(new Date()).getDay()];
+  }
+  
   getBellTime(lunch) {
     if (!lunch) return {};
     const d = new Date(),
       mins = d.getHours() * 60 + d.getMinutes(),
-      sched = /*finals(lunch),*/ d.getDay() === 3 ? pack(lunch) : normal(lunch),
+      sched = this.getSchedule()(lunch),/*finals(lunch), d.getDay() === 3 ? pack(lunch) : normal(lunch),*/
       period = sched.find(x => mins < x.time[1] && mins >= x.time[0]),
       passing = sched.reduce(
         (p, c, i, a) =>
@@ -68,9 +78,7 @@ export default class BellTime extends React.Component {
       mins_left = final.time[1] - mins - (l === 60 ? 0 : 1),
       data2 = {
         period: period
-          ? `${this.ordinal_suffix_of(final.name)}${
-              /^[0-9]+$/.test(final.name) ? " Period" : ""
-            }`
+          ? `${this.ordinal_suffix_of(final.name)}${/^[0-9]+$/.test(final.name) ? " Period" : ""}`
           : `Passing Period (after ${this.ordinal_suffix_of(final.name)})`,
         mins_left,
         secs_left: l == 60 ? "00" : this.zeroPad(l),
