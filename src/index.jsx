@@ -137,7 +137,11 @@ class App extends React.Component {
           <div className="container">
             {this.lunch ? (
               <>
-                {this.state.mode === "clock" ? (<BellTime lunch={this.lunch} />) : (<YearTime countdown={this.state.countdown}/>)}
+                {this.state.mode === "clock" ? (
+                  <BellTime lunch={this.lunch} />
+                ) : (
+                  <YearTime countdown={this.state.countdown} />
+                )}
                 <button
                   onClick={() =>
                     this.setState(s => ({
