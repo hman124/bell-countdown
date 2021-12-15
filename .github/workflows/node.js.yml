@@ -28,5 +28,6 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: mkdir dev
-    - run: mv ./* dev
+    - run: shopt -s extglob
+    - run: mv !(subfolder) subfolder
     - run: mv dev/build/* ./
