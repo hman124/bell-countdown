@@ -73,6 +73,7 @@ body {
   place-items:center;
   font-size:1.4rem;
   padding:2rem;
+  color: black;
 }
 
 .modal input.menu {
