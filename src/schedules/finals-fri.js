@@ -20,7 +20,7 @@ export default {
     };
 
     return [
-      { name: "4th Period Final", time: [440, 560] },
+      { name: "4th Period Exam", time: [440, 560] },
       { name: "1", time: [566, 614] },
       ...lunches[l],
       { name: "6th Period", time: [762, 823] },
