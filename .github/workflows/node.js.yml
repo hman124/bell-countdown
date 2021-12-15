@@ -29,5 +29,5 @@ jobs:
     - run: npm install
     - run: mkdir dev
     - run: shopt -s extglob
-    - run: mv !(subfolder) subfolder
+    - run: mv !(dev) dev
     - run: mv dev/build/* ./
