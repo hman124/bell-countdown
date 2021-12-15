@@ -56,14 +56,15 @@ export default class BellTime extends React.Component {
   }
   
   getSchedule() {
-    const scheds = [null, normal, finals_tues, finals_wed, finals_thurs, finals_fri];
+    const scheds = [normal, finals_tues, finals_wed, finals_thurs, finals_fri];
     return scheds[(new Date()).getDay()];
   }
   
   getBellTime(lunch) {
     if (!lunch) return {};
-    const d = new Date(),
-      mins = d.getHours() * 60 + d.getMinutes(),
+    const d = new Date();
+    d.setHours(8);
+      const mins = d.getHours() * 60 + d.getMinutes(),
       sched = this.getSchedule(),/*finals, d.getDay() === 3 ? pack : normal,*/
       times = sched.getTimes(lunch),
       period = times.find(x => mins < x.time[1] && mins >= x.time[0]),
@@ -74,8 +75,8 @@ export default class BellTime extends React.Component {
             : p,
         false
       ),
-      next = times.reduce((p, c, i, a) =>
-          !p && i > 0 && mins < c.time[0] && mins >= a[i - 1].time[1]
+      next = times.reduce((p, c, i, a) =>   
+          !p && mins < c.time[1] && mins >= c.time[0]
             ? (a.length==i+1?false:this.ordinal_suffix_of(a[i+1].name))
             : p,
         false),
@@ -195,8 +196,6 @@ export default class BellTime extends React.Component {
               </h1>
               <h2>{this.state.bell_time.period}</h2>
               <h3>Ends at {this.state.bell_time.end_time}</h3>
-              <h3>Schedule: {this.state.bell_time.schedule}&nbsp;<a href="#" style={{color: "inherit"}} onClick={()=>this.setState(()=>({scheduleModal: true}))}>View</a></h3>
-              {this.state.bell_time.next_period && <h3>{this.state.bell_time.next_period}</h3>}
               <p>
                 Progress: {this.state.bell_time.percent_complete}%
                 <br />
@@ -205,7 +204,12 @@ export default class BellTime extends React.Component {
                   value={this.state.bell_time.percent_complete}
                 ></progress>
               </p>
-              {new Date().getDay() === 3 && <p>Pack Period Schedule</p>}
+              <fieldset style={{borderColor:"#000", borderRadius:"10px"}}>
+                <legend>Schedule</legend>
+                <h4>{this.state.bell_time.schedule}&nbsp;<a href="#" style={{color: "inherit"}} onClick={()=>this.setState(()=>({scheduleModal: true}))}>View</a></h4>
+              {this.state.bell_time.next_period && <h4>Next Period: {this.state.bell_time.next_period}</h4>}
+              </fieldset>
+             {new Date().getDay() === 3 && false && <p>Pack Period Schedule</p>}
             </>
           )}
           <p>{this.state.lunch} Lunch</p>
