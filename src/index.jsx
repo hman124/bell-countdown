@@ -17,13 +17,12 @@ window.addEventListener("load", () => {
   }
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js", { scope: "/" }).then(reg => {
-      console.log("Service Worker Started");
-    });
+    // navigator.serviceWorker.register("/sw.js", { scope: "/" }).then(reg => {
+    // reg.unregister()
+    //   console.log("Service Worker Started");
+    // });
   }
 });
-
-window.onerror = alert;
 
 let prompt = false;
 window.addEventListener("beforeinstallprompt", function(e) {
@@ -37,16 +36,22 @@ class App extends React.Component {
     this.lunch = window.localStorage.getItem("lunch");
     this.countdown = window.localStorage.getItem("countdown");
     this.state = {
+      lunch: this.lunch,
       ready: !!this.lunch,
       mode: "clock",
       background: window.localStorage.getItem("background"),
       settings: false,
       installed: false,
       notifications: !!window.localStorage.getItem("notifications"),
-      message,
-      countdown: this.countdown ? JSON.parse(this.countdown) : false
+      countdown: this.countdown ? JSON.parse(this.countdown) : false,
+      message
     };
-
+    message.show
+      ? setTimeout(
+          () => this.setState(() => ({ message: { show: false } })),
+          5000
+        )
+      : false;
     window.addEventListener(
       "appinstalled",
       function(e) {
@@ -76,7 +81,7 @@ class App extends React.Component {
       window.localStorage.removeItem("new");
       window.localStorage.setItem("lunch", val);
       this.lunch = event.target.value;
-      this.setState(() => ({ ready: true }));
+      this.setState(() => ({ ready: true, lunch: event.target.value }));
     }
   }
 
@@ -115,30 +120,24 @@ class App extends React.Component {
     return (
       <>
         {this.state.message.show && (
-          <div className="modal">
-            {this.state.message.content}
-            <input
-              type="button"
-              onClick={() =>
-                this.setState(() => ({ message: { show: false } }))
-              }
-              value="Okay"
-            />
+          <div
+            className={
+              "message" + (this.state.background ? " background-enabled" : "")
+            }
+          >
+            <p>{this.state.message.content}</p>
           </div>
         )}
         <div
-          className="countdown"
-          style={
-            this.state.background
-              ? { backgroundColor: "rgba(0,0,0,0.7)", color: "white" }
-              : {}
+          className={
+            "countdown" + (this.state.background ? " background-enabled" : "")
           }
         >
           <div className="container">
-            {this.lunch ? (
+            {this.state.lunch ? (
               <>
                 {this.state.mode === "clock" ? (
-                  <BellTime lunch={this.lunch} />
+                  <BellTime lunch={this.state.lunch} key={this.state.lunch} />
                 ) : (
                   <YearTime countdown={this.state.countdown} />
                 )}
@@ -197,4 +196,4 @@ class App extends React.Component {
   }
 }
 
-ReactDOM.render(<App></App>, document.getElementById("root"));
+ReactDOM.render(<React.StrictMode><App></App></React.StrictMode>, document.getElementById("root"));

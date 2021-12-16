@@ -4,140 +4,174 @@
 }
 
 * {
-  box-sizing:border-box;
+  box-sizing: border-box;
 }
 
 :root {
-  font-size:16px;
+  font-size: 16px;
 }
 
 #root {
-  height:100vh;
-  width:100vw;
-  display:grid;
-  place-items:center;
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  place-items: center;
 }
 
 body {
-  font-family:rubik;
-  padding:0;
-  margin:0;
-  font-feature-settings:"tnum";
-  background-color:transparent;
+  font-family: rubik;
+  padding: 0;
+  margin: 0;
+  font-feature-settings: "tnum";
+  background-color: transparent;
+}
+
+.message {
+  position: fixed;
+  bottom: 0;
+  display: grid;
+  justify-content: center;
+  width: 100vw;
+}
+
+.message p {
+  padding: 1rem;
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  font-size: 1rem;
 }
 
 .background {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100vw;
-  height:100vh;
-  z-index:-3;
-  background-position:center;
-  background-size:cover;
-  background-repeat:no-repeat;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -3;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .countdown {
-  text-align:left;
-  width:100vw;
-  height:100%;
-  display:grid;
-  padding:0;
-  place-items:center;
+  text-align: left;
+  width: 100vw;
+  height: 100%;
+  display: grid;
+  padding: 0;
+  place-items: center;
 }
 
 .countdown .container {
-  width:600px;
-  padding:2rem;
-  border-radius:2rem;
+  width: 600px;
+  padding: 2rem;
+  border-radius: 2rem;
 }
 
 .countdown p {
-  font-size:1.3rem;
-  text-align:center;
+  font-size: 1.3rem;
+  text-align: center;
 }
 
 .countdown button:not(.countdown button:last-of-type) {
-  margin-right:1rem;
+  margin-right: 1rem;
 }
 
 .modal {
-  background:white;
-  width:100vw;
-  height:100vh;
-  position:fixed;
-  top:0;
-  left:0;
-  display:grid;
-  place-items:center;
-  font-size:1.4rem;
-  padding:2rem;
+  background: white;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  padding: 2rem;
   color: black;
+  overflow: auto;
 }
 
 .modal input.menu {
-  position:absolute;
-  bottom:0;
-  right:0;
-  margin:4rem;
-  font-size:1.3rem;
-  background-color:darkcyan;
-  color:white;
-  border-radius:5px;
-  border:none;
-  width:25%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 4rem;
+  font-size: 1.3rem;
+  background-color: darkcyan;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  width: 25%;
 }
 
-input, select, textarea, button {
-  padding:0.5rem;
-  background-color:white;
-  border:1px #ccc solid;
-  border-radius:5px;
-  margin-bottom:1rem;
+.message.background-enabled p {
+  background-color: rgb(225, 225, 225);
+  border: 2px #000 solid;
+  color: black;
+}
+
+.countdown.background-enabled {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+input,
+select,
+textarea,
+button {
+  padding: 0.5rem;
+  background-color: white;
+  border: 1px #ccc solid;
+  border-radius: 5px;
+  margin-bottom: 1rem;
 }
 
 @media screen and (max-height: 550px) {
   .countdown {
-    display:grid;
-    place-items:none;
-    justify-items:center;
+    display: grid;
+    place-items: none;
+    justify-items: center;
   }
-  
-  .countdown .container{
-    border:none;  
-    padding:0rem;
+
+  .countdown .container {
+    border: none;
+    padding: 0rem;
   }
 }
 
-@media screen and (max-width:700px) {
+@media screen and (max-width: 700px) {
   :root {
-    font-size:14px;
+    font-size: 14px;
   }
-  
+
   .countdown {
-    display:block;
-    place-items:none;
+    display: block;
+    place-items: none;
   }
-  
-  .countdown .container{
-    border:none;
-    padding:0;
-    width:100%;
-    padding:1rem;
+
+  .countdown .container {
+    border: none;
+    padding: 0;
+    width: 100%;
+    padding: 1rem;
   }
-  
-  .settings button, .settings input {
-    width:calc(100% - 4rem);
+
+  .settings button,
+  .settings input {
+    width: calc(100% - 4rem);
   }
 
   .modal input {
-    width:calc(100% - 8rem);
+    width: calc(100% - 8rem);
   }
 }
 
-@media screen and (max-width:525px) {
+@media screen and (max-width: 525px) {
   .bg-cont {
-    grid-template-columns:1fr;
+    grid-template-columns: 1fr;
   }
 }

@@ -10,7 +10,6 @@ import finals_wed from "./schedules/finals-wed.js";
 import finals_thurs from "./schedules/finals-thurs.js";
 import finals_fri from "./schedules/finals-fri.js";
 
-
 export default class BellTime extends React.Component {
   constructor(props) {
     super(props);
@@ -33,11 +32,19 @@ export default class BellTime extends React.Component {
   }
 
   numToTime(num) {
-    var h = Math.trunc(num / 60),
-      m = num % 60;
-    return `${(h > 12 ? h % 12 : h).toString()}:${
-      m < 10 ? "0" + m.toString() : m.toString()
-    }`;
+    if (typeof num == "string") {
+      return (
+        (((+num.split(":")[0] + 11) % 12) + 1).toString() +
+        ":" +
+        num.split(":")[1]
+      );
+    } else {
+      var h = Math.trunc(num / 60),
+        m = num % 60;
+      return `${(h > 12 ? h % 12 : h).toString()}:${
+        m < 10 ? "0" + m.toString() : m.toString()
+      }`;
+    }
   }
 
   ordinal_suffix_of(i) {
@@ -54,53 +61,70 @@ export default class BellTime extends React.Component {
       return i + "th Period";
     }
   }
-  
+
   getSchedule() {
-    const scheds = [normal, finals_tues, finals_wed, finals_thurs, finals_fri];
-    return scheds[(new Date()).getDay()];
+    const scheds = [
+      null,
+      normal,
+      finals_tues,
+      finals_wed,
+      finals_thurs,
+      finals_fri
+    ];
+    return scheds[new Date().getDay()];
   }
-  
+
+  to12hrTime(time) {
+    return (
+      (((+time.split(":")[0] + 11) % 12) + 1).toString() +
+      ":" +
+      time.split(":")[1]
+    );
+  }
+
+  toMins(time) {
+    const [hours, minutes] = time.split(":").map(x => +x);
+    return hours * 60 + minutes;
+  }
+
   getBellTime(lunch) {
     if (!lunch) return {};
     const d = new Date();
-    d.setHours(8);
-      const mins = d.getHours() * 60 + d.getMinutes(),
-      sched = this.getSchedule(),/*finals, d.getDay() === 3 ? pack : normal,*/
-      times = sched.getTimes(lunch),
-      period = times.find(x => mins < x.time[1] && mins >= x.time[0]),
-      passing = times.reduce(
-        (p, c, i, a) =>
-          !p && i > 0 && mins < c.time[0] && mins >= a[i - 1].time[1]
-            ? { name: a[i - 1].name, time: [a[i - 1].time[1], c.time[0]] }
-            : p,
-        false
-      ),
-      next = times.reduce((p, c, i, a) =>   
-          !p && mins < c.time[1] && mins >= c.time[0]
-            ? (a.length==i+1?false:this.ordinal_suffix_of(a[i+1].name))
-            : p,
-        false),
-      final = period || passing;
-    
-    if (!final) return { period: "no_school" };
+    d.setHours(9)
+    const  mins = d.getHours() * 60 + d.getMinutes(),
+      sched = this.getSchedule() /*finals, d.getDay() === 3 ? pack : normal,*/,
+      times = sched.getTimes(lunch);
+
+    var period = null,
+      next = null;
+    for (let i = 0; i < times.length; i++){
+      const x = times[i];
+      if (mins < this.toMins(x.time[1]) && mins >= this.toMins(x.time[0])) {
+        if (typeof times[i + 1] !== "undefined") {next = this.ordinal_suffix_of(times[i + 1].name);}
+        period = x;
+        break;
+      } else if (i > 0 && mins < this.toMins(x.time[0]) && mins >= this.toMins(times[i - 1].time[1])){
+        next = x.name;
+        period = { 
+          name: `Passing Period (after ${times[i - 1].name})`,
+          time: [this.toMins(times[i - 1].time[1]), this.toMins(x.time[0])]
+        };
+        break;
+      }
+    }
+
+    if (!period) return { period: "no_school" };
     const l = 60 - d.getSeconds(),
-      mins_left = final.time[1] - mins - (l === 60 ? 0 : 1),
+      mins_left = this.toMins(period.time[1]) - mins - (l === 60 ? 0 : 1),
       data2 = {
         schedule: sched.title,
         next_period: next,
-        period: period
-          ? this.ordinal_suffix_of(final.name)
-          : `Passing Period (after ${this.ordinal_suffix_of(final.name)})`,
+        period: this.ordinal_suffix_of(period.name),
         mins_left,
         secs_left: l == 60 ? "00" : this.zeroPad(l),
-        end_time: this.numToTime(final.time[1]),
-        percent_complete:
-          100 -
-          Math.trunc(
-            ((mins_left + l / 60) / (final.time[1] - final.time[0])) * 100
-          )
+        end_time: this.to12hrTime(period.time[1]),
+        percent_complete: Math.trunc((1 - (mins_left / (this.toMins(period.time[1]) - this.toMins(period.time[0])))) * 100)
       };
-
     return data2;
   }
 
@@ -115,7 +139,8 @@ export default class BellTime extends React.Component {
   getClock() {
     const d = new Date();
     return (
-      (d.getHours() > 12 ? d.getHours() % 12 : d.getHours()) +
+      ((d.getHours() + 11) % 12) +
+      1 +
       ":" +
       (d.getMinutes() < 10
         ? "0" + d.getMinutes().toString()
@@ -131,8 +156,7 @@ export default class BellTime extends React.Component {
     if (
       seconds !== 1 &&
       seconds % 15 !== 0 &&
-      this.getClock() === this.state.clock &&
-      this.state.refresh === false
+      this.getClock() === this.state.clock
     ) {
       var l = 60 - new Date().getSeconds();
       this.setState(state => {
@@ -162,16 +186,20 @@ export default class BellTime extends React.Component {
       });
     }
   }
-  
-  getScheduleList(){
-    const times = this.getSchedule().getTimes("C");
-    return times.reduce((p,c,i,a)=>{
-      const start = [((Math.trunc(c.time[0]/60)+11)%12)+1, this.zeroPad(c.time[0]%60)];
-      const end = [((Math.trunc(c.time[1]/60)+11)%12)+1, this.zeroPad(c.time[1]%60)];
-      p.push(<li key={i} style={{marginBottom: "1rem"}}>
-      <b>{this.ordinal_suffix_of(c.name)}</b><br/>
-        <small>{start.join(":")} - {end.join(":")}</small>
-      </li>);
+
+  getScheduleList() {
+    const times = this.getSchedule().getTimes(this.state.lunch);
+    return times.reduce((p, c, i, a) => {
+      p.push(
+        <li key={i} style={{ marginBottom: "1rem" }}>
+          <b>{this.ordinal_suffix_of(c.name)}</b>
+          <br />
+          <small>
+            {this.to12hrTime(c.time[0])} - {this.to12hrTime(c.time[1])} (
+            {this.toMins(c.time[1]) - this.toMins(c.time[0])} minutes)
+          </small>
+        </li>
+      );
       return p;
     }, []);
   }
@@ -204,26 +232,47 @@ export default class BellTime extends React.Component {
                   value={this.state.bell_time.percent_complete}
                 ></progress>
               </p>
-              <fieldset style={{borderColor:"#000", borderRadius:"10px"}}>
-                <legend>Schedule</legend>
-                <h4>{this.state.bell_time.schedule}&nbsp;<a href="#" style={{color: "inherit"}} onClick={()=>this.setState(()=>({scheduleModal: true}))}>View</a></h4>
-              {this.state.bell_time.next_period && <h4>Next Period: {this.state.bell_time.next_period}</h4>}
+              <fieldset style={{ borderRadius: "10px", marginBottom: "2rem" }}>
+                <legend>
+                  <h3 style={{ margin: "0" }}>Schedule</h3>
+                </legend>
+                <h4>{this.state.bell_time.schedule}&nbsp;</h4>
+                <h4>{this.state.lunch} Lunch</h4>
+                <h4>
+                  <a
+                    href="#"
+                    style={{ color: "inherit" }}
+                    onClick={e => {e.preventDefault();
+                      this.setState(() => ({ scheduleModal: true }))}
+                    }
+                  >
+                    View Schedule
+                  </a>
+                </h4>
+                {this.state.bell_time.next_period && (
+                  <h4>Next Period: {this.state.bell_time.next_period}</h4>
+                )}
               </fieldset>
-             {new Date().getDay() === 3 && false && <p>Pack Period Schedule</p>}
+              {new Date().getDay() === 3 && false && (
+                <p>Pack Period Schedule</p>
+              )}
             </>
           )}
-          <p>{this.state.lunch} Lunch</p>
-          {
-            this.state.scheduleModal && <div style={{display:"block"}} className="modal">
-                <span style={{cursor:"pointer"}} onClick={()=>this.setState(()=>({scheduleModal: false}))}>X</span>
-                <h1 style={{textAlign:"center"}}>Schedule</h1>
-                <hr/>
-                <p>Schedule: {this.getSchedule().title}</p>
-              <ul>
-                {this.getScheduleList()}
-              </ul>
+          {this.state.scheduleModal && (
+            <div style={{ display: "block" }} className="modal">
+              <span
+                style={{ cursor: "pointer" }}
+                onClick={() => this.setState(() => ({ scheduleModal: false }))}
+              >
+                X
+              </span>
+              <h1 style={{ textAlign: "center" }}>Schedule</h1>
+              <hr />
+              <p>{this.getSchedule().title}</p>
+              <p>{this.state.lunch} Lunch</p>
+              <ul>{this.getScheduleList()}</ul>
             </div>
-          }
+          )}
         </>
       </>
     );

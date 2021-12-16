@@ -1,5 +1,6 @@
 export default {
   title: "Pep Rally",
+  version: "1.0",
   getTimes: function(l) {
     const lunches = {
       A: [
