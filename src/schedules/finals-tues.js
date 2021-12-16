@@ -1,29 +1,30 @@
 export default {
   title: "Finals Week - Tuesday",
+  version: "2.0",
   getTimes: function(l) {
     const lunches = {
       A: [
-        { name: "Lunch", time: [614, 644] },
-        { name: "4", time: [650, 700] },
-        { name: "5", time: [706, 756] }
+        { name: "Lunch", time: ["10:14", "10:44"] },
+        { name: "4", time: ["10:50", "11:40"] },
+        { name: "5", time: ["11:46", "12:36"] },
       ],
       B: [
-        { name: "4", time: [620, 670] },
-        { name: "Lunch", time: [670, 700] },
-        { name: "5", time: [706, 756] }
+        { name: "4", time: ["10:20", "11:10"] },
+        { name: "Lunch", time: ["11:10", "11:40"] },
+        { name: "5", time: ["11:46", "12:36"] }
       ],
       C: [
-        { name: "4", time: [620, 670] },
-        { name: "5", time: [676, 726] },
-        { name: "Lunch", time: [726, 756] }
-      ]
+        { name: "4", time: ["10:20", "11:10"] },
+        { name: "5", time: ["11:16", "12:06"] },
+        { name: "Lunch", time: ["12:06", "12:36"] },
+      ],
     };
 
     return [
-      { name: "1st Period Exam", time: [440, 560] },
-      { name: "3", time: [566, 614] },
+      { name: "1nd Period Exam", time: ["7:20", "9:20"] },
+      { name: "3", time: ["9:26", "10:14"] },
       ...lunches[l],
-      { name: "6th Period Exam", time: [762, 890] }
+      { name: "6th Period Exam", time: ["12:42", "14:50"] }
     ];
   }
 };

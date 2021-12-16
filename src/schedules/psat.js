@@ -1,5 +1,6 @@
 export default {
   title: "PSAT",
+  version: "1.0",
   getTimes: function(l) {
     const lunches = {
       A: [

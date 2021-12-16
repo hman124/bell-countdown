@@ -1,5 +1,4 @@
 {
     "show": false,
-    "content": "The bell schedule has been updated for the finals schedule",
-    "//note": "this file sets a popup to show with a message, if the 'show' key is 'true'"
+    "content": "Due to the current circumstances, only the exam periods are accurate at this time."
 }

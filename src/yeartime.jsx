@@ -8,20 +8,20 @@ export default class YearTime extends React.Component {
       year_time: this.getYearTime(props.countdown),
       countdown: this.props.countdown
     };
-    
+
     this.tick = this.tick.bind(this);
   }
-  
-  componentDidMount(){
+
+  componentDidMount() {
     this.interval = setInterval(this.tick, 1000);
   }
-  
-  componentWillUnmount(){
+
+  componentWillUnmount() {
     clearInterval(this.interval);
   }
-  
-  tick(){
-    this.setState(s=>({year_time: this.getYearTime(this.state.countdown)}))
+
+  tick() {
+    this.setState(s => ({ year_time: this.getYearTime(this.state.countdown) }));
   }
 
   getYearTime(countdown) {

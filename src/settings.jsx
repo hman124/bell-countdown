@@ -1,4 +1,3 @@
-
 import React from "react";
 import "./settings.css";
 
@@ -52,11 +51,11 @@ export default class Settings extends React.Component {
     this.setState(() => ({ page: 1 }));
     this.props.close();
   }
-  
-  dateSub(e){
+
+  dateSub(e) {
     e.preventDefault();
     var a = e.target.date.value.split("-");
-    if(a[0]>3000){
+    if (a[0] > 3000) {
       alert("please choose a year less than 3000");
     } else {
       a.push(a.shift());
@@ -157,31 +156,46 @@ export default class Settings extends React.Component {
             <h1>Countdown</h1>
             <hr />
             <form action="#" onSubmit={this.dateSub}>
-        <label>
-          Enter the date you would like to count down to<br/>
-              <input
-              type="date"
-              min={(() => {
-                var dtToday = new Date();
-              dtToday.setDate(dtToday.getDate()+1)
-                var month = dtToday.getMonth() + 1;
-                var day = dtToday.getDate();
-                var year = dtToday.getFullYear();
+              <label>
+                Enter the date you would like to count down to
+                <br />
+                <input
+                  type="date"
+                  min={(() => {
+                    var dtToday = new Date();
+                    dtToday.setDate(dtToday.getDate() + 1);
+                    var month = dtToday.getMonth() + 1;
+                    var day = dtToday.getDate();
+                    var year = dtToday.getFullYear();
 
-                if (month < 10) month = "0" + month.toString();
-                if (day < 10) day = "0" + day.toString();
+                    if (month < 10) month = "0" + month.toString();
+                    if (day < 10) day = "0" + day.toString();
 
-                return year + "-" + month + "-" + day;
-              })()} required name="date"
-            ></input>
+                    return year + "-" + month + "-" + day;
+                  })()}
+                  required
+                  name="date"
+                ></input>
               </label>
-              <br/>
-              <input required type="text" name="countdowntitle" placeholder="Countdown Title"></input>
+              <br />
+              <input
+                required
+                type="text"
+                name="countdowntitle"
+                placeholder="Countdown Title"
+              ></input>
               <input type="reset" value="Reset"></input>
               <input type="submit" value="Apply"></input>
             </form>
             <hr></hr>
-            <input type="button" value="Use The Last Day of School" onClick={()=>{this.props.changeDate("The Last Day of School", "5/27/2022");this.close()}}></input>
+            <input
+              type="button"
+              value="Use The Last Day of School"
+              onClick={() => {
+                this.props.changeDate("The Last Day of School", "5/27/2022");
+                this.close();
+              }}
+            ></input>
           </>
         );
       case 5:
