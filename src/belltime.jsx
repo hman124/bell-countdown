@@ -2,6 +2,7 @@ import React from "react";
 
 //import psat from "./schedules/psat.js";
 //import pep from "./schedules/pep-rally.js";
+window.onerror = alert;
 
 import pack from "./schedules/pack.js";
 import normal from "./schedules/normal.js";
@@ -28,22 +29,6 @@ export default class BellTime extends React.Component {
       return "0" + num.toString();
     } else {
       return num;
-    }
-  }
-
-  numToTime(num) {
-    if (typeof num == "string") {
-      return (
-        (((+num.split(":")[0] + 11) % 12) + 1).toString() +
-        ":" +
-        num.split(":")[1]
-      );
-    } else {
-      var h = Math.trunc(num / 60),
-        m = num % 60;
-      return `${(h > 12 ? h % 12 : h).toString()}:${
-        m < 10 ? "0" + m.toString() : m.toString()
-      }`;
     }
   }
 
@@ -89,25 +74,30 @@ export default class BellTime extends React.Component {
 
   getBellTime(lunch) {
     if (!lunch) return {};
-    const d = new Date();
-    d.setHours(9)
-    const  mins = d.getHours() * 60 + d.getMinutes(),
+    const d = new Date(),
+      mins = d.getHours() * 60 + d.getMinutes(),
       sched = this.getSchedule() /*finals, d.getDay() === 3 ? pack : normal,*/,
       times = sched.getTimes(lunch);
 
     var period = null,
       next = null;
-    for (let i = 0; i < times.length; i++){
+    for (let i = 0; i < times.length; i++) {
       const x = times[i];
       if (mins < this.toMins(x.time[1]) && mins >= this.toMins(x.time[0])) {
-        if (typeof times[i + 1] !== "undefined") {next = this.ordinal_suffix_of(times[i + 1].name);}
+        if (typeof times[i + 1] !== "undefined") {
+          next = this.ordinal_suffix_of(times[i + 1].name);
+        }
         period = x;
         break;
-      } else if (i > 0 && mins < this.toMins(x.time[0]) && mins >= this.toMins(times[i - 1].time[1])){
+      } else if (
+        i > 0 &&
+        mins < this.toMins(x.time[0]) &&
+        mins >= this.toMins(times[i - 1].time[1])
+      ) {
         next = x.name;
-        period = { 
-          name: `Passing Period (after ${times[i - 1].name})`,
-          time: [this.toMins(times[i - 1].time[1]), this.toMins(x.time[0])]
+        period = {
+          name: `Passing Period (after ${this.ordinal_suffix_of(times[i - 1].name)})`,
+          time: [times[i - 1].time[1], x.time[0]]
         };
         break;
       }
@@ -123,7 +113,12 @@ export default class BellTime extends React.Component {
         mins_left,
         secs_left: l == 60 ? "00" : this.zeroPad(l),
         end_time: this.to12hrTime(period.time[1]),
-        percent_complete: Math.trunc((1 - (mins_left / (this.toMins(period.time[1]) - this.toMins(period.time[0])))) * 100)
+        percent_complete: Math.trunc(
+          (1 -
+            mins_left /
+              (this.toMins(period.time[1]) - this.toMins(period.time[0]))) *
+            100
+        )
       };
     return data2;
   }
@@ -242,9 +237,10 @@ export default class BellTime extends React.Component {
                   <a
                     href="#"
                     style={{ color: "inherit" }}
-                    onClick={e => {e.preventDefault();
-                      this.setState(() => ({ scheduleModal: true }))}
-                    }
+                    onClick={e => {
+                      e.preventDefault();
+                      this.setState(() => ({ scheduleModal: true }));
+                    }}
                   >
                     View Schedule
                   </a>

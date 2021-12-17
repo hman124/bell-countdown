@@ -88,8 +88,7 @@ export default class Settings extends React.Component {
               type="button"
               value="Set Countdown"
               onClick={() => this.switchPage(4)}
-            />
-          </>
+            />           </>
         );
       case 2:
         return (
@@ -199,7 +198,9 @@ export default class Settings extends React.Component {
           </>
         );
       case 5:
-        return <></>;
+        return <>
+          <form action=""></form>
+        </>;
     }
   }
 
