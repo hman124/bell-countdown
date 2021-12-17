@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+window.onerror = alert;
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 
 import Settings from "./settings.jsx";
@@ -8,6 +9,8 @@ import message from "./message.json";
 
 import BellTime from "./belltime.jsx";
 import YearTime from "./yeartime.jsx";
+
+import confetti from "./confetti.js";
 
 window.addEventListener("load", () => {
   navigator.wakeLock ? navigator.wakeLock.request("screen") : false;
@@ -35,6 +38,7 @@ class App extends React.Component {
     super(props);
     this.lunch = window.localStorage.getItem("lunch");
     this.countdown = window.localStorage.getItem("countdown");
+    this.confettiColors = window.localStorage.getItem("confetti");
     this.state = {
       lunch: this.lunch,
       ready: !!this.lunch,
@@ -44,7 +48,9 @@ class App extends React.Component {
       installed: false,
       notifications: !!window.localStorage.getItem("notifications"),
       countdown: this.countdown ? JSON.parse(this.countdown) : false,
-      message
+      message,
+      confettiColors: this.confettiColors?JSON.parse(this.confettiColors):["red", "green"],
+      confettiModal: false
     };
     message.show
       ? setTimeout(
@@ -62,6 +68,9 @@ class App extends React.Component {
     this.changeDate = this.changeDate.bind(this);
     this.selectChange = this.selectChange.bind(this);
     this.toggleNotifs = this.toggleNotifs.bind(this);
+    this.updateColors = this.updateColors.bind(this);
+    confetti.colorList = this.state.confettiColors;
+    confetti.start();
   }
 
   changeDate(title, date) {
@@ -116,6 +125,25 @@ class App extends React.Component {
     }
   }
 
+  updateColors(e) {
+
+    this.setState(x => {
+      const z = x.confettiColors.concat();
+      z.includes(e.target.value)
+        ? z.splice(z.indexOf(e.target.value), 1)
+        : z.push(e.target.value);
+      confetti.remove();
+      if(z.length == 0){
+        confetti.colorList = ["white"];
+      } else {
+        confetti.colorList = z;
+      }
+      confetti.start();
+      window.localStorage.setItem("confetti", JSON.stringify(z));
+      return {confettiColors:z};
+    });
+  }
+
   render() {
     return (
       <>
@@ -157,6 +185,11 @@ class App extends React.Component {
                 >
                   Settings
                 </button>
+                <button
+                  onClick={() => this.setState(() => ({ confettiModal: true }))}
+                >
+                  Confetti Colors
+                </button>
                 <Settings
                   close={() => this.setState(() => ({ settings: false }))}
                   setLunch={this.selectChange}
@@ -191,9 +224,125 @@ class App extends React.Component {
               : {}
           }
         ></div>
+        {this.state.confettiModal && (
+          <div className="modal">
+            <span style={{cursor: "pointer"}} onClick={()=>this.setState(()=>({confettiModal:!1}))}>X</span>
+            <h1>Confetti Colors</h1>
+            <hr />
+            <label>
+              Red
+              <input
+                type="checkbox"
+                value="red"
+                checked={this.state.confettiColors.includes("red")}
+                onChange={this.updateColors}
+              />
+            </label><label>
+              Orange
+              <input
+                type="checkbox"
+                value="orange"
+                checked={this.state.confettiColors.includes("orange")}
+                onChange={this.updateColors}
+              />
+            </label><label>
+              Yellow
+              <input
+                type="checkbox"
+                value="yellow"
+                checked={this.state.confettiColors.includes("yellow")}
+                onChange={this.updateColors}
+              />
+            </label><label>
+            Green  
+            <input
+                type="checkbox"
+                value="green"
+                checked={this.state.confettiColors.includes("green")}
+                onChange={this.updateColors}
+              />
+            </label><label>
+              Lime
+              <input
+                type="checkbox"
+                value="lime"
+                checked={this.state.confettiColors.includes("lime")}
+                onChange={this.updateColors}
+              />
+            </label><label>
+              Dark Green
+              <input
+                type="checkbox"
+                value="darkGreen"
+                checked={this.state.confettiColors.includes("darkGreen")}
+                onChange={this.updateColors}
+              />
+            </label><label>
+              Blue
+              <input
+                type="checkbox"
+                value="blue"
+                checked={this.state.confettiColors.includes("blue")}
+                onChange={this.updateColors}
+              />
+            </label><label>
+              Cyan
+              <input
+                type="checkbox"
+                value="cyan"
+                checked={this.state.confettiColors.includes("cyan")}
+                onChange={this.updateColors}
+              />
+            </label><label>
+              Dark Cyan
+              <input
+                type="checkbox"
+                value="darkCyan"
+                checked={this.state.confettiColors.includes("darkCyan")}
+                onChange={this.updateColors}
+              />
+            </label><label>
+              Purple
+              <input
+                type="checkbox"
+                value="purple"
+                checked={this.state.confettiColors.includes("purple")}
+                onChange={this.updateColors}
+              />
+            </label><label>
+              Magenta
+              <input
+                type="checkbox"
+                value="magenta"
+                checked={this.state.confettiColors.includes("magenta")}
+                onChange={this.updateColors}
+              />
+            </label><label>
+              Pink
+              <input
+                type="checkbox"
+                value="pink"
+                checked={this.state.confettiColors.includes("pink")}
+                onChange={this.updateColors}
+              />
+            </label> <label>
+              Black
+              <input
+                type="checkbox"
+                value="black"
+                checked={this.state.confettiColors.includes("black")}
+                onChange={this.updateColors}
+              />
+            </label>      </div>
+        )}
       </>
     );
   }
 }
 
-ReactDOM.render(<React.StrictMode><App></App></React.StrictMode>, document.getElementById("root"));
+ReactDOM.render(
+  <React.StrictMode>
+    <App></App>
+  </React.StrictMode>,
+  document.getElementById("root")
+);

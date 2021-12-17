@@ -37,7 +37,7 @@ body {
 .message p {
   padding: 1rem;
   display: inline-block;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.5);
   color: white;
   border-radius: 20px;
   margin-bottom: 2rem;
@@ -63,6 +63,8 @@ body {
   display: grid;
   padding: 0;
   place-items: center;
+  background-color:rgba(0,0,0,0.5);
+  color:white;
 }
 
 .countdown .container {
@@ -87,12 +89,17 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  display: grid;
+  display: block;
   place-items: center;
   font-size: 1.4rem;
   padding: 2rem;
   color: black;
   overflow: auto;
+}
+
+.modal label{
+  display:block;
+  
 }
 
 .modal input.menu {
