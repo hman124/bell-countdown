@@ -63,8 +63,8 @@ body {
   display: grid;
   padding: 0;
   place-items: center;
-  background-color:rgba(0,0,0,0.5);
-  color:white;
+  /*background-color:rgba(0,0,0,0.5);
+  color:white;*/
 }
 
 .countdown .container {
