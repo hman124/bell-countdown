@@ -25,31 +25,13 @@ export default class YearTime extends React.Component {
   }
 
   getYearTime(countdown) {
-    var days = 0;
-    const t = new Date(countdown.date),
-      d = new Date(),
-      holidays = VCALENDAR[0].VEVENT.filter(x =>
-        x.SUMMARY.toLowerCase().includes("holiday")
-      ).map(x => ({
-        date: x.DTSTART.slice(6, 8),
-        month: x.DTSTART.slice(4, 6),
-        duration: x.DURATION ? +x.DURATION.match(/[1-9]+/)[0] : 1
-      }));
+    var days = 0,
+        t = new Date(countdown.date),
+        d = new Date();
 
     d.setDate(d.getDate() + 1);
     while (d < t) {
-      if (countdown.holidays) {
-        days++;
-      } else {
-        const today = holidays.filter(
-          x => x.date == d.getDate() && x.month == d.getMonth() + 1
-        );
-        if (today.length > 0) {
-          d.setDate(d.getDate() + (+today[0].duration - 1));
-        } else if (!/^[60]{1}$/.test(d.getDay())) {
-          days++;
-        }
-      }
+      days++;
       d.setDate(d.getDate() + 1);
     }
 
@@ -81,31 +63,6 @@ export default class YearTime extends React.Component {
         <h2>{this.state.year_time.hours_until} hours,</h2>
         <h2>{this.state.year_time.minutes_until} minutes,</h2>
         <h2>{this.state.year_time.secs_until} seconds left</h2>
-        <h3>
-          (
-          <input
-            type="checkbox"
-            onClick={event => {
-              this.setState(s => {
-                const countdown = Object.assign(s.countdown, {
-                  holidays: !s.countdown.holidays
-                });
-                window.localStorage.setItem(
-                  "countdown",
-                  JSON.stringify(countdown)
-                );
-                return {
-                  year_time: this.getYearTime(countdown),
-                  countdown
-                };
-              });
-            }}
-            style={{ display: "inline" }}
-            checked={this.state.countdown.holidays}
-          />
-          {this.state.countdown.holidays ? "" : "not "}
-          including weekends and holidays)
-        </h3>
       </>
     );
   }

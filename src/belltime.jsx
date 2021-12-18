@@ -11,6 +11,8 @@ import finals_wed from "./schedules/finals-wed.js";
 import finals_thurs from "./schedules/finals-thurs.js";
 import finals_fri from "./schedules/finals-fri.js";
 
+import { VCALENDAR } from "./icalfeed.json";
+
 export default class BellTime extends React.Component {
   constructor(props) {
     super(props);
@@ -48,15 +50,16 @@ export default class BellTime extends React.Component {
   }
 
   getSchedule() {
-    const scheds = [
-      null,
-      normal,
-      finals_tues,
-      finals_wed,
-      finals_thurs,
-      finals_fri
-    ];
-    return scheds[new Date().getDay()];
+    // const scheds = [
+    //   null,
+    //   normal,
+    //   finals_tues,
+    //   finals_wed,
+    //   finals_thurs,
+    //   finals_fri
+    // ];
+    // return scheds[new Date().getDay()];
+    return (new Date).getDay() == 3?pack:normal;
   }
 
   to12hrTime(time) {
@@ -72,8 +75,47 @@ export default class BellTime extends React.Component {
     return hours * 60 + minutes;
   }
 
+  checkDaysOff() {
+    const d = new Date(),
+      holidays = VCALENDAR[0].VEVENT.filter(x =>
+        x.SUMMARY.toLowerCase().includes("holiday")
+      ).map(x => ({
+        date: x.DTSTART.slice(6, 8),
+        month: x.DTSTART.slice(4, 6),
+        duration: x.DURATION ? +x.DURATION.match(/[1-9]+/)[0] : 1
+      }));
+    
+    d.setSeconds(0);
+    d.setHours(0);
+    d.setMinutes(0);
+    if (
+      holidays.find(x => x.date == d.getDate() && x.month == d.getMonth() + 1) || /^[60]$/.test(d.getDay())
+    ) {
+      return true;
+    } else {
+      var lastHolidayPassed = false, t = new Date(d.toString());
+      while (!lastHolidayPassed) {
+        t.setDate(t.getDate()-1);
+        const today = holidays.filter(
+          x => x.date == t.getDate() && x.month == t.getMonth() + 1
+        );
+        if(today){
+           if(today.DURATION > 1){
+             t.setDate(t.getDate()+today.DURATION);
+             return t >= d;
+           } else {
+             lastHolidayPassed = true;
+             return false;
+           }
+        }
+      }
+    }
+  }
+
+
   getBellTime(lunch) {
     if (!lunch) return {};
+    else if (this.checkDaysOff()) return {period: "no_school"};
     const d = new Date(),
       mins = d.getHours() * 60 + d.getMinutes(),
       sched = this.getSchedule() /*finals, d.getDay() === 3 ? pack : normal,*/,
@@ -96,7 +138,9 @@ export default class BellTime extends React.Component {
       ) {
         next = x.name;
         period = {
-          name: `Passing Period (after ${this.ordinal_suffix_of(times[i - 1].name)})`,
+          name: `Passing Period (after ${this.ordinal_suffix_of(
+            times[i - 1].name
+          )})`,
           time: [times[i - 1].time[1], x.time[0]]
         };
         break;
@@ -182,22 +226,22 @@ export default class BellTime extends React.Component {
     }
   }
 
-  getScheduleList() {
-    const times = this.getSchedule().getTimes(this.state.lunch);
-    return times.reduce((p, c, i, a) => {
-      p.push(
-        <li key={i} style={{ marginBottom: "1rem" }}>
-          <b>{this.ordinal_suffix_of(c.name)}</b>
-          <br />
-          <small>
-            {this.to12hrTime(c.time[0])} - {this.to12hrTime(c.time[1])} (
-            {this.toMins(c.time[1]) - this.toMins(c.time[0])} minutes)
-          </small>
-        </li>
-      );
-      return p;
-    }, []);
-  }
+  // getScheduleList() {
+  //   const times = this.getSchedule().getTimes(this.state.lunch);
+  //   return times.reduce((p, c, i, a) => {
+  //     p.push(
+  //       <li key={i} style={{ marginBottom: "1rem" }}>
+  //         <b>{this.ordinal_suffix_of(c.name)}</b>
+  //         <br />
+  //         <small>
+  //           {this.to12hrTime(c.time[0])} - {this.to12hrTime(c.time[1])} (
+  //           {this.toMins(c.time[1]) - this.toMins(c.time[0])} minutes)
+  //         </small>
+  //       </li>
+  //     );
+  //     return p;
+  //   }, []);
+  // }
 
   render() {
     return (
@@ -227,29 +271,7 @@ export default class BellTime extends React.Component {
                   value={this.state.bell_time.percent_complete}
                 ></progress>
               </p>
-              <fieldset style={{ borderRadius: "10px", marginBottom: "2rem" }}>
-                <legend>
-                  <h3 style={{ margin: "0" }}>Schedule</h3>
-                </legend>
-                <h4>{this.state.bell_time.schedule}&nbsp;</h4>
-                <h4>{this.state.lunch} Lunch</h4>
-                <h4>
-                  <a
-                    href="#"
-                    style={{ color: "inherit" }}
-                    onClick={e => {
-                      e.preventDefault();
-                      this.setState(() => ({ scheduleModal: true }));
-                    }}
-                  >
-                    View Schedule
-                  </a>
-                </h4>
-                {this.state.bell_time.next_period && (
-                  <h4>Next Period: {this.state.bell_time.next_period}</h4>
-                )}
-              </fieldset>
-              {new Date().getDay() === 3 && false && (
+              {new Date().getDay() === 3 && (
                 <p>Pack Period Schedule</p>
               )}
             </>
@@ -274,3 +296,26 @@ export default class BellTime extends React.Component {
     );
   }
 }
+
+              // <fieldset style={{ borderRadius: "10px", marginBottom: "2rem" }}>
+              //   <legend>
+              //     <h3 style={{ margin: "0" }}>Schedule</h3>
+              //   </legend>
+              //   <h4>{this.state.bell_time.schedule}&nbsp;</h4>
+              //   <h4>{this.state.lunch} Lunch</h4>
+              //   <h4>
+              //     <a
+              //       href="#"
+              //       style={{ color: "inherit" }}
+              //       onClick={e => {
+              //         e.preventDefault();
+              //         this.setState(() => ({ scheduleModal: true }));
+              //       }}
+              //     >
+              //       View Schedule
+              //     </a>
+              //   </h4>
+              //   {this.state.bell_time.next_period && (
+              //     <h4>Next Period: {this.state.bell_time.next_period}</h4>
+              //   )}
+              // </fieldset>
