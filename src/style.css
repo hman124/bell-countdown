@@ -71,6 +71,7 @@ body {
   width: 600px;
   padding: 2rem;
   border-radius: 2rem;
+  border:2px #000 solid;
 }
 
 .countdown p {
@@ -124,6 +125,11 @@ body {
 .countdown.background-enabled {
   color: white;
   background-color: rgba(0, 0, 0, 0.7);
+  border:none;
+}
+
+.countdown.background-enabled .container{
+  border:none;
 }
 
 input,

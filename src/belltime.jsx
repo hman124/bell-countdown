@@ -16,6 +16,7 @@ import { VCALENDAR } from "./icalfeed.json";
 export default class BellTime extends React.Component {
   constructor(props) {
     super(props);
+    this.schedule = window.localStorage.getItem("schedule");
     this.state = {
       lunch: props.lunch,
       bell_time: this.getBellTime(props.lunch),
@@ -59,7 +60,7 @@ export default class BellTime extends React.Component {
     //   finals_fri
     // ];
     // return scheds[new Date().getDay()];
-    return (new Date).getDay() == 3?pack:normal;
+    return this.schedule?  {getTimes:()=>JSON.parse(this.schedule)}:((new Date).getDay() == 3?pack:normal);
   }
 
   to12hrTime(time) {
@@ -67,7 +68,7 @@ export default class BellTime extends React.Component {
       (((+time.split(":")[0] + 11) % 12) + 1).toString() +
       ":" +
       time.split(":")[1]
-    );
+    ) + ((+time.split(":")[0])>=12?" PM":"");
   }
 
   toMins(time) {
@@ -76,6 +77,7 @@ export default class BellTime extends React.Component {
   }
 
   checkDaysOff() {
+    return false;
     const d = new Date(),
       holidays = VCALENDAR[0].VEVENT.filter(x =>
         x.SUMMARY.toLowerCase().includes("holiday")
@@ -88,25 +90,22 @@ export default class BellTime extends React.Component {
     d.setSeconds(0);
     d.setHours(0);
     d.setMinutes(0);
-    if (
-      holidays.find(x => x.date == d.getDate() && x.month == d.getMonth() + 1) || /^[60]$/.test(d.getDay())
-    ) {
-      return true;
+    d.setDate(d.getDate());
+    
+    if (/^[60]$/.test(d.getDay())) {
+      return {isOff: true, reason: "Weekend"};
     } else {
-      var lastHolidayPassed = false, t = new Date(d.toString());
-      while (!lastHolidayPassed) {
-        t.setDate(t.getDate()-1);
-        const today = holidays.filter(
-          x => x.date == t.getDate() && x.month == t.getMonth() + 1
-        );
+      var t = new Date(d.toString()), first = new Date("8/1/2021");
+      while (true) {
+        const today = holidays.find(x => x.date == t.getDate() && x.month == t.getMonth() + 1);
         if(today){
-           if(today.DURATION > 1){
-             t.setDate(t.getDate()+today.DURATION);
-             return t >= d;
-           } else {
-             lastHolidayPassed = true;
-             return false;
-           }
+          var e = new Date(t.toString());
+          e.setDate(e.getDate()+today.duration);
+          return {isOff: d <= e && d >= t, reason: "Student Holiday "}; 
+        } else if(t <= first){
+          return {isOff: false};
+        } else {
+          t.setDate(t.getDate()-1);
         }
       }
     }
@@ -114,8 +113,9 @@ export default class BellTime extends React.Component {
 
 
   getBellTime(lunch) {
+    var daysOff = this.checkDaysOff()
     if (!lunch) return {};
-    else if (this.checkDaysOff()) return {period: "no_school"};
+    else if (daysOff.isOff) return {period: "no_school", reason: daysOff.reason };
     const d = new Date(),
       mins = d.getHours() * 60 + d.getMinutes(),
       sched = this.getSchedule() /*finals, d.getDay() === 3 ? pack : normal,*/,
@@ -147,7 +147,7 @@ export default class BellTime extends React.Component {
       }
     }
 
-    if (!period) return { period: "no_school" };
+    if (!period) return { period: "no_school", reason: `School ${(mins<times[0].time[0])?"hasn't started yet":"has ended for the day"}` };
     const l = 60 - d.getSeconds(),
       mins_left = this.toMins(period.time[1]) - mins - (l === 60 ? 0 : 1),
       data2 = {
@@ -248,8 +248,9 @@ export default class BellTime extends React.Component {
       <>
         <>
           <h1>{this.state.clock}</h1>
-          {this.state.bell_time.period === "no_school" ? (
-            <h1>School is not in session right now</h1>
+          {this.state.bell_time.period === "no_school" ? (<>
+            <h1>There is no school right now</h1>
+            <p>{this.state.bell_time.reason}</p></>
           ) : (
             <>
               <h1>
@@ -276,26 +277,26 @@ export default class BellTime extends React.Component {
               )}
             </>
           )}
-          {this.state.scheduleModal && (
-            <div style={{ display: "block" }} className="modal">
-              <span
-                style={{ cursor: "pointer" }}
-                onClick={() => this.setState(() => ({ scheduleModal: false }))}
-              >
-                X
-              </span>
-              <h1 style={{ textAlign: "center" }}>Schedule</h1>
-              <hr />
-              <p>{this.getSchedule().title}</p>
-              <p>{this.state.lunch} Lunch</p>
-              <ul>{this.getScheduleList()}</ul>
-            </div>
-          )}
         </>
       </>
     );
   }
 }
+          // {this.state.scheduleModal && (
+          //   <div style={{ display: "block" }} className="modal">
+          //     <span
+          //       style={{ cursor: "pointer" }}
+          //       onClick={() => this.setState(() => ({ scheduleModal: false }))}
+          //     >
+          //       X
+          //     </span>
+          //     <h1 style={{ textAlign: "center" }}>Schedule</h1>
+          //     <hr />
+          //     <p>{this.getSchedule().title}</p>
+          //     <p>{this.state.lunch} Lunch</p>
+          //     <ul>{this.getScheduleList()}</ul>
+          //   </div>
+          // )}
 
               // <fieldset style={{ borderRadius: "10px", marginBottom: "2rem" }}>
               //   <legend>

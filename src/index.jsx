@@ -1,4 +1,3 @@
-window.onerror = alert;
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 
@@ -10,8 +9,8 @@ import message from "./message.json";
 import BellTime from "./belltime.jsx";
 import YearTime from "./yeartime.jsx";
 
-/*
 import Confetti from "./confetti.jsx";
+/*
 <button onClick={() => this.setState(() => ({ confettiModal: true }))}>Confetti Colors</button>
 <Confetti open={this.state.confettiModal} key={this.state.confettiModal}/>
 */
@@ -50,7 +49,7 @@ class App extends React.Component {
       settings: false,
       installed: false,
       notifications: !!window.localStorage.getItem("notifications"),
-      countdown: this.countdown ? JSON.parse(this.countdown) : false,
+      countdown: this.countdown ? JSON.parse(this.countdown) : {title:"The Last Day of School", date: "5/27/2022"},
       message
     };
     message.show
@@ -146,7 +145,7 @@ class App extends React.Component {
                 {this.state.mode === "clock" ? (
                   <BellTime lunch={this.state.lunch} key={this.state.lunch} />
                 ) : (
-                  <YearTime countdown={this.state.countdown} />
+                  <YearTime countdown={this.state.countdown} key={this.state.countdown.date}/>
                 )}
                 <button
                   onClick={() =>
@@ -156,8 +155,8 @@ class App extends React.Component {
                   }
                 >
                   {this.state.mode === "clock"
-                    ? "Show Countdown"
-                    : "Show Bell Schedule"}
+                    ? "Countdown"
+                    : "Bell Schedule"}
                 </button>
                 <button
                   onClick={() => this.setState(() => ({ settings: true }))}
@@ -168,6 +167,7 @@ class App extends React.Component {
                   close={() => this.setState(() => ({ settings: false }))}
                   setLunch={this.selectChange}
                   setBackground={this.changeBg}
+                  lunch={this.state.lunch}
                   isOpen={this.state.settings}
                   notifs={this.state.notifications}
                   changeDate={this.changeDate}
@@ -190,6 +190,7 @@ class App extends React.Component {
             )}
           </div>
         </div>
+        {(new Date()).getHours() == 0 && <Confetti/>}
         <div
           className="background"
           style={

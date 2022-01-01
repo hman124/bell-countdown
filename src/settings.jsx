@@ -1,11 +1,15 @@
 import React from "react";
 import "./settings.css";
 
+import normal from "./schedules/normal.js";
+
 export default class Settings extends React.Component {
   constructor(props) {
     super(props);
+    this.schedule = window.localStorage.getItem("schedule");
     this.state = {
-      page: 1
+      page: 1,
+      schedule: this.schedule?JSON.parse(this.schedule):[]
     };
 
     this.fileInput = React.createRef();
@@ -88,7 +92,14 @@ export default class Settings extends React.Component {
               type="button"
               value="Set Countdown"
               onClick={() => this.switchPage(4)}
-            />           </>
+            />{" "}
+            <input
+              className="menu"
+              type="button"
+              value="Set Schedule"
+              onClick={() => this.switchPage(5)}
+            />{" "}
+          </>
         );
       case 2:
         return (
@@ -198,10 +209,93 @@ export default class Settings extends React.Component {
           </>
         );
       case 5:
-        return <>
-          <form action=""></form>
-        </>;
+        return (
+          <>
+            <h1>Set Schedule</h1>
+            <hr />
+            {this.state.schedule?.length > 0 && <><table>
+              <thead></thead>
+              <tbody>
+                <tr>
+                  <th>Period Name</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                </tr>
+                {this.renderPeriodTable()}
+              </tbody>
+            </table>
+            <button onClick={()=>{
+                this.setState({schedule: []});
+                 window.localStorage.removeItem("schedule");
+                }}>Clear Schedule</button></>
+            }
+            <button
+              onClick={() =>
+                this.setState(s => {
+                  var e = s.schedule.concat();
+                  e.push({ name: "", time: [] });
+                  return { schedule: e };
+                })
+              }
+            >
+              Add Period
+            </button>
+          </>
+        );
     }
+  }
+
+  saveSchedule(e) {
+    window.localStorage.setItem("schedule", JSON.stringify(e));
+  }
+
+  renderPeriodTable() {
+    return this.state.schedule.map((x, i) => (
+      <tr key={i}>
+        <td>
+          <input
+            onChange={e =>
+              this.setState(s => {
+                var t = s.schedule.concat();
+                t[i].name = e.target.value;
+                this.saveSchedule(t);
+                return { schedule: t };
+              })
+            }
+            type="text"
+            value={x.name}
+          />
+        </td>
+        <td>
+          <input
+            type="time"
+            onChange={e =>
+              this.setState(s => {
+                var t = s.schedule.concat();
+                t[i].time[0] = e.target.value;
+                this.saveSchedule(t);
+                return { schedule: t };
+              })
+            }
+            value={x.time[0]}
+          />
+        </td>
+        <td>
+          <input
+            type="time"
+            onChange={e =>
+              this.setState(s => {
+                var t = s.schedule.concat();
+                t[i].time[1] = e.target.value;
+                this.saveSchedule(t);
+                return { schedule: t };
+              })
+            }
+            value={x.time[1]}
+          />
+        </td>
+      </tr>
+    ));
   }
 
   switchPage(p) {
