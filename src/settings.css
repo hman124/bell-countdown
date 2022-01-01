@@ -21,6 +21,24 @@
   width: 50%;
 }
 
+table{
+  width:100%;
+}
+
+td {
+  width:33.33333%;
+}
+
+table, tr, th, td {
+  border: 2px #000 solid;
+  border-collapse:collapse;
+  padding:10px;
+}
+
+.settings table tr td input {
+  width:calc(100% - 20px);
+  margin:0;
+}
 .settings-fallback {
   position: fixed;
   height: 100%;
