@@ -3,7 +3,8 @@
   "version": "1.4.9",
   "description": "School bell schedule",
   "scripts": {
-    "start": "vite"
+    "start": "vite",
+    "build": "vite build"
   },
   "dependencies": {
     "react": "^17.0.2",
