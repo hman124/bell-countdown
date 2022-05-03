@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 
 import Settings from "./settings.jsx";
 import "./styles/style.css";
@@ -25,9 +25,12 @@ window.addEventListener("load", () => {
 class App extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.useAlt = config.schedule.alternate.use;
-    this.lunch = this.useAlt && config.schedule.alternate.reset_lunch ? null : window.localStorage.getItem("lunch");
+    this.lunch =
+      this.useAlt && config.schedule.alternate.reset_lunch
+        ? null
+        : window.localStorage.getItem("lunch");
     this.countdown = window.localStorage.getItem("countdown");
     this.state = {
       lunch: this.lunch,
@@ -37,34 +40,36 @@ class App extends React.Component {
       settings: false,
       prompt: false,
       // notifications: !!window.localStorage.getItem("notifications"),
-      countdown: this.countdown ? JSON.parse(this.countdown) : {title:"The Last Day of School", date: "5/27/2022"},
+      countdown: this.countdown
+        ? JSON.parse(this.countdown)
+        : { title: "The Last Day of School", date: "5/27/2022" },
       message,
-      display: window.localStorage.getItem("display")||"aesthetic"
+      display: window.localStorage.getItem("display") || "aesthetic",
     };
-  
+
     this.changeDate = this.changeDate.bind(this);
     this.setDisplay = this.setDisplay.bind(this);
     this.selectChange = this.selectChange.bind(this);
     // this.toggleNotifs = this.toggleNotifs.bind(this);
   }
-  
+
   componentDidMount() {
-    window.addEventListener("beforeinstallprompt", e => {
+    window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
-      this.setState({prompt: true});
+      this.setState({ prompt: true });
     });
 
     window.addEventListener("appinstalled", () => {
-      this.setState({prompt: true});
-    });    
+      this.setState({ prompt: true });
+    });
   }
 
   changeDate(title, date) {
     const a = { title, date };
     window.localStorage.setItem("countdown", JSON.stringify(a));
-    this.setState(o => ({
+    this.setState((o) => ({
       countdown: a,
-      mode: "last"
+      mode: "last",
     }));
   }
 
@@ -110,23 +115,29 @@ class App extends React.Component {
   //     });
   //   }
   // }  Should We Delete this?
-  
+
   setDisplay(d) {
-    this.setState({display: d});
+    this.setState({ display: d });
   }
 
-  renderLunchOptions(){
-    if(this.useAlt){
-      return config.schedule.alternate.schedule.lunches.map(x => <option value={x.id}>{x.name}</option>);
+  renderLunchOptions() {
+    if (this.useAlt) {
+      return config.schedule.alternate.schedule.lunches.map((x, i) => (
+        <option key={i} value={x.id}>
+          {x.name}
+        </option>
+      ));
     } else {
-      return (<>
-                  <option value="A">A Lunch</option>
-                  <option value="B">B Lunch</option>
-                  <option value="C">C Lunch</option>
-        </>)
+      return (
+        <>
+          <option value="A">A Lunch</option>
+          <option value="B">B Lunch</option>
+          <option value="C">C Lunch</option>
+        </>
+      );
     }
   }
-  
+
   render() {
     return (
       <>
@@ -141,27 +152,38 @@ class App extends React.Component {
         )}
         <div
           className={
-            "countdown" + (this.state.background ? " background-enabled" : "") + (this.state.display? ' '+this.state.display: "")
+            "countdown" +
+            (this.state.background ? " background-enabled" : "") +
+            (this.state.display ? " " + this.state.display : "")
           }
         >
           <div className="container">
             {this.state.lunch ? (
               <>
                 {this.state.mode === "clock" ? (
-                  <BellTime display={this.state.display} schedule={config.schedule} lunch={this.state.lunch} key={this.state.lunch} />
+                  <BellTime
+                    display={this.state.display}
+                    schedule={config.schedule}
+                    lunch={this.state.lunch}
+                    key={this.state.lunch}
+                  />
                 ) : (
-                  <YearTime onExpire={()=>this.setState({countdown:{expired: true}})} countdown={this.state.countdown} key={this.state.countdown.date}/>
+                  <YearTime
+                    onExpire={() =>
+                      this.setState({ countdown: { expired: true } })
+                    }
+                    countdown={this.state.countdown}
+                    key={this.state.countdown.date}
+                  />
                 )}
                 <button
                   onClick={() =>
-                    this.setState(s => ({
-                      mode: s.mode == "last" ? "clock" : "last"
+                    this.setState((s) => ({
+                      mode: s.mode == "last" ? "clock" : "last",
                     }))
                   }
                 >
-                  {this.state.mode === "clock"
-                    ? "Countdown"
-                    : "Bell Schedule"}
+                  {this.state.mode === "clock" ? "Countdown" : "Bell Schedule"}
                 </button>
                 <button
                   onClick={() => this.setState(() => ({ settings: true }))}
@@ -179,7 +201,7 @@ class App extends React.Component {
                   notifs={this.state.notifications}
                   changeDate={this.changeDate}
                   toggleNotifs={this.toggleNotifs}
-                  changeBackground={w =>
+                  changeBackground={(w) =>
                     this.setState(() => ({ background: w }))
                   }
                 />
@@ -195,25 +217,26 @@ class App extends React.Component {
             )}
           </div>
         </div>
-        {(!this.state.display || this.state.display == "aesthetic") &&
+        {(!this.state.display || this.state.display == "aesthetic") && (
           <div
-          className="background"
-          style={
-            this.state.background
-              ? { backgroundImage: `url(${this.state.background})` }
-              : {}
-          }
-        ></div>
-        }
+            className="background"
+            style={
+              this.state.background
+                ? { backgroundImage: `url(${this.state.background})` }
+                : {}
+            }
+          ></div>
+        )}
       </>
     );
   }
 }
-         // {(new Date()).getHours() == 0 && <Confetti/>}
+// {(new Date()).getHours() == 0 && <Confetti/>}
 
-ReactDOM.render(
+const root = createRoot(document.getElementById("root"));
+
+root.render(
   <React.StrictMode>
     <App></App>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );

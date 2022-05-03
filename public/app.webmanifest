@@ -25,7 +25,7 @@
       "type": "image/png"
     }
   ],
-  "name": "School Bell Schedule",
-  "short_name": "Bell Schedule",
+  "name": "Bell Countdown",
+  "short_name": "Bell Countdown",
   "start_url": "/index.html"
 }

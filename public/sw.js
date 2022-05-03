@@ -1,4 +1,4 @@
-const CACHE_NAME = "cache-v1.2.7";
+const CACHE_NAME = "cache-v1.2.9";
 
 self.addEventListener("install", e => {
   caches.keys().then(function(names) {
@@ -14,9 +14,9 @@ self.addEventListener("install", e => {
       "/img/3.png",
       "/img/4.png",
       "/img/5.png",
-      "/assets/index.c89c4e46.js",
-      "/assets/index.ae306ca4.css",
-      "/assets/vendor.cd7509fb.js"
+      "/assets/index.js",
+      "/assets/index.css",
+      "/assets/vendor.js"
     ]);
   });
 });
