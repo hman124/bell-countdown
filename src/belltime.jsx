@@ -1,22 +1,12 @@
 import React from "react";
-
-//import psat from "./schedules/psat.js";
-//import pep from "./schedules/pep-rally.js";
 window.onerror = alert;
 
-import pack from "./schedules/pack.js";
-import normal from "./schedules/normal.js";
-import finals_tues from "./schedules/finals-tues.js";
-import finals_wed from "./schedules/finals-wed.js";
-import finals_thurs from "./schedules/finals-thurs.js";
-import finals_fri from "./schedules/finals-fri.js";
-
-import { VCALENDAR } from "./icalfeed.json";
+import calendar from "./icalfeed.json";
 
 export default class BellTime extends React.Component {
   constructor(props) {
     super(props);
-    this.schedule = window.localStorage.getItem("schedule");
+    // this.schedule = window.localStorage.getItem("schedule");
     this.state = {
       lunch: props.lunch,
       bell_time: this.getBellTime(props.lunch),
@@ -51,17 +41,15 @@ export default class BellTime extends React.Component {
   }
 
   getSchedule() {
-    // const scheds = [
-    //   null,
-    //   normal,
-    //   finals_tues,
-    //   finals_wed,
-    //   finals_thurs,
-    //   finals_fri
-    // ];
-    // return scheds[new Date().getDay()];
-    return this.schedule?  {getTimes:()=>JSON.parse(this.schedule)}:((new Date).getDay() == 3?pack:normal);
+    const d = new Date(),
+          w = d.getDay();
+    if(this.props.schedule.alternate?.use){
+      return this.props.schedule.alternate.schedule || this.props.schedule.alternate.order[w];      
+    } else {
+      return this.props.schedule.order[w];
+    }
   }
+  
 
   to12hrTime(time) {
     return (
@@ -77,14 +65,11 @@ export default class BellTime extends React.Component {
   }
 
   checkDaysOff() {
-    return false;
     const d = new Date(),
-      holidays = VCALENDAR[0].VEVENT.filter(x =>
-        x.SUMMARY.toLowerCase().includes("holiday")
-      ).map(x => ({
-        date: x.DTSTART.slice(6, 8),
-        month: x.DTSTART.slice(4, 6),
-        duration: x.DURATION ? +x.DURATION.match(/[1-9]+/)[0] : 1
+      holidays = calendar.map(x => ({
+        date: x.start.slice(6, 8),
+        month: x.start.slice(4, 6),
+        duration: x.duration ? +x.duration.match(/[1-9]+/)[0] : 1
       }));
     
     d.setSeconds(0);
@@ -226,35 +211,35 @@ export default class BellTime extends React.Component {
     }
   }
 
-  // getScheduleList() {
-  //   const times = this.getSchedule().getTimes(this.state.lunch);
-  //   return times.reduce((p, c, i, a) => {
-  //     p.push(
-  //       <li key={i} style={{ marginBottom: "1rem" }}>
-  //         <b>{this.ordinal_suffix_of(c.name)}</b>
-  //         <br />
-  //         <small>
-  //           {this.to12hrTime(c.time[0])} - {this.to12hrTime(c.time[1])} (
-  //           {this.toMins(c.time[1]) - this.toMins(c.time[0])} minutes)
-  //         </small>
-  //       </li>
-  //     );
-  //     return p;
-  //   }, []);
-  // }
+  getScheduleList() {
+    const times = this.getSchedule().getTimes(this.state.lunch);
+    return times.reduce((p, c, i, a) => {
+      p.push(
+        <li key={i} style={{ marginBottom: "1rem" }}>
+          <b>{this.ordinal_suffix_of(c.name)}</b>
+          <br />
+          <small>
+            {this.to12hrTime(c.time[0])} - {this.to12hrTime(c.time[1])} (
+            {this.toMins(c.time[1]) - this.toMins(c.time[0])} minutes)
+          </small>
+        </li>
+      );
+      return p;
+    }, []);
+  }
 
   render() {
     return (
       <>
         <>
-          <h1>{this.state.clock}</h1>
+          {this.props.display=="aesthetic" && <h1>{this.state.clock}</h1>}
           {this.state.bell_time.period === "no_school" ? (<>
             <h1>There is no school right now</h1>
             <p>{this.state.bell_time.reason}</p></>
           ) : (
             <>
-              <h1>
-                The Bell rings in{" "}
+              <h1 style={this.props.display=="focused"?{fontSize: "4rem"}:{}}>
+                {this.props.display=="aesthetic" && "Class Ends in "}
                 {this.state.bell_time.mins_left > 59
                   ? `${Math.trunc(
                       this.state.bell_time.mins_left / 60
@@ -264,7 +249,8 @@ export default class BellTime extends React.Component {
               </h1>
               <h2>{this.state.bell_time.period}</h2>
               <h3>Ends at {this.state.bell_time.end_time}</h3>
-              <p>
+            {this.props.display=="aesthetic" && 
+            <p>
                 Progress: {this.state.bell_time.percent_complete}%
                 <br />
                 <progress
@@ -272,51 +258,51 @@ export default class BellTime extends React.Component {
                   value={this.state.bell_time.percent_complete}
                 ></progress>
               </p>
-              {new Date().getDay() === 3 && (
+            }  
+              {new Date().getDay() === 3 && !this.props.schedule.alternate.use && (
                 <p>Pack Period Schedule</p>
               )}
             </>
           )}
         </>
+        {this.props.schedule.alternate.use && <><fieldset style={{ borderRadius: "10px", marginBottom: "2rem" }}>
+                <legend>
+                  <h3 style={{ margin: "0" }}>Schedule</h3>
+                </legend>
+                <h4>{this.getSchedule().title}&nbsp;</h4>
+                <h4>{this.state.lunch} Lunch</h4>
+                <h4>
+                  <a
+                    href="#"
+                    style={{ color: "inherit" }}
+                    onClick={e => {
+                      e.preventDefault();
+                      this.setState(() => ({ scheduleModal: true }));
+                    }}
+                  >
+                    View Schedule
+                  </a>
+                </h4>
+                {this.state.bell_time.next_period && (
+                  <h4>Next Period: {this.state.bell_time.next_period}</h4>
+                )}
+              </fieldset>
+          {this.state.scheduleModal && (
+            <div style={{ display: "block" }} className="modal">
+              <span
+                style={{ cursor: "pointer" }}
+                onClick={() => this.setState(() => ({ scheduleModal: false }))}
+              >
+                X
+              </span>
+              <h1 style={{ textAlign: "center" }}>Schedule</h1>
+              <hr />
+              <p>{this.getSchedule().title}</p>
+              <p>{this.state.lunch} Lunch</p>
+              <ul>{this.getScheduleList()}</ul>
+            </div>
+            )}</>}
       </>
     );
   }
 }
-          // {this.state.scheduleModal && (
-          //   <div style={{ display: "block" }} className="modal">
-          //     <span
-          //       style={{ cursor: "pointer" }}
-          //       onClick={() => this.setState(() => ({ scheduleModal: false }))}
-          //     >
-          //       X
-          //     </span>
-          //     <h1 style={{ textAlign: "center" }}>Schedule</h1>
-          //     <hr />
-          //     <p>{this.getSchedule().title}</p>
-          //     <p>{this.state.lunch} Lunch</p>
-          //     <ul>{this.getScheduleList()}</ul>
-          //   </div>
-          // )}
-
-              // <fieldset style={{ borderRadius: "10px", marginBottom: "2rem" }}>
-              //   <legend>
-              //     <h3 style={{ margin: "0" }}>Schedule</h3>
-              //   </legend>
-              //   <h4>{this.state.bell_time.schedule}&nbsp;</h4>
-              //   <h4>{this.state.lunch} Lunch</h4>
-              //   <h4>
-              //     <a
-              //       href="#"
-              //       style={{ color: "inherit" }}
-              //       onClick={e => {
-              //         e.preventDefault();
-              //         this.setState(() => ({ scheduleModal: true }));
-              //       }}
-              //     >
-              //       View Schedule
-              //     </a>
-              //   </h4>
-              //   {this.state.bell_time.next_period && (
-              //     <h4>Next Period: {this.state.bell_time.next_period}</h4>
-              //   )}
-              // </fieldset>

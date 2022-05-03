@@ -1,19 +1,16 @@
 import React from "react";
-import "./settings.css";
-
-import normal from "./schedules/normal.js";
+import "./styles/settings.css";
 
 export default class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.schedule = window.localStorage.getItem("schedule");
     this.state = {
-      page: 1,
+      page: 0,
       schedule: this.schedule?JSON.parse(this.schedule):[]
     };
 
     this.fileInput = React.createRef();
-
     this.renderPage = this.renderPage.bind(this);
     this.switchPage = this.switchPage.bind(this);
     this.changeBackground = this.changeBackground.bind(this);
@@ -51,57 +48,54 @@ export default class Settings extends React.Component {
     }
   }
 
+      // <li onClick={()=>this.switchPage(4)}>Schedule</li>
+  renderSideNav() {
+    return <ul class="settings-nav">
+      <li onClick={()=>this.switchPage(1)}>Lunch</li>    
+      <li onClick={()=>this.switchPage(2)}>Background</li>    
+      <li onClick={()=>this.switchPage(3)}>Countdown</li>
+      <li onClick={()=>this.switchPage(5)}>Display</li>
+      {this.props.prompt && <li onClick={()=>this.props.prompt.prompt()}>Install App</li>}
+    </ul>
+  }
+  
   close() {
-    this.setState(() => ({ page: 1 }));
+    this.setState(() => ({ page: 0 }));
     this.props.close();
   }
 
   dateSub(e) {
     e.preventDefault();
     var a = e.target.date.value.split("-");
+    a.push(a.shift());
+  
+    var x = a.join("/"),
+        r = new Date(x),
+        d = new Date();
     if (a[0] > 3000) {
       alert("please choose a year less than 3000");
+    } else if(e < d) {
+      alert("please choose a date in the future");
     } else {
-      a.push(a.shift());
-      this.props.changeDate(e.target.countdowntitle.value, a.join("/"));
+      this.props.changeDate(e.target.title.value, x);
       this.close();
     }
+  }
+  
+  setDisplay(d){
+    window.localStorage.setItem("display", d);
+    this.props.setDisplay(d);
+    this.close();
   }
 
   renderPage() {
     switch (this.state.page) {
+      case 0:
+        return (<>
+        <h1>Settings</h1>
+        <p>Select a menu item to edit the settings</p></>);
+        break;
       case 1:
-        return (
-          <>
-            <h1>Settings</h1>
-            <hr />
-            <input
-              className="menu"
-              type="button"
-              value="Change Lunch"
-              onClick={() => this.switchPage(2)}
-            />
-            <input
-              className="menu"
-              type="button"
-              value="Set Background"
-              onClick={() => this.switchPage(3)}
-            />
-            <input
-              className="menu"
-              type="button"
-              value="Set Countdown"
-              onClick={() => this.switchPage(4)}
-            />{" "}
-            <input
-              className="menu"
-              type="button"
-              value="Set Schedule"
-              onClick={() => this.switchPage(5)}
-            />{" "}
-          </>
-        );
-      case 2:
         return (
           <>
             <h1>Select Lunch</h1>
@@ -116,6 +110,7 @@ export default class Settings extends React.Component {
               <option value="A">A</option>
               <option value="B">B</option>
               <option value="C">C</option>
+              <option value="alt" hidden>Alternate</option>
             </select>
             <input
               type="button"
@@ -124,7 +119,7 @@ export default class Settings extends React.Component {
             />
           </>
         );
-      case 3:
+      case 2:
         return (
           <>
             <h1>Select Background</h1>
@@ -146,6 +141,7 @@ export default class Settings extends React.Component {
                 }, [])}
             </div>
             <hr />
+            <h3>Or upload a file:</h3>
             <input
               type="file"
               value=""
@@ -160,7 +156,8 @@ export default class Settings extends React.Component {
             />
           </>
         );
-      case 4:
+        break;
+      case 3:
         return (
           <>
             <h1>Countdown</h1>
@@ -185,17 +182,16 @@ export default class Settings extends React.Component {
                   })()}
                   required
                   name="date"
-                ></input>
+                />
               </label>
               <br />
               <input
                 required
                 type="text"
-                name="countdowntitle"
+                name="title"
                 placeholder="Countdown Title"
-              ></input>
-              <input type="reset" value="Reset"></input>
-              <input type="submit" value="Apply"></input>
+              />
+              <input type="submit" value="Apply"/>
             </form>
             <hr></hr>
             <input
@@ -208,7 +204,8 @@ export default class Settings extends React.Component {
             ></input>
           </>
         );
-      case 5:
+        break;
+      case 4:
         return (
           <>
             <h1>Set Schedule</h1>
@@ -242,6 +239,13 @@ export default class Settings extends React.Component {
             </button>
           </>
         );
+      case 5:
+        return (<>
+            <h1>Display Settings</h1>
+            <hr/>
+              <input type="button" value="Aesthetic" onClick={()=>this.setDisplay('aesthetic')}/>
+              <input type="button" value="Focused" onClick={()=>this.setDisplay('focused')}/>
+          </>);
     }
   }
 
@@ -307,12 +311,14 @@ export default class Settings extends React.Component {
       <>
         {this.props.isOpen && (
           <>
-            <div className="settings-fallback" onClick={this.close}></div>
             <div className="settings">
               <span className="settings-close" onClick={this.close}>
                 X
               </span>
-              {this.renderPage()}
+              {this.renderSideNav()}
+              <div className="settings-page">
+                {this.renderPage()}
+              </div>
             </div>
           </>
         )}

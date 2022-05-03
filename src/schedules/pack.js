@@ -23,7 +23,7 @@ export default {
     return [
       { name: "1", time: ["07:20", "08:10"] },
       { name: "2", time: ["08:16", "09:06"] },
-      { name: "Pack", time: ["09:06", "9:36"] },
+      { name: "Pack Period", time: ["09:06", "9:36"] },
       { name: "3", time: ["09:42", "10:32"] },
       ...lunches[l],
       { name: "6", time: ["13:02", "13:53"] },
