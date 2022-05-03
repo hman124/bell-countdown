@@ -8,7 +8,7 @@
 }
 
 :root {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 #root {
@@ -32,6 +32,12 @@ body {
   display: grid;
   justify-content: center;
   width: 100vw;
+  overflow:auto;
+  
+}
+
+.message {
+  margin:1rem;
 }
 
 .message p {
@@ -57,9 +63,12 @@ body {
 }
 
 .countdown {
-  text-align: left;
   width: 100vw;
   height: 100%;
+}
+
+.countdown.aesthetic {
+  text-align: left;
   display: grid;
   padding: 0;
   place-items: center;
@@ -71,8 +80,12 @@ body {
   width: 600px;
   padding: 2rem;
   border-radius: 2rem;
-  border:2px #000 solid;
 }
+
+.countdown.aesthetic .container {
+  border:2px #000000 solid;
+}
+
 
 .countdown p {
   font-size: 1.3rem;
@@ -118,13 +131,13 @@ body {
 
 .message.background-enabled p {
   background-color: rgb(225, 225, 225);
-  border: 2px #000 solid;
+  border: 2px #000000 solid;
   color: black;
 }
 
-.countdown.background-enabled {
+.countdown.aesthetic.background-enabled {
   color: white;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
   border:none;
 }
 
@@ -138,7 +151,7 @@ textarea,
 button {
   padding: 0.5rem;
   background-color: white;
-  border: 1px #ccc solid;
+  border: 1px #cccccc solid;
   border-radius: 5px;
   margin-bottom: 1rem;
 }
@@ -161,11 +174,15 @@ button {
     font-size: 14px;
   }
 
-  .countdown {
+  .countdown.aesthetic {
     display: block;
     place-items: none;
   }
 
+  .countdown.focused {
+    font-size: 20px;
+  }
+  
   .countdown .container {
     border: none;
     padding: 0;

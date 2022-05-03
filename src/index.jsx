@@ -2,44 +2,32 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 
 import Settings from "./settings.jsx";
-import "./style.css";
+import "./styles/style.css";
 
-import message from "./message.json";
+import Noty from "noty";
 
+import message from "./config.js";
 import BellTime from "./belltime.jsx";
 import YearTime from "./yeartime.jsx";
 
-import Confetti from "./confetti.jsx";
-/*
-<button onClick={() => this.setState(() => ({ confettiModal: true }))}>Confetti Colors</button>
-<Confetti open={this.state.confettiModal} key={this.state.confettiModal}/>
-*/
+import config from "./config.js";
 
 window.addEventListener("load", () => {
   navigator.wakeLock ? navigator.wakeLock.request("screen") : false;
 
   if (window.location.protocol === "http:") {
     window.location.protocol = "https:";
+  } else if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js", { scope: "/" });
   }
-
-  if ("serviceWorker" in navigator) {
-    // navigator.serviceWorker.register("/sw.js", { scope: "/" }).then(reg => {
-    // reg.unregister()
-    //   console.log("Service Worker Started");
-    // });
-  }
-});
-
-let prompt = false;
-window.addEventListener("beforeinstallprompt", function(e) {
-  e.preventDefault();
-  prompt = e;
 });
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.lunch = window.localStorage.getItem("lunch");
+    
+    this.useAlt = config.schedule.alternate.use;
+    this.lunch = this.useAlt && config.schedule.alternate.reset_lunch ? null : window.localStorage.getItem("lunch");
     this.countdown = window.localStorage.getItem("countdown");
     this.state = {
       lunch: this.lunch,
@@ -47,27 +35,28 @@ class App extends React.Component {
       mode: "clock",
       background: window.localStorage.getItem("background"),
       settings: false,
-      installed: false,
-      notifications: !!window.localStorage.getItem("notifications"),
+      prompt: false,
+      // notifications: !!window.localStorage.getItem("notifications"),
       countdown: this.countdown ? JSON.parse(this.countdown) : {title:"The Last Day of School", date: "5/27/2022"},
-      message
+      message,
+      display: window.localStorage.getItem("display")||"aesthetic"
     };
-    message.show
-      ? setTimeout(
-          () => this.setState(() => ({ message: { show: false } })),
-          5000
-        )
-      : false;
-    window.addEventListener(
-      "appinstalled",
-      function(e) {
-        this.setState(() => ({ installed: true }));
-      }.bind(this)
-    );
-
+  
     this.changeDate = this.changeDate.bind(this);
+    this.setDisplay = this.setDisplay.bind(this);
     this.selectChange = this.selectChange.bind(this);
-    this.toggleNotifs = this.toggleNotifs.bind(this);
+    // this.toggleNotifs = this.toggleNotifs.bind(this);
+  }
+  
+  componentDidMount() {
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      this.setState({prompt: true});
+    });
+
+    window.addEventListener("appinstalled", () => {
+      this.setState({prompt: true});
+    });    
   }
 
   changeDate(title, date) {
@@ -84,7 +73,7 @@ class App extends React.Component {
     if (val === "choose") {
       alert("Please choose an option");
     } else {
-      window.localStorage.removeItem("new");
+      // window.localStorage.removeItem("new");
       window.localStorage.setItem("lunch", val);
       this.lunch = event.target.value;
       this.setState(() => ({ ready: true, lunch: event.target.value }));
@@ -104,24 +93,40 @@ class App extends React.Component {
     }
   }
 
-  toggleNotifs() {
-    if (this.state.notifications) {
-      window.localStorage.removeItem("notifications");
-      this.setState(s => ({ notifications: !1 }));
-    } else {
-      Notification.requestPermission().then(r => {
-        if (r == "granted") {
-          window.localStorage.setItem("notifications", "true");
-          this.setState(s => ({ notifications: !0 }));
-        } else {
-          alert(
-            "You need to grant permission in order for notifications to function."
-          );
-        }
-      });
-    }
+  // toggleNotifs() {
+  //   if (this.state.notifications) {
+  //     window.localStorage.removeItem("notifications");
+  //     this.setState(s => ({ notifications: !1 }));
+  //   } else {
+  //     Notification.requestPermission().then(r => {
+  //       if (r == "granted") {
+  //         window.localStorage.setItem("notifications", "true");
+  //         this.setState(s => ({ notifications: !0 }));
+  //       } else {
+  //         alert(
+  //           "You need to grant permission in order for notifications to function."
+  //         );
+  //       }
+  //     });
+  //   }
+  // }  Should We Delete this?
+  
+  setDisplay(d) {
+    this.setState({display: d});
   }
 
+  renderLunchOptions(){
+    if(this.useAlt){
+      return config.schedule.alternate.schedule.lunches.map(x => <option value={x.id}>{x.name}</option>);
+    } else {
+      return (<>
+                  <option value="A">A Lunch</option>
+                  <option value="B">B Lunch</option>
+                  <option value="C">C Lunch</option>
+        </>)
+    }
+  }
+  
   render() {
     return (
       <>
@@ -131,21 +136,21 @@ class App extends React.Component {
               "message" + (this.state.background ? " background-enabled" : "")
             }
           >
-            <p>{this.state.message.content}</p>
+            <p>{this.state.message.message.content}</p>
           </div>
         )}
         <div
           className={
-            "countdown" + (this.state.background ? " background-enabled" : "")
+            "countdown" + (this.state.background ? " background-enabled" : "") + (this.state.display? ' '+this.state.display: "")
           }
         >
           <div className="container">
             {this.state.lunch ? (
               <>
                 {this.state.mode === "clock" ? (
-                  <BellTime lunch={this.state.lunch} key={this.state.lunch} />
+                  <BellTime display={this.state.display} schedule={config.schedule} lunch={this.state.lunch} key={this.state.lunch} />
                 ) : (
-                  <YearTime countdown={this.state.countdown} key={this.state.countdown.date}/>
+                  <YearTime onExpire={()=>this.setState({countdown:{expired: true}})} countdown={this.state.countdown} key={this.state.countdown.date}/>
                 )}
                 <button
                   onClick={() =>
@@ -166,6 +171,8 @@ class App extends React.Component {
                 <Settings
                   close={() => this.setState(() => ({ settings: false }))}
                   setLunch={this.selectChange}
+                  setDisplay={this.setDisplay}
+                  prompt={this.state.prompt}
                   setBackground={this.changeBg}
                   lunch={this.state.lunch}
                   isOpen={this.state.settings}
@@ -182,16 +189,14 @@ class App extends React.Component {
                 <h1>Choose a Lunch</h1>
                 <select onChange={this.selectChange}>
                   <option value="choose">Choose One</option>
-                  <option value="A">A Lunch</option>
-                  <option value="B">B Lunch</option>
-                  <option value="C">C Lunch</option>
+                  {this.renderLunchOptions()}
                 </select>
               </>
             )}
           </div>
         </div>
-        {(new Date()).getHours() == 0 && <Confetti/>}
-        <div
+        {(!this.state.display || this.state.display == "aesthetic") &&
+          <div
           className="background"
           style={
             this.state.background
@@ -199,10 +204,12 @@ class App extends React.Component {
               : {}
           }
         ></div>
+        }
       </>
     );
   }
 }
+         // {(new Date()).getHours() == 0 && <Confetti/>}
 
 ReactDOM.render(
   <React.StrictMode>

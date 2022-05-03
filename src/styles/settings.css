@@ -1,0 +1,152 @@
+.settings {
+  grid-template-columns: 15rem calc(100vw - 14rem);
+  grid-template-rows: 100vh;
+  display:grid;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  background-color: white;
+  z-index: 999;
+  text-align: center;
+  color: black;
+}
+
+.settings input,
+.settings button,
+.settings select {
+  font-size: 1.3rem;
+  display: inline-block;
+  margin: 1rem;
+  width: 50%;
+}
+
+.settings .settings-nav {
+  border-right: 2px #444444 solid;
+  float: left;
+  list-style:none;
+  padding: 0;
+  margin:0;
+  grid-row: 1 / span 1;
+  grid-column:1 / span 1;
+  padding: 2rem;
+  padding-top:5rem;
+}
+
+.settings .settings-nav li {
+  cursor: pointer;
+  margin-bottom: 2rem;
+  font-size: larger;
+  transition: 0.4s;
+  border-radius: 5px;
+  padding: 1rem;
+}
+
+.settings .settings-nav li:hover {
+  background-color: #444444; 
+  color: white;
+}
+
+.settings .settings-page {
+  grid-column: 2 / span 1;
+  grid-row: 1 / span 1;
+  overflow: auto;
+}
+
+table{
+  width:100%;
+}
+
+td {
+  width:33.33333%;
+}
+
+table, tr, th, td {
+  border: 2px #000000 solid;
+  border-collapse:collapse;
+  padding:10px;
+}
+
+.settings table tr td input {
+  width:calc(100% - 20px);
+  margin:0;
+}
+
+.settings-close {
+  cursor: pointer;
+  position: absolute;
+  left: 1rem;
+  width:13rem;
+  background-color:white;
+  display: block;
+  font-size: 1.3rem;
+  transition: 0.3s;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top:1rem;
+}
+
+.settings-close:hover {
+  background: #444444;
+  color: white;
+}
+
+.bg-cont {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  grid-row-gap: 2rem;
+  width: 100%;
+  place-items: center;
+  margin-bottom: 2rem;
+}
+
+.bg-cont img {
+  height: 8rem;
+  width: auto;
+  border-radius: 5px;
+}
+
+@media screen and (max-width: 1000px) {
+  .settings {
+    grid-template-rows: 5rem calc(100vh - 5rem);
+    grid-template-columns: 100%;
+  }
+  
+  .settings .settings-nav {
+    overflow-y:hidden;
+    grid-row: 1 / span 1;
+    grid-column: 1 / span 1;
+    white-space:nowrap;
+    overflow-x: auto;
+    background-color: #444444;
+    color:white;
+    line-height: 5rem;
+    padding: 0;
+    padding-left: 4rem;
+  }
+  
+  .settings .settings-nav li {
+    margin: 0;
+    padding:0;
+    display:inline-block;
+    margin-right: 2rem;
+  }
+  
+  .settings-close {
+    width:auto;
+    height:3rem;
+    background-color: #444;
+    color:white;
+  }
+  
+  .settings .settings-page {
+    grid-row: 2 / span 1;
+    grid-column: auto;
+  }
+/*   
+  .settings input, .settings button, .settings select {
+    font-size: 8rem;
+  } */
+}
