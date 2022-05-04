@@ -1,31 +1,31 @@
 {
-  "background_color": "white",
+  "background_color": "#FFFFFF",
   "theme_color":"black",
-  "description": "Show the bell schedule countdown",
+  "description": "Countdown for School class periods",
   "display": "standalone",
   "icons": [
     {
-      "src": "https://cdn.glitch.com/57d24874-cb67-48cc-824b-0b097a930360%2Ffavicon.ico",
+      "src": "/logos/pwa-192x192.png",
       "sizes": "192x192"
       },{
-      "src": "https://cdn.glitch.me/83902b7b-ef91-4e8d-b9e1-502c054170d1%2FUntitled-modified.png",
+      "src": "/logos/pwa-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     },{
-      "src": "https://cdn.glitch.me/83902b7b-ef91-4e8d-b9e1-502c054170d1%2FIcon-76.png",
+      "src": "/logos/pwa-76x76.png",
       "sizes": "76x76",
       "type": "image/png"
     },{
-      "src": "https://cdn.glitch.me/83902b7b-ef91-4e8d-b9e1-502c054170d1%2Fimg-1024.png",
+      "src": "/logos/pwa-1024x1024.png",
       "sizes": "1024x1024",
       "type": "image/png"
     },{
-      "src": "https://cdn.glitch.me/83902b7b-ef91-4e8d-b9e1-502c054170d1%2FIcon-60%402x.png",
+      "src": "/logos/pwa-120x120.png",
       "sizes": "120x120",
       "type": "image/png"
     }
   ],
   "name": "Bell Countdown",
-  "short_name": "Bell Countdown",
+  "short_name": "Countdown",
   "start_url": "/index.html"
 }

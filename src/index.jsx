@@ -4,8 +4,6 @@ import { createRoot } from "react-dom/client";
 import Settings from "./settings.jsx";
 import "./styles/style.css";
 
-import Noty from "noty";
-
 import message from "./config.js";
 import BellTime from "./belltime.jsx";
 import YearTime from "./yeartime.jsx";
@@ -14,7 +12,6 @@ import config from "./config.js";
 
 window.addEventListener("load", () => {
   navigator.wakeLock ? navigator.wakeLock.request("screen") : false;
-
   if (window.location.protocol === "http:") {
     window.location.protocol = "https:";
   } else if ("serviceWorker" in navigator) {

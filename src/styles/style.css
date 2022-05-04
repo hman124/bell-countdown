@@ -176,10 +176,11 @@ button {
 
   .countdown.aesthetic {
     display: block;
-    place-items: none;
+    padding: 2rem;
   }
 
   .countdown.focused {
+    padding:2rem;
     font-size: 20px;
   }
   
