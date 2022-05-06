@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles/settings.css";
+import "../styles/settings.css";
 
 export default class Settings extends React.Component {
   constructor(props) {
@@ -52,16 +52,15 @@ export default class Settings extends React.Component {
   renderSideNav() {
     return <ul class="settings-nav">
       <li onClick={()=>this.switchPage(1)}>Lunch</li>    
-      <li onClick={()=>this.switchPage(2)}>Background</li>    
       <li onClick={()=>this.switchPage(3)}>Countdown</li>
-      <li onClick={()=>this.switchPage(5)}>Display</li>
       {this.props.prompt && <li onClick={()=>this.props.prompt.prompt()}>Install App</li>}
     </ul>
   }
+      // <li onClick={()=>this.switchPage(2)}>Background</li>    
+      // <li onClick={()=>this.switchPage(5)}>Display</li>
   
   close() {
-    this.setState(() => ({ page: 0 }));
-    this.props.close();
+    this.props.setTab(0);
   }
 
   dateSub(e) {
@@ -78,7 +77,7 @@ export default class Settings extends React.Component {
       alert("please choose a date in the future");
     } else {
       this.props.changeDate(e.target.title.value, x);
-      this.close();
+      this.props.setTab(1);
     }
   }
   
@@ -102,8 +101,8 @@ export default class Settings extends React.Component {
             <hr />
             <select
               onChange={e => {
-                this.props.setLunch(e);
-                this.close();
+                this.props.setLunch(e.target.value);
+                this.props.setTab(0);
               }}
             >
               <option>Choose One</option>
@@ -119,44 +118,44 @@ export default class Settings extends React.Component {
             />
           </>
         );
-      case 2:
-        return (
-          <>
-            <h1>Select Background</h1>
-            <hr />
-            <div className="bg-cont">
-              {Array(6)
-                .fill(null)
-                .reduce((a, e, i) => {
-                  var url = `/img/${i}.png`;
-                  a.push(
-                    <img
-                      key={i}
-                      className="bg-preview"
-                      src={url}
-                      onClick={e => this.changeBackground(url)}
-                    />
-                  );
-                  return a;
-                }, [])}
-            </div>
-            <hr />
-            <h3>Or upload a file:</h3>
-            <input
-              type="file"
-              value=""
-              accept="image/*"
-              ref={this.fileInput}
-              onChange={this.uploadBackground}
-            />
-            <input
-              type="button"
-              onClick={this.changeBackground.bind(this, false)}
-              value="Clear Background"
-            />
-          </>
-        );
-        break;
+      // case 2:
+      //   return (
+      //     <>
+      //       <h1>Select Background</h1>
+      //       <hr />
+      //       <div className="bg-cont">
+      //         {Array(6)
+      //           .fill(null)
+      //           .reduce((a, e, i) => {
+      //             var url = `/img/${i}.png`;
+      //             a.push(
+      //               <img
+      //                 key={i}
+      //                 className="bg-preview"
+      //                 src={url}
+      //                 onClick={e => this.changeBackground(url)}
+      //               />
+      //             );
+      //             return a;
+      //           }, [])}
+      //       </div>
+      //       <hr />
+      //       <h3>Or upload a file:</h3>
+      //       <input
+      //         type="file"
+      //         value=""
+      //         accept="image/*"
+      //         ref={this.fileInput}
+      //         onChange={this.uploadBackground}
+      //       />
+      //       <input
+      //         type="button"
+      //         onClick={this.changeBackground.bind(this, false)}
+      //         value="Clear Background"
+      //       />
+      //     </>
+      //   );
+      //   break;
       case 3:
         return (
           <>
@@ -198,7 +197,7 @@ export default class Settings extends React.Component {
               type="button"
               value="Use The Last Day of School"
               onClick={() => {
-                this.props.changeDate("The Last Day of School", "5/27/2022");
+                this.props.changeDate("The Last Day of School", "5/26/2022");
                 this.close();
               }}
             ></input>
@@ -239,13 +238,13 @@ export default class Settings extends React.Component {
             </button>
           </>
         );
-      case 5:
-        return (<>
-            <h1>Display Settings</h1>
-            <hr/>
-              <input type="button" value="Aesthetic" onClick={()=>this.setDisplay('aesthetic')}/>
-              <input type="button" value="Focused" onClick={()=>this.setDisplay('focused')}/>
-          </>);
+      // case 5:
+      //   return (<>
+      //       <h1>Display Settings</h1>
+      //       <hr/>
+      //         <input type="button" value="Aesthetic" onClick={()=>this.setDisplay('aesthetic')}/>
+      //         <input type="button" value="Focused" onClick={()=>this.setDisplay('focused')}/>
+      //     </>);
     }
   }
 
@@ -309,20 +308,20 @@ export default class Settings extends React.Component {
   render() {
     return (
       <>
-        {this.props.isOpen && (
-          <>
             <div className="settings">
-              <span className="settings-close" onClick={this.close}>
-                X
-              </span>
               {this.renderSideNav()}
+              <div style={{clear: "both"}}></div>
               <div className="settings-page">
                 {this.renderPage()}
               </div>
+              <span style={{position:"fixed", bottom: "0", left: "0"}}>Ver. 2.0.2 (quickfix) | <a href="mailto:bugs@steedster.net">Report Bugs</a></span>
             </div>
           </>
-        )}
-      </>
+        
     );
   }
 }
+
+              // <span className="settings-close" onClick={this.close}>
+              //   X
+              // </span>

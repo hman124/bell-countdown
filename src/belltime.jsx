@@ -186,7 +186,7 @@ export default class BellTime extends React.Component {
       this.setState(state => {
         const secs_left =
           l == 60 ? "00" : l < 10 ? `0${l.toString()}` : l.toString();
-        document.title = `School Bell Schedule ${
+        document.title = `Bell Countdown ${
           typeof state.bell_time.mins_left == "number"
             ? `- ${state.bell_time.mins_left}:${secs_left}`
             : ""
@@ -198,7 +198,7 @@ export default class BellTime extends React.Component {
     } else {
       this.setState(() => {
         const bell_time = this.getBellTime(this.state.lunch);
-        document.title = `School Bell Schedule ${
+        document.title = `Bell Countdown ${
           typeof bell_time.mins_left == "number"
             ? `- ${bell_time.mins_left}:${bell_time.secs_left}`
             : ""

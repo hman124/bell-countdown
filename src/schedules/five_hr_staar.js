@@ -1,7 +1,7 @@
-///*
+///* schedule ver 2.0 - times instead of numbers
 export default {
   title: "EOC TESTING",
-  version: "1.0",
+  version: "2.0",
   getTimes: function(l) {
     const lunches = {
       Downstairs: [

@@ -1,0 +1,31 @@
+{
+  "background_color": "#FFFFFF",
+  "theme_color":"black",
+  "description": "Countdown for School class periods",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/logos/pwa-192x192.png",
+      "sizes": "160x160"
+    }, {
+      "src": "/logos/pwa-512x512.png",
+      "sizes": "503x503",
+      "type": "image/png"
+    }, {
+      "src": "/logos/pwa-76x76.png",
+      "sizes": "76x76",
+      "type": "image/png"
+    }, {
+      "src": "/logos/pwa-1024x1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }, {
+      "src": "/logos/pwa-120x120.png",
+      "sizes": "120x120",
+      "type": "image/png"
+    }
+  ],
+  "name": "Bell Countdown",
+  "short_name": "Countdown",
+  "start_url": "/index.html"
+}
