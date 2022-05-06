@@ -8,12 +8,17 @@ class BellCountdown extends React.Component {
     this.state = {
       countdown: this.getCountdown(),
       clock: this.getClock(),
+      counter: Math.min(window.innerWidth/4, window.innerHeight/4)
     };
 
     this.tick = this.tick.bind(this);
   }
 
   componentDidMount() {
+    
+    window.addEventListener("resize", () => {
+      this.setState({counter: Math.min(window.innerWidth/4, window.innerHeight/4)});
+    });
     this.interval = setInterval(this.tick, 1000);
   }
 
@@ -45,7 +50,7 @@ class BellCountdown extends React.Component {
       seconds = l == 60 ? "00" : this.zeroPad(l);
     return {
       hours: Math.trunc(diff / 60),
-      minutes: (diff % 60) + (l == 60 ? 1 : 0),
+      minutes: ((diff % 60) + (l == 60 ? 1 : 0)) - 1,
       seconds,
     };
   }
@@ -121,7 +126,7 @@ class BellCountdown extends React.Component {
   tick() {
     const d = new Date(),
       seconds = 60 - d.getSeconds();
-    if (seconds % 15 == 0 || seconds == 0 || seconds == 59) {
+    if (seconds % 15 == 0 || seconds == 0 || seconds == 59 || this.getClock() !== this.state.clock) {
       this.setState({
         clock: this.getClock(),
         countdown: this.getCountdown(),
@@ -158,8 +163,8 @@ class BellCountdown extends React.Component {
               <h1>{this.state.countdown.current}</h1>
               <div className="counters-container">
             <RadialProgress
-              width={window.innerWidth/4}
-              height={window.innerWidth/4}
+              width={this.state.counter}
+              height={this.state.counter}
               steps={this.state.countdown.length}
               startStep={this.state.countdown.time.minutes}
               step={this.state.countdown.time.minutes}
@@ -167,8 +172,8 @@ class BellCountdown extends React.Component {
               segmented={false}
             />
             <RadialProgress
-              width={window.innerWidth/4}
-              height={window.innerWidth/4}
+              width={this.state.counter}
+              height={this.state.counter}
               steps={60}
               startStep={this.state.countdown.time.seconds}
               step={this.state.countdown.time.seconds}

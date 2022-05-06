@@ -314,7 +314,7 @@ export default class Settings extends React.Component {
               <div className="settings-page">
                 {this.renderPage()}
               </div>
-              <span style={{position:"fixed", bottom: "0", left: "0"}}>Ver. 2.0.1 | <a href="mailto:bugs@steedster.net">Report Bugs</a></span>
+              <span style={{position:"fixed", bottom: "0", left: "0"}}>Ver. 2.0.2 (quickfix) | <a href="mailto:bugs@steedster.net">Report Bugs</a></span>
             </div>
           </>
         
