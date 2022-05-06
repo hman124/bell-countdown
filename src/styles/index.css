@@ -1,0 +1,94 @@
+@font-face {
+  src: url(https://cdn.glitch.me/887c9896-8f4a-43f2-989c-68584c8d1c1a%2FRubik-VariableFont_wght.ttf);
+  font-family: rubik;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 20px;
+}
+
+#root {
+  position:fixed;
+  top:0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+body {
+  font-family: rubik, calibri, sans-serif;
+  padding: 0;
+  margin: 0;
+  font-feature-settings: "tnum";
+  background-color: transparent;
+}
+
+.countdown {
+  padding: 1rem;
+}
+
+.counters-container {
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 3fr 1fr;
+}
+
+.RadialProgressIndicator {
+  display:inline-block;
+  margin:auto;
+}
+
+.progressLabel {
+  text-align:center;
+}
+
+/* @media screen and (max-width: 1000px){
+  .counters-container {
+}
+} */
+
+ul.DateCountdown {
+    width: calc(6rem * 4);
+    padding: 0;
+  margin:auto;
+  }
+  
+  ul.DateCountdown li {
+    width: 6rem;
+    text-align:center;
+    text-transform: uppercase;
+    display:inline-block;
+  }
+  
+  ul.DateCountdown li p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display:block;
+  }
+  
+  @media screen and (max-width: 800px){
+    ul.DateCountdown {
+      width: 6rem;
+      margin:auto;
+    }
+    
+    ul.DateCountdown li {
+      display:block;
+    }
+  }
+
+.settings-nav ul {
+  display:block;
+}
+
+.settings-nav li{
+  list-style:none;
+  text-decoration:underline;
+  float:left;
+  display:block;
+  margin-right: 0.5rem;
+}

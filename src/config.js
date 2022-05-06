@@ -12,16 +12,5 @@ const calendarFeed = ""; // this will eventually hold the url for the SchoolCafe
 
 
 export default {
- "schedule":{
-    "alternate": {
-      "use": true,
-      "reset_lunch": true,
-      "schedule": eoc,
-      // use schedule for one schedule, use order for multiple, depending on weekday 
-      //"order": [normal, finals_tues, finals_wed, finals_thurs, finals_fri]
-    }, "order": [null, normal, normal, pack, normal, normal]
- }, "message":{
-    "show": true,
-    "content": "EOC TESTING TODAY, 5/3/2022! The schedule for Today has been adjusted for this."
-  }
+ "schedule": normal
 };

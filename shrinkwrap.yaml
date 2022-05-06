@@ -2,6 +2,8 @@ dependencies:
   noty: 3.1.4
   react: 18.1.0
   react-dom: 18.1.0
+  react-radial-progress-indicator: 1.4.1
+  react-tabs: 5.1.0
 devDependencies:
   vite: 2.6.14
   vite-plugin-pwa: 0.12.0
@@ -1559,6 +1561,12 @@ packages:
       node: '>=10'
     resolution:
       integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==
+  /clsx/1.1.1:
+    dev: false
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
   /color-convert/1.9.3:
     dependencies:
       color-name: 1.1.3
@@ -2372,6 +2380,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-HKOH392eBygTojC6fXVBOFxTqebjnn/e7/AS69zlWSH3Tn6+0RzfT3aDCGx2PY6Ed3xKBPhtz+xeHAHQGEh68Q==
+  /object-assign/4.1.1:
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
   /object-inspect/1.12.0:
     dev: true
     resolution:
@@ -2441,6 +2455,14 @@ packages:
       node: ^14.13.1 || >=16.0.0
     resolution:
       integrity: sha512-6UqkYefdogmzqAZWzJ7laYeJnaXDy2/J+ZqiiMtS7t7OfpXWTlaeGMwX8U6EFvPV/YWWEKRkS8hKS4k60WHTOg==
+  /prop-types/15.8.1:
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      react-is: 16.13.1
+    dev: false
+    resolution:
+      integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
   /punycode/2.1.1:
     dev: true
     engines:
@@ -2466,6 +2488,26 @@ packages:
       react: ^18.1.0
     resolution:
       integrity: sha512-fU1Txz7Budmvamp7bshe4Zi32d0ll7ect+ccxNu9FlObT605GOEB8BfO4tmRJ39R5Zj831VCpvQ05QPBW5yb+w==
+  /react-is/16.13.1:
+    dev: false
+    resolution:
+      integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
+  /react-radial-progress-indicator/1.4.1:
+    dev: false
+    peerDependencies:
+      react: '>=16.4'
+      react-dom: '>=16.4'
+    resolution:
+      integrity: sha512-4FYrCtpqshAdVdKWPo+CmIVU5fALidzKrFNIB3S98JgXruts22jiqS3n0JFLW5mlYqTXUqzOQNH1m2jyWgnnzg==
+  /react-tabs/5.1.0:
+    dependencies:
+      clsx: 1.1.1
+      prop-types: 15.8.1
+    dev: false
+    peerDependencies:
+      react: ^18.0.0
+    resolution:
+      integrity: sha512-jsPVEPuhG7JljTo8Q4ujz4UKRpG90nHlDClAdvV5KrLxCHU+MT/kg7dmhq8fDv8+frciDtaYeFFlTVRLm4N5AQ==
   /react/18.1.0:
     dependencies:
       loose-envify: 1.4.0
@@ -3057,6 +3099,8 @@ specifiers:
   noty: ^3.1.4
   react: ^18.0.0
   react-dom: ^18.0.0
+  react-radial-progress-indicator: ^1.4.1
+  react-tabs: ^5.1.0
   vite: ^2.4.4
   vite-plugin-pwa: ^0.12.0
   workbox-window: ^6.5.3

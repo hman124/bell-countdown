@@ -1,7 +1,6 @@
 import calendar from "./icalfeed.json";
 import schedule from "./schedule.js";
 
-export default function () {
   function zeroPad(num) {
     if (num < 10) {
       return "0" + num.toString();
@@ -156,6 +155,9 @@ export default function () {
       (d.getHours() >= 12 ? "PM" : "AM")
     );
   }
+
+export default {
+ 
 }
 
 //   function getScheduleList() {
