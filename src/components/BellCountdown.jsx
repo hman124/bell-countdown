@@ -61,11 +61,8 @@ class BellCountdown extends React.Component {
     const mins = d.getHours() * 60 + d.getMinutes(),
       sched = this.props.schedule,
       times = sched.getTimes(this.props.lunch),
-      list = times
-        .map((x) => x.time)
-        .flat()
-        .map((x) => this.toMins(x)),
-      itm = list.find((c, i, a) => i > 0 && mins <= c && mins >= a[i - 1]),
+      list = times.map((x) => x.time).flat().map((x) => this.toMins(x)),
+      itm = list.find((c, i, a) => i > 0 && mins < c && mins >= a[i - 1]),
       i = list.indexOf(itm) + (itm == mins ? 1 : 0);
 
     if (i < 0) {

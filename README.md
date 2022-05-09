@@ -1,4 +1,4 @@
-# [School Bell Schedule](https://school-bell-schedule.glitch.me)
+# [Bell Countdown](https://bell-countdown.netlify.app)
 
 A React web app designed to tell useful information like how much time is left in the current class period.
 
@@ -6,5 +6,5 @@ As it turns out, it's more useful than you think. This is still in development a
 
 For now, the schedule is set to the schedule of my school, but in the (near) future, I will be adding support for custom schedules, a feature most similar apps i've found don't have.
 
-It can be viewed live here: https://school-bell-schedule.glitch.me/<br>
-And you can see the code here on github or on glitch.com (https://glitch.com/edit/#!/school-bell-schedule)
+It can be viewed live here: https://bell-countdown.netlify.app/<br>
+And you can see the code here on github

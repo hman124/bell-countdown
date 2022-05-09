@@ -8,11 +8,12 @@ import "./styles/index.css";
 
 import LunchChooser from "./components/LunchChooser.jsx";
 import DateCountdown from "./components/DateCountdown.jsx";
+import BellCountdown from "./components/BellCountdown.jsx";
+import LunchMenu from "./components/LunchMenu.jsx";
 import Settings from "./components/Settings.jsx";
 
 import config from "./config.js";
 import normal from "./schedules/normal.js";
-import BellCountdown from "./components/BellCountdown.jsx";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 
@@ -30,7 +31,7 @@ class App extends React.Component {
 
     this.stored = {
       lunch: window.localStorage.getItem("lunch"),
-      countdown: window.localStorage.getItem("countdown")
+      countdown: window.localStorage.getItem("countdown"),
     };
 
     this.schedule = config.schedule;
@@ -39,7 +40,11 @@ class App extends React.Component {
       lunch: this.stored.lunch || false,
       ready: !!this.stored.lunch,
       countdown: this.stored.countdown ? JSON.parse(this.stored.countdown) : {title: "Last Day of School", date: "5/26/2022"},
-      tabIndex: 0
+      tabIndex: 0,
+      menu: {
+        loading: true, 
+        items: null
+      }
     };
 
     this.onSelectLunch = this.onSelectLunch.bind(this);
@@ -52,6 +57,18 @@ class App extends React.Component {
       this.setState({ prompt: true });
     });
 
+  const d = new Date();
+  const today = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+    
+   
+  const options = new URLSearchParams();
+  options.set("date", today);
+  
+  fetch("https://bell-countdown-api.glitch.me/MenuItems?"+options.toString())
+    .then(r=>r.json()).then(items => {
+      this.setState({menu: {loading: false, items}});
+    });
+    
     window.addEventListener("appinstalled", () => {
       this.setState({ prompt: true });
     });
@@ -61,8 +78,9 @@ class App extends React.Component {
     if (lunch !== "choose") {
       window.localStorage.setItem("lunch", lunch);
       this.setState({
-        lunch,
-        ready: true,
+          lunch,
+          ready: true,
+        
       });
     }
   }
@@ -89,6 +107,7 @@ class App extends React.Component {
                 <TabList>
                   <Tab>Schedule</Tab>
                   <Tab>Countdown</Tab>
+                  <Tab>Menu</Tab>
                   <Tab>Settings</Tab>
                 </TabList>
 
@@ -103,8 +122,11 @@ class App extends React.Component {
                 <TabPanel>
                   <DateCountdown countdown={this.state.countdown}/>
                 </TabPanel>
+                <TabPanel forceRender={true}>
+                  <LunchMenu loading={this.state.menu.loading} items={this.state.menu.items}/>
+                </TabPanel>
                 <TabPanel>
-                <Settings setLunch={this.onSelectLunch} setTab={(index) => this.setState({tabIndex:index})} changeDate={this.changeDate}/>
+                <Settings setLunch={this.onSelectLunch} schedule={this.schedule} setTab={(index) => this.setState({tabIndex:index})} changeDate={this.changeDate}/>
                 </TabPanel>
               </Tabs>
             </div>

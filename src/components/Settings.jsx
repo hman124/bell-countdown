@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/settings.css";
+import LunchChooser from "./LunchChooser.jsx";
 
 export default class Settings extends React.Component {
   constructor(props) {
@@ -10,47 +11,47 @@ export default class Settings extends React.Component {
       schedule: this.schedule?JSON.parse(this.schedule):[]
     };
 
-    this.fileInput = React.createRef();
+    // this.fileInput = React.createRef();
     this.renderPage = this.renderPage.bind(this);
     this.switchPage = this.switchPage.bind(this);
-    this.changeBackground = this.changeBackground.bind(this);
-    this.uploadBackground = this.uploadBackground.bind(this);
+    // this.changeBackground = this.changeBackground.bind(this);
+    // this.uploadBackground = this.uploadBackground.bind(this);
     this.close = this.close.bind(this);
     this.dateSub = this.dateSub.bind(this);
   }
 
-  changeBackground(val) {
-    if (val) {
-      this.props.changeBackground(val);
-      window.localStorage.setItem("background", val);
-    } else {
-      this.props.changeBackground(false);
-      window.localStorage.removeItem("background");
-    }
-    this.close();
-  }
+  // changeBackground(val) {
+  //   if (val) {
+  //     this.props.changeBackground(val);
+  //     window.localStorage.setItem("background", val);
+  //   } else {
+  //     this.props.changeBackground(false);
+  //     window.localStorage.removeItem("background");
+  //   }
+  //   this.close();
+  // }
 
-  async uploadBackground(e) {
-    if (this.fileInput.current.files[0].size > 4000000) {
-      alert("Image is too large in size. Must be less than 4MB");
-      this.fileInput.current.value = "";
-      return;
-    } else {
-      const toBase64 = file =>
-        new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = error => reject(error);
-        });
+//   async uploadBackground(e) {
+//     if (this.fileInput.current.files[0].size > 4000000) {
+//       alert("Image is too large in size. Must be less than 4MB");
+//       this.fileInput.current.value = "";
+//       return;
+//     } else {
+//       const toBase64 = file =>
+//         new Promise((resolve, reject) => {
+//           const reader = new FileReader();
+//           reader.readAsDataURL(file);
+//           reader.onload = () => resolve(reader.result);
+//           reader.onerror = error => reject(error);
+//         });
 
-      this.changeBackground(await toBase64(this.fileInput.current.files[0]));
-    }
-  }
+//       this.changeBackground(await toBase64(this.fileInput.current.files[0]));
+//     }
+//   }
 
       // <li onClick={()=>this.switchPage(4)}>Schedule</li>
-  renderSideNav() {
-    return <ul class="settings-nav">
+  renderNav() {
+    return <ul className="settings-nav">
       <li onClick={()=>this.switchPage(1)}>Lunch</li>    
       <li onClick={()=>this.switchPage(3)}>Countdown</li>
       {this.props.prompt && <li onClick={()=>this.props.prompt.prompt()}>Install App</li>}
@@ -80,12 +81,6 @@ export default class Settings extends React.Component {
       this.props.setTab(1);
     }
   }
-  
-  setDisplay(d){
-    window.localStorage.setItem("display", d);
-    this.props.setDisplay(d);
-    this.close();
-  }
 
   renderPage() {
     switch (this.state.page) {
@@ -99,23 +94,7 @@ export default class Settings extends React.Component {
           <>
             <h1>Select Lunch</h1>
             <hr />
-            <select
-              onChange={e => {
-                this.props.setLunch(e.target.value);
-                this.props.setTab(0);
-              }}
-            >
-              <option>Choose One</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-              <option value="alt" hidden>Alternate</option>
-            </select>
-            <input
-              type="button"
-              value="Cancel"
-              onClick={() => this.switchPage(1)}
-            />
+            <LunchChooser schedule={this.props.schedule} submit={lunch=>{this.props.setLunch(lunch);this.props.setTab(0);}}/>
           </>
         );
       // case 2:
@@ -248,58 +227,58 @@ export default class Settings extends React.Component {
     }
   }
 
-  saveSchedule(e) {
-    window.localStorage.setItem("schedule", JSON.stringify(e));
-  }
+//   saveSchedule(e) {
+//     window.localStorage.setItem("schedule", JSON.stringify(e));
+//   }
 
-  renderPeriodTable() {
-    return this.state.schedule.map((x, i) => (
-      <tr key={i}>
-        <td>
-          <input
-            onChange={e =>
-              this.setState(s => {
-                var t = s.schedule.concat();
-                t[i].name = e.target.value;
-                this.saveSchedule(t);
-                return { schedule: t };
-              })
-            }
-            type="text"
-            value={x.name}
-          />
-        </td>
-        <td>
-          <input
-            type="time"
-            onChange={e =>
-              this.setState(s => {
-                var t = s.schedule.concat();
-                t[i].time[0] = e.target.value;
-                this.saveSchedule(t);
-                return { schedule: t };
-              })
-            }
-            value={x.time[0]}
-          />
-        </td>
-        <td>
-          <input
-            type="time"
-            onChange={e =>
-              this.setState(s => {
-                var t = s.schedule.concat();
-                t[i].time[1] = e.target.value;
-                this.saveSchedule(t);
-                return { schedule: t };
-              })
-            }
-            value={x.time[1]}
-          />
-        </td>
-      </tr>
-    ));
-  }
+//   renderPeriodTable() {
+//     return this.state.schedule.map((x, i) => (
+//       <tr key={i}>
+//         <td>
+//           <input
+//             onChange={e =>
+//               this.setState(s => {
+//                 var t = s.schedule.concat();
+//                 t[i].name = e.target.value;
+//                 this.saveSchedule(t);
+//                 return { schedule: t };
+//               })
+//             }
+//             type="text"
+//             value={x.name}
+//           />
+//         </td>
+//         <td>
+//           <input
+//             type="time"
+//             onChange={e =>
+//               this.setState(s => {
+//                 var t = s.schedule.concat();
+//                 t[i].time[0] = e.target.value;
+//                 this.saveSchedule(t);
+//                 return { schedule: t };
+//               })
+//             }
+//             value={x.time[0]}
+//           />
+//         </td>
+//         <td>
+//           <input
+//             type="time"
+//             onChange={e =>
+//               this.setState(s => {
+//                 var t = s.schedule.concat();
+//                 t[i].time[1] = e.target.value;
+//                 this.saveSchedule(t);
+//                 return { schedule: t };
+//               })
+//             }
+//             value={x.time[1]}
+//           />
+//         </td>
+//       </tr>
+//     ));
+//   }
 
   switchPage(p) {
     this.setState(() => ({ page: p }));
@@ -309,12 +288,12 @@ export default class Settings extends React.Component {
     return (
       <>
             <div className="settings">
-              {this.renderSideNav()}
+              {this.renderNav()}
               <div style={{clear: "both"}}></div>
               <div className="settings-page">
                 {this.renderPage()}
               </div>
-              <span style={{position:"fixed", bottom: "0", left: "0"}}>Ver. 2.0.2 (quickfix) | <a href="mailto:bugs@steedster.net">Report Bugs</a></span>
+              <span style={{position:"fixed", bottom: "0", left: "0"}}>Ver. 2.1.0 (stable) | <a href="mailto:bugs@steedster.net">Report Bugs</a></span>
             </div>
           </>
         
