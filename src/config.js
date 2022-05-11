@@ -12,5 +12,5 @@ const calendarFeed = ""; // this will eventually hold the url for the SchoolCafe
 
 
 export default {
- "schedule": normal
+ "schedule": pack
 };
