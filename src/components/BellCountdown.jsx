@@ -33,7 +33,7 @@ class BellCountdown extends React.Component {
   }
 
   toMins(time) {
-    const pattern = /[0-9]{2}:[0-9]{1,2}/;
+    const pattern = /[0-9]{1,2}:[0-9]{1,2}/;
     if (pattern.test(time)) {
       const [hours, minutes] = time.split(":");
       return +minutes + +hours * 60;
