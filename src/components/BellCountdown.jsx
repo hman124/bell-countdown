@@ -64,7 +64,7 @@ class BellCountdown extends React.Component {
   getCountdown() {
     const d = new Date()
     if (/[60]/.test(d.getDay())) return {school: false, reason: "Weekend" };
-    const mins = 500,//d.getHours() * 60 + d.getMinutes(),
+    const mins = d.getHours() * 60 + d.getMinutes(),
       sched = this.props.schedule,
       times = sched.getTimes(this.props.lunch),
       list = times.map((x) => x.time).flat().map((x) => this.toMins(x)),
