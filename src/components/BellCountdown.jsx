@@ -12,17 +12,23 @@ class BellCountdown extends React.Component {
     };
 
     this.tick = this.tick.bind(this);
+    this.resizeDimensions = this.resizeDimensions.bind(this);
   }
 
-  componentDidMount() {
-    
-    window.addEventListener("resize", () => {
-      this.setState({counter: Math.min(window.innerWidth/4, window.innerHeight/4)});
+  resizeDimensions(){
+    this.setState({
+      counter: Math.min(window.innerWidth/4, window.innerHeight/4)
     });
+    // this.forceUpdate()
+  }
+  
+  componentDidMount() {    
+    window.addEventListener("resize", this.resizeDimensions);
     this.interval = setInterval(this.tick, 1000);
   }
 
   componentWillUnmount() {
+    window.removeEventListener("resize", this.resizeDimensions);
     clearInterval(this.interval);
   }
 
@@ -58,7 +64,7 @@ class BellCountdown extends React.Component {
   getCountdown() {
     const d = new Date()
     if (/[60]/.test(d.getDay())) return {school: false, reason: "Weekend" };
-    const mins = d.getHours() * 60 + d.getMinutes(),
+    const mins = 500,//d.getHours() * 60 + d.getMinutes(),
       sched = this.props.schedule,
       times = sched.getTimes(this.props.lunch),
       list = times.map((x) => x.time).flat().map((x) => this.toMins(x)),

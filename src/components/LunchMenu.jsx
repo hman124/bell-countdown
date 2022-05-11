@@ -1,34 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 window.onerror = alert;
 
-function LunchItemImage(props) {
-  var [loading, setLoading] = useState(true);
-  var [image, setImage] = useState(null);
+class LunchItemImage extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      loading: true,
+      none: false,
+    };
+    var paramsStr = props.url.split("?")[1],
+        params = new URLSearchParams(paramsStr);
+    this.timer = setTimeout(()=>{
+      this.setState(s=>({
+        none: s.loading
+      }));      
+    }, 5000);
+    this.url = "https://bell-countdown-api.glitch.me/MenuImageCache?MenuItem="+params.get("menuItemId");
+  }
+  
+  componentDidMount() {
+    this.timer = setTimeout(()=>{
+      this.setState(s=>({
+        none: s.loading
+      }));      
+    }, 5000);
+  }
+  
+  componentWillUnmount(){
+    clearTimeout(this.timer);
+  }
 
-  const url = props.url;
-  fetch(url, { headers: { accept: "application/json" } })
-    .then((r) => r.json())
-    .then((d) => {
-      setLoading(false);
-      setImage(d);
-    });
-
-  return (
+  render() {
+    return (
     <>
-      {loading && (
-        <img
-          width="40"
-          height="40"
-          className="MenuImage"
-          src="https://cdn.glitch.com/41b9504c-a9af-4d48-8bcf-ed59058d6a31/loading-loading-forever.gif"
-        />
-      )}
-      {!loading && image && (
-        <img src={"data:image/png;base64," + image} className="MenuImage" width="40" height="40" />
-      )}
+      {this.state.loading && !this.state.none && <img width="40" height="40" className="MenuImage" src="https://cdn.glitch.com/41b9504c-a9af-4d48-8bcf-ed59058d6a31/loading-loading-forever.gif"/>}
+      {!this.state.none && <img src={this.url} onLoad={()=>this.setState({loading: false})} style={this.state.loading?{display:'none'}:{}} className="MenuImage" width="40" height="40"/>}
     </>
-  );
+  );}
 }
 
 function LunchMenu(props) {
@@ -49,27 +58,36 @@ function LunchMenu(props) {
           <h1>On the Menu Today</h1>
           <h2>Meal:</h2>
           <h3>
-            <LunchItemImage
-              url={props.items["LUNCH ENTREE"][0].ThumbnailImageURL}
-            />
-            {props.items["LUNCH ENTREE"][0].MenuItemDescription}
+            <ul>
+              {props.items["LUNCH ENTREE"].map(itm => (
+                <li key={itm.MenuItemDescription}>
+                  <LunchItemImage url={itm.ThumbnailImageURL} key={itm.ThumbnailImageURL}/>
+                  {itm.MenuItemDescription}
+                </li>
+              ))}
+            </ul>
           </h3>
           <h2>Vegetables:</h2>
-          {props.items["VEGETABLE"].map((itm, i) => (
-            <li key={i}>
-              <LunchItemImage url={itm.ThumbnailImageURL} />
-              {itm.MenuItemDescription}
-            </li>
-          ))}
+          <ul>
+            {props.items["VEGETABLE"].map(itm => (
+              <li key={itm.MenuItemDescription}>
+                <LunchItemImage url={itm.ThumbnailImageURL} key={itm.ThumbnailImageURL}/>
+                {itm.MenuItemDescription}
+              </li>
+            ))}
+          </ul>
           <h2>Fruits:</h2>
-          {props.items["FRUIT"].map((itm, i) => (
-            <li key={i}>
-              <LunchItemImage url={itm.ThumbnailImageURL} />
-              {itm.MenuItemDescription}
-            </li>
-          ))}
+          <ul>
+            {props.items["FRUIT"].map(itm => (
+              <li key={itm.MenuItemDescription}>
+                <LunchItemImage url={itm.ThumbnailImageURL} key={itm.ThumbnailImageURL}/>
+                {itm.MenuItemDescription}
+              </li>
+            ))}
+          </ul>
         </div>
-      </>);
+      </>
+    );
   }
 }
 

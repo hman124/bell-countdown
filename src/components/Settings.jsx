@@ -293,7 +293,9 @@ export default class Settings extends React.Component {
               <div className="settings-page">
                 {this.renderPage()}
               </div>
-              <span style={{position:"fixed", bottom: "0", left: "0"}}>Ver. 2.1.0 (stable) | <a href="mailto:bugs@steedster.net">Report Bugs</a></span>
+              <span className="version">
+                Ver. 2.1.2 (stable) | <a href="mailto:bugs@steedster.net">Report Bugs</a>
+              </span>
             </div>
           </>
         
