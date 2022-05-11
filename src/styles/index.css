@@ -38,6 +38,7 @@ body {
   grid-template-rows: 3fr 1fr;
 }
 
+
 .RadialProgressIndicator {
   display: inline-block;
   margin: auto;
@@ -45,6 +46,12 @@ body {
 
 .progressLabel {
   text-align: center;
+}
+
+select {
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px #cccccc solid;
 }
 
 /* @media screen and (max-width: 1000px){
