@@ -3,5 +3,3 @@ archived/
 .github/
 .glitch-assets/
 .vite.config.js.swp
-package-lock.json
-shrinkwrap.yaml
