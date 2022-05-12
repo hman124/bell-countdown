@@ -81,6 +81,7 @@ class App extends React.Component {
 
   onSelectLunch(lunch) {
     if (lunch !== "choose") {
+      console.log(lunch);
       window.localStorage.setItem("lunch", lunch);
       this.setState({
         lunch,
@@ -118,7 +119,7 @@ class App extends React.Component {
 
               <TabPanel>
                 <BellCountdown
-                  lunch="C"
+                  lunch={this.state.lunch}
                   schedule={this.schedule}
                   display="counters"
                 />

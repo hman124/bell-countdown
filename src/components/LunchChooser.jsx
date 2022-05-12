@@ -12,9 +12,8 @@ export default function LunchChooser(props) {
     }
   }
   
-  const options = props.schedule.lunches.map(x=><option value={x.id}>{x.name}</option>);
-  
-  
+  const options = props.schedule.lunches.map(x=><option key={x.id} value={x.id}>{x.name}</option>);
+    
   return <>
     <select onChange={event=>setLunch(event.target.value)} value={lunch}>
       <option value="choose">Choose One</option>
