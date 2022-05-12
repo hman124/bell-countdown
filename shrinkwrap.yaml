@@ -1,7 +1,7 @@
 dependencies:
   noty: 3.1.4
   react: 18.1.0
-  react-circular-progressbar: 2.0.4
+  react-circular-progressbar: github.com/hman124/react-circular-progressbar/facb1db088e16f3871cc9c33ab7ffb01d9c1ef59
   react-dom: 18.1.0
   react-tabs: 5.1.0
   vite-plugin-react: 4.0.1
@@ -644,12 +644,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
-  /react-circular-progressbar/2.0.4:
-    dev: false
-    peerDependencies:
-      react: ^0.14.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-    resolution:
-      integrity: sha512-OfX0ThSxRYEVGaQSt0DlXfyl5w4DbXHsXetyeivmoQrh9xA9bzVPHNf8aAhOIiwiaxX2WYWpLDB3gcpsDJ9oww==
   /react-dom/18.1.0:
     dependencies:
       loose-envify: 1.4.0
@@ -765,13 +759,23 @@ packages:
       stylus: '*'
     resolution:
       integrity: sha512-2HA9xGyi+EhY2MXo0+A2dRsqsAG3eFNEVIo12olkWhOmc8LfiM+eMdrXf+Ruje9gdXgvSqjLI9freec1RUM5EA==
+  github.com/hman124/react-circular-progressbar/facb1db088e16f3871cc9c33ab7ffb01d9c1ef59:
+    dev: false
+    name: react-circular-progressbar
+    peerDependencies:
+      react: ^0.14.0 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    prepare: true
+    requiresBuild: true
+    resolution:
+      tarball: 'https://codeload.github.com/hman124/react-circular-progressbar/tar.gz/facb1db088e16f3871cc9c33ab7ffb01d9c1ef59'
+    version: 2.0.4
 registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
 specifiers:
   noty: ^3.1.4
   react: ^18.0.0
-  react-circular-progressbar: ^2.0.4
+  react-circular-progressbar: 'github:hman124/react-circular-progressbar'
   react-dom: ^18.0.0
   react-tabs: ^5.1.0
   vite: ^2.4.4
