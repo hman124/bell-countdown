@@ -4,14 +4,14 @@
   "description": "School bell schedule",
   "scripts": {
     "start": "vite",
-    "build": "npm install --force && vite build"
+    "build": "vite build"
   },
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "noty": "^3.1.4",
     "react-tabs": "^5.1.0",
-    "react-circular-progressbar": "^2.0.4",
+    "react-circular-progressbar": "hman124/react-circular-progressbar",
     "vite-plugin-react": "^4.0.1"
   },
   "devDependencies": {
