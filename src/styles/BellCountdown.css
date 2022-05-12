@@ -1,0 +1,13 @@
+.BellCountdown .counters-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 3fr 1fr;
+}
+
+.BellCountdown .progressbar-label {
+  text-align: center;
+}
+
+.BellCountdown .progressbar-container {
+  margin: auto;
+}

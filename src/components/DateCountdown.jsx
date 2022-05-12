@@ -1,5 +1,6 @@
 import React from "react";
 // import calendar from "../icalfeed.json"
+import "../styles/DateCountdown.css";
 
 export default class YearTime extends React.Component {
   constructor(props) {
@@ -57,7 +58,7 @@ export default class YearTime extends React.Component {
 
       const twelve = new Date();
       twelve.setDate(twelve.getDate() + 1);
-      twelve.setHours(0);
+      twelve.setHours(12);
       twelve.setMinutes(0);
       twelve.setSeconds(0);
 
@@ -79,7 +80,7 @@ export default class YearTime extends React.Component {
 
   render() {
     return (
-      <>
+      <div className="DateCountdown container">
         {this.props.countdown.expired ? (
           <>
             <h2>Countdown is over, choose a new one in settings</h2>
@@ -96,7 +97,7 @@ export default class YearTime extends React.Component {
             </ul>
           </>
         )}
-      </>
+      </div>
     );
   }
 }

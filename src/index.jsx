@@ -34,17 +34,20 @@ class App extends React.Component {
       countdown: window.localStorage.getItem("countdown"),
     };
 
-    this.schedule = config.schedule;
+    const d = new Date();
+    this.schedule = config.order[d.getDay()];
 
     this.state = {
       lunch: this.stored.lunch || false,
       ready: !!this.stored.lunch,
-      countdown: this.stored.countdown ? JSON.parse(this.stored.countdown) : {title: "Last Day of School", date: "5/26/2022"},
+      countdown: this.stored.countdown
+        ? JSON.parse(this.stored.countdown)
+        : { title: "Last Day of School", date: "5/26/2022" },
       tabIndex: 0,
       menu: {
-        loading: true, 
-        items: null
-      }
+        loading: true,
+        items: null,
+      },
     };
 
     this.onSelectLunch = this.onSelectLunch.bind(this);
@@ -57,18 +60,20 @@ class App extends React.Component {
       this.setState({ prompt: true });
     });
 
-  const d = new Date();
-  const today = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
-    
-   
-  const options = new URLSearchParams();
-  options.set("date", today);
-  
-  fetch("https://bell-countdown-api.glitch.me/MenuItems?"+options.toString())
-    .then(r=>r.json()).then(items => {
-      this.setState({menu: {loading: false, items}});
-    });
-    
+    const d = new Date();
+    const today = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+
+    const options = new URLSearchParams();
+    options.set("date", today);
+
+    fetch(
+      "https://bell-countdown-api.glitch.me/MenuItems?" + options.toString()
+    )
+      .then((r) => r.json())
+      .then((items) => {
+        this.setState({ menu: { loading: false, items } });
+      });
+
     window.addEventListener("appinstalled", () => {
       this.setState({ prompt: true });
     });
@@ -78,23 +83,21 @@ class App extends React.Component {
     if (lunch !== "choose") {
       window.localStorage.setItem("lunch", lunch);
       this.setState({
-          lunch,
-          ready: true,
-        
+        lunch,
+        ready: true,
       });
     }
   }
 
   changeDate(title, date) {
-    const obj = {title, date};
+    const obj = { title, date };
     window.localStorage.setItem("countdown", JSON.stringify(obj));
-    this.setState({countdown: obj});
+    this.setState({ countdown: obj });
   }
-  
+
   render() {
     return (
       <>
-        <div className="container">
           {!this.state.ready && (
             <LunchChooser
               schedule={this.schedule}
@@ -102,36 +105,43 @@ class App extends React.Component {
             />
           )}
           {this.state.ready && (
-            <div className="countdown">
-              <Tabs selectedIndex={this.state.tabIndex} onSelect={(index) => this.setState({tabIndex:index})}>
-                <TabList>
-                  <Tab>Schedule</Tab>
-                  <Tab>Countdown</Tab>
-                  <Tab>Menu</Tab>
-                  <Tab>Settings</Tab>
-                </TabList>
+            <Tabs
+              selectedIndex={this.state.tabIndex}
+              onSelect={(index) => this.setState({ tabIndex: index })}
+            >
+              <TabList>
+                <Tab>Schedule</Tab>
+                <Tab>Countdown</Tab>
+                <Tab>Menu</Tab>
+                <Tab>Settings</Tab>
+              </TabList>
 
-                <TabPanel>
-                  <BellCountdown
-                    lunch="C"
-                    schedule={this.schedule}
-                    display="counters"
-                  />
-                  <p>{this.state.lunch} Lunch</p>
-                </TabPanel>
-                <TabPanel>
-                  <DateCountdown countdown={this.state.countdown}/>
-                </TabPanel>
-                <TabPanel forceRender={true}>
-                  <LunchMenu loading={this.state.menu.loading} items={this.state.menu.items}/>
-                </TabPanel>
-                <TabPanel>
-                <Settings setLunch={this.onSelectLunch} schedule={this.schedule} setTab={(index) => this.setState({tabIndex:index})} changeDate={this.changeDate}/>
-                </TabPanel>
-              </Tabs>
-            </div>
+              <TabPanel>
+                <BellCountdown
+                  lunch="C"
+                  schedule={this.schedule}
+                  display="counters"
+                />
+              </TabPanel>
+              <TabPanel>
+                <DateCountdown countdown={this.state.countdown} />
+              </TabPanel>
+              <TabPanel forceRender={true}>
+                <LunchMenu
+                  loading={this.state.menu.loading}
+                  items={this.state.menu.items}
+                />
+              </TabPanel>
+              <TabPanel>
+                <Settings
+                  setLunch={this.onSelectLunch}
+                  schedule={this.schedule}
+                  setTab={(index) => this.setState({ tabIndex: index })}
+                  changeDate={this.changeDate}
+                />
+              </TabPanel>
+            </Tabs>
           )}
-        </div>
       </>
     );
   }
