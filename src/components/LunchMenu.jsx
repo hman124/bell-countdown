@@ -1,43 +1,58 @@
 import React, { useState, useEffect } from "react";
 
-window.onerror = alert;
+// window.onerror = alert;
 
 class LunchItemImage extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       loading: true,
       none: false,
     };
     var paramsStr = props.url.split("?")[1],
-        params = new URLSearchParams(paramsStr);
-    this.timer = setTimeout(()=>{
-      this.setState(s=>({
-        none: s.loading
-      }));      
-    }, 5000);
-    this.url = "https://bell-countdown-api.glitch.me/MenuImageCache?MenuItem="+params.get("menuItemId");
+      params = new URLSearchParams(paramsStr);
+    
+    this.url =
+      "https://bell-countdown-api.glitch.me/MenuImageCache?MenuItem=" +
+      params.get("menuItemId");
   }
-  
+
   componentDidMount() {
-    this.timer = setTimeout(()=>{
-      this.setState(s=>({
-        none: s.loading
-      }));      
+    this.timer = setTimeout(() => {
+      this.setState((s) => ({
+        none: s.loading,
+      }));
     }, 5000);
   }
-  
-  componentWillUnmount(){
+
+  componentWillUnmount() {
     clearTimeout(this.timer);
   }
 
   render() {
     return (
-    <>
-      {this.state.loading && !this.state.none && <img width="40" height="40" className="MenuImage" src="https://cdn.glitch.com/41b9504c-a9af-4d48-8bcf-ed59058d6a31/loading-loading-forever.gif"/>}
-      {!this.state.none && <img src={this.url} onLoad={()=>this.setState({loading: false})} style={this.state.loading?{display:'none'}:{}} className="MenuImage" width="40" height="40"/>}
-    </>
-  );}
+      <>
+        {this.state.loading && !this.state.none && (
+          <img
+            width="40"
+            height="40"
+            className="MenuImage"
+            src="https://cdn.glitch.com/41b9504c-a9af-4d48-8bcf-ed59058d6a31/loading-loading-forever.gif"
+          />
+        )}
+        {!this.state.none && (
+          <img
+            src={this.url}
+            onLoad={() => this.setState({ loading: false })}
+            style={this.state.loading ? { display: "none" } : {}}
+            className="MenuImage"
+            width="40"
+            height="40"
+          />
+        )}
+      </>
+    );
+  }
 }
 
 function LunchMenu(props) {
@@ -53,40 +68,47 @@ function LunchMenu(props) {
     );
   } else {
     return (
-      <>
-        <div className="lunchMenu">
-          <h1>On the Menu Today</h1>
-          <h2>Meal:</h2>
-          <h3>
-            <ul>
-              {props.items["LUNCH ENTREE"].map(itm => (
-                <li key={itm.MenuItemDescription}>
-                  <LunchItemImage url={itm.ThumbnailImageURL} key={itm.ThumbnailImageURL}/>
-                  {itm.MenuItemDescription}
-                </li>
-              ))}
-            </ul>
-          </h3>
-          <h2>Vegetables:</h2>
+      <div className="LunchMenu container">
+        <h1>On the Menu Today</h1>
+        <h2>Meal:</h2>
+        <h3>
           <ul>
-            {props.items["VEGETABLE"].map(itm => (
+            {props.items["LUNCH ENTREE"].map((itm) => (
               <li key={itm.MenuItemDescription}>
-                <LunchItemImage url={itm.ThumbnailImageURL} key={itm.ThumbnailImageURL}/>
+                <LunchItemImage
+                  url={itm.ThumbnailImageURL}
+                  key={itm.ThumbnailImageURL}
+                />
                 {itm.MenuItemDescription}
               </li>
             ))}
           </ul>
-          <h2>Fruits:</h2>
-          <ul>
-            {props.items["FRUIT"].map(itm => (
-              <li key={itm.MenuItemDescription}>
-                <LunchItemImage url={itm.ThumbnailImageURL} key={itm.ThumbnailImageURL}/>
-                {itm.MenuItemDescription}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </>
+        </h3>
+        <h2>Vegetables:</h2>
+        <ul>
+          {props.items["VEGETABLE"].map((itm) => (
+            <li key={itm.MenuItemDescription}>
+              <LunchItemImage
+                url={itm.ThumbnailImageURL}
+                key={itm.ThumbnailImageURL}
+              />
+              {itm.MenuItemDescription}
+            </li>
+          ))}
+        </ul>
+        <h2>Fruits:</h2>
+        <ul>
+          {props.items["FRUIT"].map((itm) => (
+            <li key={itm.MenuItemDescription}>
+              <LunchItemImage
+                url={itm.ThumbnailImageURL}
+                key={itm.ThumbnailImageURL}
+              />
+              {itm.MenuItemDescription}
+            </li>
+          ))}
+        </ul>
+      </div>
     );
   }
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/settings.css";
+import "../styles/Settings.css";
 import LunchChooser from "./LunchChooser.jsx";
 
 export default class Settings extends React.Component {
@@ -8,7 +8,7 @@ export default class Settings extends React.Component {
     this.schedule = window.localStorage.getItem("schedule");
     this.state = {
       page: 0,
-      schedule: this.schedule?JSON.parse(this.schedule):[]
+      schedule: this.schedule ? JSON.parse(this.schedule) : [],
     };
 
     // this.fileInput = React.createRef();
@@ -31,35 +31,39 @@ export default class Settings extends React.Component {
   //   this.close();
   // }
 
-//   async uploadBackground(e) {
-//     if (this.fileInput.current.files[0].size > 4000000) {
-//       alert("Image is too large in size. Must be less than 4MB");
-//       this.fileInput.current.value = "";
-//       return;
-//     } else {
-//       const toBase64 = file =>
-//         new Promise((resolve, reject) => {
-//           const reader = new FileReader();
-//           reader.readAsDataURL(file);
-//           reader.onload = () => resolve(reader.result);
-//           reader.onerror = error => reject(error);
-//         });
+  //   async uploadBackground(e) {
+  //     if (this.fileInput.current.files[0].size > 4000000) {
+  //       alert("Image is too large in size. Must be less than 4MB");
+  //       this.fileInput.current.value = "";
+  //       return;
+  //     } else {
+  //       const toBase64 = file =>
+  //         new Promise((resolve, reject) => {
+  //           const reader = new FileReader();
+  //           reader.readAsDataURL(file);
+  //           reader.onload = () => resolve(reader.result);
+  //           reader.onerror = error => reject(error);
+  //         });
 
-//       this.changeBackground(await toBase64(this.fileInput.current.files[0]));
-//     }
-//   }
+  //       this.changeBackground(await toBase64(this.fileInput.current.files[0]));
+  //     }
+  //   }
 
-      // <li onClick={()=>this.switchPage(4)}>Schedule</li>
+  // <li onClick={()=>this.switchPage(4)}>Schedule</li>
   renderNav() {
-    return <ul className="settings-nav">
-      <li onClick={()=>this.switchPage(1)}>Lunch</li>    
-      <li onClick={()=>this.switchPage(3)}>Countdown</li>
-      {this.props.prompt && <li onClick={()=>this.props.prompt.prompt()}>Install App</li>}
-    </ul>
+    return (
+      <ul className="settings-nav">
+        <li onClick={() => this.switchPage(1)}>Lunch</li>
+        <li onClick={() => this.switchPage(3)}>Countdown</li>
+        {this.props.prompt && (
+          <li onClick={() => this.props.prompt.prompt()}>Install App</li>
+        )}
+      </ul>
+    );
   }
-      // <li onClick={()=>this.switchPage(2)}>Background</li>    
-      // <li onClick={()=>this.switchPage(5)}>Display</li>
-  
+  // <li onClick={()=>this.switchPage(2)}>Background</li>
+  // <li onClick={()=>this.switchPage(5)}>Display</li>
+
   close() {
     this.props.setTab(0);
   }
@@ -68,13 +72,13 @@ export default class Settings extends React.Component {
     e.preventDefault();
     var a = e.target.date.value.split("-");
     a.push(a.shift());
-  
+
     var x = a.join("/"),
-        r = new Date(x),
-        d = new Date();
+      r = new Date(x),
+      d = new Date();
     if (a[0] > 3000) {
       alert("please choose a year less than 3000");
-    } else if(e < d) {
+    } else if (e < d) {
       alert("please choose a date in the future");
     } else {
       this.props.changeDate(e.target.title.value, x);
@@ -85,16 +89,25 @@ export default class Settings extends React.Component {
   renderPage() {
     switch (this.state.page) {
       case 0:
-        return (<>
-        <h1>Settings</h1>
-        <p>Select a menu item to edit the settings</p></>);
+        return (
+          <>
+            <h1>Settings</h1>
+            <p>Select a menu item to edit the settings</p>
+          </>
+        );
         break;
       case 1:
         return (
           <>
             <h1>Select Lunch</h1>
             <hr />
-            <LunchChooser schedule={this.props.schedule} submit={lunch=>{this.props.setLunch(lunch);this.props.setTab(0);}}/>
+            <LunchChooser
+              schedule={this.props.schedule}
+              submit={(lunch) => {
+                this.props.setLunch(lunch);
+                this.props.setTab(0);
+              }}
+            />
           </>
         );
       // case 2:
@@ -169,7 +182,7 @@ export default class Settings extends React.Component {
                 name="title"
                 placeholder="Countdown Title"
               />
-              <input type="submit" value="Apply"/>
+              <input type="submit" value="Apply" />
             </form>
             <hr></hr>
             <input
@@ -188,25 +201,32 @@ export default class Settings extends React.Component {
           <>
             <h1>Set Schedule</h1>
             <hr />
-            {this.state.schedule?.length > 0 && <><table>
-              <thead></thead>
-              <tbody>
-                <tr>
-                  <th>Period Name</th>
-                  <th>Start Time</th>
-                  <th>End Time</th>
-                </tr>
-                {this.renderPeriodTable()}
-              </tbody>
-            </table>
-            <button onClick={()=>{
-                this.setState({schedule: []});
-                 window.localStorage.removeItem("schedule");
-                }}>Clear Schedule</button></>
-            }
+            {this.state.schedule?.length > 0 && (
+              <>
+                <table>
+                  <thead></thead>
+                  <tbody>
+                    <tr>
+                      <th>Period Name</th>
+                      <th>Start Time</th>
+                      <th>End Time</th>
+                    </tr>
+                    {this.renderPeriodTable()}
+                  </tbody>
+                </table>
+                <button
+                  onClick={() => {
+                    this.setState({ schedule: [] });
+                    window.localStorage.removeItem("schedule");
+                  }}
+                >
+                  Clear Schedule
+                </button>
+              </>
+            )}
             <button
               onClick={() =>
-                this.setState(s => {
+                this.setState((s) => {
                   var e = s.schedule.concat();
                   e.push({ name: "", time: [] });
                   return { schedule: e };
@@ -227,58 +247,58 @@ export default class Settings extends React.Component {
     }
   }
 
-//   saveSchedule(e) {
-//     window.localStorage.setItem("schedule", JSON.stringify(e));
-//   }
+  //   saveSchedule(e) {
+  //     window.localStorage.setItem("schedule", JSON.stringify(e));
+  //   }
 
-//   renderPeriodTable() {
-//     return this.state.schedule.map((x, i) => (
-//       <tr key={i}>
-//         <td>
-//           <input
-//             onChange={e =>
-//               this.setState(s => {
-//                 var t = s.schedule.concat();
-//                 t[i].name = e.target.value;
-//                 this.saveSchedule(t);
-//                 return { schedule: t };
-//               })
-//             }
-//             type="text"
-//             value={x.name}
-//           />
-//         </td>
-//         <td>
-//           <input
-//             type="time"
-//             onChange={e =>
-//               this.setState(s => {
-//                 var t = s.schedule.concat();
-//                 t[i].time[0] = e.target.value;
-//                 this.saveSchedule(t);
-//                 return { schedule: t };
-//               })
-//             }
-//             value={x.time[0]}
-//           />
-//         </td>
-//         <td>
-//           <input
-//             type="time"
-//             onChange={e =>
-//               this.setState(s => {
-//                 var t = s.schedule.concat();
-//                 t[i].time[1] = e.target.value;
-//                 this.saveSchedule(t);
-//                 return { schedule: t };
-//               })
-//             }
-//             value={x.time[1]}
-//           />
-//         </td>
-//       </tr>
-//     ));
-//   }
+  //   renderPeriodTable() {
+  //     return this.state.schedule.map((x, i) => (
+  //       <tr key={i}>
+  //         <td>
+  //           <input
+  //             onChange={e =>
+  //               this.setState(s => {
+  //                 var t = s.schedule.concat();
+  //                 t[i].name = e.target.value;
+  //                 this.saveSchedule(t);
+  //                 return { schedule: t };
+  //               })
+  //             }
+  //             type="text"
+  //             value={x.name}
+  //           />
+  //         </td>
+  //         <td>
+  //           <input
+  //             type="time"
+  //             onChange={e =>
+  //               this.setState(s => {
+  //                 var t = s.schedule.concat();
+  //                 t[i].time[0] = e.target.value;
+  //                 this.saveSchedule(t);
+  //                 return { schedule: t };
+  //               })
+  //             }
+  //             value={x.time[0]}
+  //           />
+  //         </td>
+  //         <td>
+  //           <input
+  //             type="time"
+  //             onChange={e =>
+  //               this.setState(s => {
+  //                 var t = s.schedule.concat();
+  //                 t[i].time[1] = e.target.value;
+  //                 this.saveSchedule(t);
+  //                 return { schedule: t };
+  //               })
+  //             }
+  //             value={x.time[1]}
+  //           />
+  //         </td>
+  //       </tr>
+  //     ));
+  //   }
 
   switchPage(p) {
     this.setState(() => ({ page: p }));
@@ -286,23 +306,21 @@ export default class Settings extends React.Component {
 
   render() {
     return (
-      <>
-            <div className="settings">
-              {this.renderNav()}
-              <div style={{clear: "both"}}></div>
-              <div className="settings-page">
-                {this.renderPage()}
-              </div>
-              <span className="version">
-                Ver. 2.1.2 (stable) | <a href="mailto:bugs@steedster.net">Report Bugs</a>
-              </span>
-            </div>
-          </>
-        
+      <div className="Settings container">
+        {this.renderNav()}
+        <div style={{ clear: "both" }}></div>
+        <div className="settings-page">{this.renderPage()}</div>
+        <span className="version">
+          Ver. 2.1.4 (stable) |{" "}
+          <a href="https://github.com/hman124/bell-countdown/issues/new">Report Bugs</a> |{" "}
+          <a href="https://github.com/hman124/bell-countdown">Github</a>
+          
+        </span>
+      </div>
     );
   }
 }
 
-              // <span className="settings-close" onClick={this.close}>
-              //   X
-              // </span>
+// <span className="settings-close" onClick={this.close}>
+//   X
+// </span>

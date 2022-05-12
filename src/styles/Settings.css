@@ -199,11 +199,18 @@ button {
 .version  {
   position:fixed;
   bottom: 0;
-  display:block;
-  width: 100vw;
-  text-align:center;
-  padding-bottom: 2rem;
-/*   padding-bottom: env(safe-area-outset-bottom); */
-/*   border:2px #000000 solid; */
   left: 0;
+}
+
+.settings-nav  {
+  display: block;
+}
+
+.settings-nav li {
+  list-style: none;
+  text-decoration: underline;
+  float: left;
+  cursor:pointer;
+  display: block;
+  margin-right: 0.5rem;
 }

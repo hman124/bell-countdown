@@ -8,12 +8,6 @@ self.addEventListener("install", e => {
     const cache = await caches.open(CACHE_NAME);
     await cache.addAll([
       "/index.html",
-      "/img/0.png",
-      "/img/1.png",
-      "/img/2.png",
-      "/img/3.png",
-      "/img/4.png",
-      "/img/5.png",
       "/assets/index.js",
       "/assets/index.css",
       "/assets/vendor.js"
@@ -22,6 +16,7 @@ self.addEventListener("install", e => {
 });
 
 self.addEventListener("fetch", function(event) {
+  if (!(event.request.url.indexOf('http') === 0)) return;
   event.respondWith(
     caches.open(CACHE_NAME).then(function(cache) {
       return fetch(event.request)
