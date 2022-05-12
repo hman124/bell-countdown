@@ -40,7 +40,7 @@ export default class YearTime extends React.Component {
 //         duration: x.duration ? +x.duration.match(/[1-9]+/)[0] : 1,
 //       }));
 
-      d.setDate(d.getDate() + 1);
+      // d.setDate(d.getDate() + 1);
       while (d < t) {
         // if (countdown.holidays && false) {
           // days++;
@@ -57,7 +57,7 @@ export default class YearTime extends React.Component {
     }
 
       const twelve = new Date();
-      twelve.setDate(twelve.getDate() + 1);
+      twelve.setDate(twelve.getDate()+1);
       twelve.setHours(12);
       twelve.setMinutes(0);
       twelve.setSeconds(0);

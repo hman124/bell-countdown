@@ -311,7 +311,7 @@ export default class Settings extends React.Component {
         <div style={{ clear: "both" }}></div>
         <div className="settings-page">{this.renderPage()}</div>
         <span className="version">
-          Ver. 2.1.4 (stable) |{" "}
+          Ver. 2.1.5 (stable) |{" "}
           <a href="https://github.com/hman124/bell-countdown/issues/new">Report Bugs</a> |{" "}
           <a href="https://github.com/hman124/bell-countdown">Github</a>
           
