@@ -38,9 +38,12 @@ class App extends React.Component {
     const d = new Date();
     this.schedule = config.order[d.getDay()];
 
+    
+    this.lunch = !!this.schedule.lunches.find(x=>x.id == this.stored.lunch) ? this.stored.lunch : false;
+    
     this.state = {
-      lunch: this.stored.lunch || false,
-      ready: !!this.stored.lunch,
+      lunch: this.lunch,
+      ready: !!this.lunch,
       countdown: this.stored.countdown
         ? JSON.parse(this.stored.countdown)
         : { title: "Last Day of School", date: "5/26/2022" },
@@ -82,7 +85,6 @@ class App extends React.Component {
 
   onSelectLunch(lunch) {
     if (lunch !== "choose") {
-      console.log(lunch);
       window.localStorage.setItem("lunch", lunch);
       this.setState({
         lunch,
