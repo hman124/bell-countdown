@@ -201,6 +201,7 @@ class BellCountdown extends React.Component {
           <>
             <h1>No School Right Now</h1>
             <p>{this.state.countdown.reason}</p>
+            <p>{this.props.lunch} Lunch</p>
           </>
         )}
       </div>

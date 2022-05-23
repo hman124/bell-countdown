@@ -52,11 +52,12 @@ if (scheduleToExport == 0) {
       ],
     };
 
-    return [
+    return lunches[l] ? [
       { name: `${testOne} Period Exam`, time: ["07:20", "09:17"] },
+      { name: "3rd Period", time: ["09:23", "10:17"] },
       ...lunches[l],
       { name: `${testTwo} Period Exam`, time: ["12:55", "14:50"] },
-    ];
+    ] : [];
   },
 };
 }
@@ -88,12 +89,12 @@ toExport = {
       ],
     };
 
-    return [
+    return lunches[l] ? [
       { name: `${testOne} Period Exam`, time: ["07:20", "09:17"] },
       ...lunches[l],
       { name: "6", time: ["12:55", "13:50"] },
       { name: "7", time: ["13:56", "14:50"] },
-    ];
+    ] : [];
   },
 };
 }
