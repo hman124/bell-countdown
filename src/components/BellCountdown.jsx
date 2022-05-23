@@ -1,7 +1,7 @@
 import React from "react";
 
 import { CircularProgressbar } from 'react-circular-progressbar';
-import 'react-circular-progressbar/src/styles.css';
+import 'react-circular-progressbar/dist/styles.css';
 /*
 import "/circular_loading_bar/loading.css"
 import "/circular_loading_bar/loading.js"
