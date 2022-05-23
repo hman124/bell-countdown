@@ -16,7 +16,7 @@ self.addEventListener("install", e => {
 });
 
 self.addEventListener("fetch", function(event) {
-  if (!(event.request.url.indexOf('http') === 0)) return;
+  if (!event.request.url.includes('http')) return;
   event.respondWith(
     caches.open(CACHE_NAME).then(function(cache) {
       return fetch(event.request)

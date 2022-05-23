@@ -1,6 +1,7 @@
 if (window.location.protocol === "http:") {
   window.location.protocol = "https:";
 }
+window.onerror=alert;
 
 import React from "react";
 import { createRoot } from "react-dom/client";
@@ -17,7 +18,7 @@ import normal from "./schedules/normal.js";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 
-// window.onerror = alert;
+//window.onerror = alert;
 
 window.addEventListener("load", () => {
   if ("serviceWorker" in navigator) {

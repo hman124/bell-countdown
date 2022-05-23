@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/Settings.css";
 import LunchChooser from "./LunchChooser.jsx";
+import "../config.js"
 
 export default class Settings extends React.Component {
   constructor(props) {
@@ -311,7 +312,8 @@ export default class Settings extends React.Component {
         <div style={{ clear: "both" }}></div>
         <div className="settings-page">{this.renderPage()}</div>
         <span className="version">
-          Ver. 2.1.5 (stable) |{" "}
+          Ver. 2.1.7 (quickfix) |{" "}
+          {/*version number last updated on 5/17/22*/}
           <a href="https://github.com/hman124/bell-countdown/issues/new">Report Bugs</a> |{" "}
           <a href="https://github.com/hman124/bell-countdown">Github</a>
           

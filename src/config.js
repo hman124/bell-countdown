@@ -1,5 +1,6 @@
 import pack from "./schedules/pack.js";
 import normal from "./schedules/normal.js";
+import eoy from "./schedules/eoy_exam.js"
 // import eoc from "./schedules/eoc.js";
 // import finals_tues from "./schedules/finals-tues.js";
 // import finals_wed from "./schedules/finals-wed.js";
@@ -8,10 +9,27 @@ import normal from "./schedules/normal.js";
 // import sat from "./schedules/sat.js"
 // import psat from "./schedules/psat.js";
 // import pep from "./schedules/pep-rally.js";
-const calendarFeed = ""; // this will eventually hold the url for the SchoolCafe holiday url
 
+const calendarFeed = ""; // this will eventually hold the url for the SchoolCafe holiday url
+//const startPage = "bell"; // options could include bell for the bell schedule, countdown for the countdown url, settings for the settings url, or menu for the menu url.
+//const isSummer = false; //if true, show a different page stating it's SUMMER!
+const version = "2.1.6"
+const versionType = "stable"
+const doUseAlt = false;
+var scheduleOrder = null;
+
+
+if (doUseAlt == false)
+  {
+    scheduleOrder = [null, normal, normal, pack, normal, normal]
+  }
+else
+  {
+    scheduleOrder = [null, eoy, eoy, normal, eoy, eoy]
+  }
 
 export default {
- "schedule": pack,
- "order": [null, normal, normal, pack, normal, normal]
+ "schedule": [],
+ "order": [null, eoy, eoy, eoy, eoy, eoy],
+"version": version
 };
