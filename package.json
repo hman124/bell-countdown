@@ -1,6 +1,6 @@
 {
   "name": "school-bell-schedule",
-  "version": "1.4.9",
+  "version": "2.1.6",
   "description": "School bell schedule",
   "scripts": {
     "start": "vite",

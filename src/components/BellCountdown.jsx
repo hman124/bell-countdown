@@ -1,7 +1,11 @@
 import React from "react";
-import { CircularProgressbar } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
 
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/src/styles.css';
+/*
+import "/circular_loading_bar/loading.css"
+import "/circular_loading_bar/loading.js"
+*/
 import "../styles/BellCountdown.css";
 
 class BellCountdown extends React.Component {
