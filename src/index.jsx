@@ -18,6 +18,8 @@ import normal from "./schedules/normal.js";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 
+
+import Confetti from "./components/Confetti.jsx";
 //window.onerror = alert;
 
 window.addEventListener("load", () => {
@@ -33,14 +35,13 @@ class App extends React.Component {
     this.stored = {
       lunch: window.localStorage.getItem("lunch"),
       countdown: window.localStorage.getItem("countdown"),
+      schedule: window.localStorage.getItem("schedule"),
+      customSchedule: window.localStorage.getItem("customSchedule")
     };
 
-    const d = new Date();
-    this.schedule = config.order[d.getDay()];
-
-    
+    this.date = new Date();
+    this.schedule = config.order[this.date.getDay()];
     this.lunch = !!this.schedule.lunches.find(x=>x.id == this.stored.lunch) ? this.stored.lunch : false;
-    
     this.state = {
       lunch: this.lunch,
       ready: !!this.lunch,
@@ -48,10 +49,15 @@ class App extends React.Component {
         ? JSON.parse(this.stored.countdown)
         : { title: "Last Day of School", date: "5/26/2022" },
       tabIndex: 0,
+      // scheduleType: this.stored.schedule || "default",
+      // schedule: (this.stored.schedule || "default") == "custom" ? 
+      // this.stored.customSchedule ? 
+      // JSON.parse(this.stored.customSchedule) : 
+      // {} : config.order[this.date.getDay()],
       menu: {
         loading: true,
         items: null,
-      },
+      }, confetti: this.date.getDate() == 26 && this.date.getMonth()==4
     };
 
     this.onSelectLunch = this.onSelectLunch.bind(this);
@@ -99,9 +105,24 @@ class App extends React.Component {
     this.setState({ countdown: obj });
   }
 
+//   setSchedule(type, schedule){
+//     this.setState({
+//       scheduleType: type,
+//       schedule: type=="default"?[config.order[this.date.getDay()]]:schedule
+//     });
+    
+//     if(type == "custom"){
+//       window.localStorage.setItem("customSchedule", schedule);
+//     }
+    
+//     window.localStorage.setItem("schedule", type);
+//   }
+  
   render() {
     return (
       <>
+        
+        {this.state.confetti && <Confetti/>}
           {!this.state.ready && (
             <LunchChooser
               schedule={this.schedule}
@@ -123,7 +144,8 @@ class App extends React.Component {
               <TabPanel>
                 <BellCountdown
                   lunch={this.state.lunch}
-                  schedule={this.schedule}
+                  schedule={this.state.schedule}
+                  scheduleType={this.state.scheduleType}
                   display="counters"
                 />
               </TabPanel>
@@ -139,6 +161,7 @@ class App extends React.Component {
               <TabPanel>
                 <Settings
                   setLunch={this.onSelectLunch}
+                  setSchedule={this.setSchedule}
                   schedule={this.schedule}
                   setTab={(index) => this.setState({ tabIndex: index })}
                   changeDate={this.changeDate}

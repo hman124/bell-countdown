@@ -15,9 +15,9 @@ const calendarFeed = ""; // this will eventually hold the url for the SchoolCafe
 //const isSummer = false; //if true, show a different page stating it's SUMMER!
 const version = "2.1.6"
 const versionType = "stable"
-const doUseAlt = false;
+const doUseAlt = true;
 var scheduleOrder = null;
-
+var showBellTimeList = false; // show the bell time list descriptor 
 
 if (doUseAlt == false)
   {
@@ -25,11 +25,11 @@ if (doUseAlt == false)
   }
 else
   {
-    scheduleOrder = [null, eoy, eoy, normal, eoy, eoy]
+    scheduleOrder = [null, eoy, eoy, eoy, eoy, eoy]
   }
 
 export default {
  "schedule": [],
- "order": [null, eoy, eoy, eoy, eoy, eoy],
+ "order": scheduleOrder,
 "version": version
 };
