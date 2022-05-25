@@ -1,15 +1,17 @@
 import React from "react";
 import "../styles/Settings.css";
 import LunchChooser from "./LunchChooser.jsx";
-import "../config.js"
+import config from "../config.js"
 
 export default class Settings extends React.Component {
-  constructor(props) {
+  constructor(props){
     super(props);
-    this.schedule = window.localStorage.getItem("schedule");
+    const d = new Date;
+    // this.schedule = this.props.schedule || config.order[d.getDay()];
     this.state = {
       page: 0,
-      schedule: this.schedule ? JSON.parse(this.schedule) : [],
+      // scheduleType: this.props.scheduleType,
+      // schedule: this.schedule ? JSON.parse(this.schedule) : [],
     };
 
     // this.fileInput = React.createRef();
@@ -52,6 +54,7 @@ export default class Settings extends React.Component {
 
   // <li onClick={()=>this.switchPage(4)}>Schedule</li>
   renderNav() {
+         // <li onClick={() => this.switchPage(4)} >Schedule</li>
     return (
       <ul className="settings-nav">
         <li onClick={() => this.switchPage(1)}>Lunch</li>
@@ -86,6 +89,11 @@ export default class Settings extends React.Component {
       this.props.setTab(1);
     }
   }
+  
+//   setSchedule(t){
+//     this.props.setSchedule(t);
+//     this.setState({schedule: t});
+//   }
 
   renderPage() {
     switch (this.state.page) {
@@ -202,6 +210,14 @@ export default class Settings extends React.Component {
           <>
             <h1>Set Schedule</h1>
             <hr />
+            <label>
+              <input type="radio" name="schedule" onClick={()=>this.setSchedule("default")}/> Use the defualt schedule
+            </label>
+            
+            <label>
+              <input type="radio" name="schedule" onClick={()=>this.setSchedule("custom")}/> Use custom schedule
+            </label>
+            <div className={this.state.scheduleType == "default"?"gray":""}>
             {this.state.schedule?.length > 0 && (
               <>
                 <table>
@@ -211,6 +227,7 @@ export default class Settings extends React.Component {
                       <th>Period Name</th>
                       <th>Start Time</th>
                       <th>End Time</th>
+                      <th>Remove</th>
                     </tr>
                     {this.renderPeriodTable()}
                   </tbody>
@@ -236,6 +253,7 @@ export default class Settings extends React.Component {
             >
               Add Period
             </button>
+            </div>
           </>
         );
       // case 5:
@@ -248,58 +266,66 @@ export default class Settings extends React.Component {
     }
   }
 
-  //   saveSchedule(e) {
-  //     window.localStorage.setItem("schedule", JSON.stringify(e));
-  //   }
+    // saveSchedule(e) {
+    //   window.localStorage.setItem("customSchedule", JSON.stringify(e));
+    //   this.props.setSchedule(this.state.scheduleType, e);
+    // }
 
-  //   renderPeriodTable() {
-  //     return this.state.schedule.map((x, i) => (
-  //       <tr key={i}>
-  //         <td>
-  //           <input
-  //             onChange={e =>
-  //               this.setState(s => {
-  //                 var t = s.schedule.concat();
-  //                 t[i].name = e.target.value;
-  //                 this.saveSchedule(t);
-  //                 return { schedule: t };
-  //               })
-  //             }
-  //             type="text"
-  //             value={x.name}
-  //           />
-  //         </td>
-  //         <td>
-  //           <input
-  //             type="time"
-  //             onChange={e =>
-  //               this.setState(s => {
-  //                 var t = s.schedule.concat();
-  //                 t[i].time[0] = e.target.value;
-  //                 this.saveSchedule(t);
-  //                 return { schedule: t };
-  //               })
-  //             }
-  //             value={x.time[0]}
-  //           />
-  //         </td>
-  //         <td>
-  //           <input
-  //             type="time"
-  //             onChange={e =>
-  //               this.setState(s => {
-  //                 var t = s.schedule.concat();
-  //                 t[i].time[1] = e.target.value;
-  //                 this.saveSchedule(t);
-  //                 return { schedule: t };
-  //               })
-  //             }
-  //             value={x.time[1]}
-  //           />
-  //         </td>
-  //       </tr>
-  //     ));
-  //   }
+    // renderPeriodTable() {
+    //   return this.state.schedule.map((x, i) => (
+    //     <tr key={i}>
+    //       <td>
+    //         <input
+    //           onChange={e =>
+    //             this.setState(s => {
+    //               var t = s.schedule.concat();
+    //               t[i].name = e.target.value;
+    //               this.saveSchedule(t);
+    //               return { schedule: t };
+    //             })
+    //           }
+    //           type="text"
+    //           value={x.name}
+    //         />
+    //       </td>
+    //       <td>
+    //         <input
+    //           type="time"
+    //           onChange={e =>
+    //             this.setState(s => {
+    //               var t = s.schedule.concat();
+    //               t[i].time[0] = e.target.value;
+    //               this.saveSchedule(t);
+    //               return { schedule: t };
+    //             })
+    //           }
+    //           value={x.time[0]}
+    //         />
+    //       </td>
+    //       <td>
+    //         <input
+    //           type="time"
+    //           onChange={e =>
+    //             this.setState(s => {
+    //               var t = s.schedule.concat();
+    //               t[i].time[1] = e.target.value;
+    //               this.saveSchedule(t);
+    //               return { schedule: t };
+    //             })
+    //           }
+    //           value={x.time[1]}
+    //         />
+    //       </td>
+    //       <td><input type="button" value="X" onClick={()=>this.setState(
+    //           s => {
+    //               var t = s.schedule.concat();
+    //               t.splice(i, 1);
+    //               this.saveSchedule(t);
+    //               return { schedule: t };
+    //             })}/></td>
+    //     </tr>
+    //   ));
+    // }
 
   switchPage(p) {
     this.setState(() => ({ page: p }));

@@ -1,15 +1,10 @@
 import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  jsx: "react",
   plugins: [],
   build: {
-    outDir: "./build",
-  },
-  server: {
-    strictPort: true,
-    hmr: {
-      port: 443,
-    },
-  },
-});
+    outDir: "build"
+  }
+}); 

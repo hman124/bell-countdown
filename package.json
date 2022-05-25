@@ -1,25 +1,36 @@
 {
-  "name": "school-bell-schedule",
-  "version": "2.1.6",
-  "description": "School bell schedule",
-  "scripts": {
-    "start": "vite",
-    "build": "vite build"
-  },
+  "name": "bell-countdown",
+  "version": "2.1.7",
+  "description": "Bell Countdown",
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "noty": "^3.1.4",
     "react-tabs": "^5.1.0",
     "react-circular-progressbar": "hman124/react-circular-progressbar",
-    "vite-plugin-react": "^4.0.1"
+    "react-confetti": "^6.1.0",
+    "react-use": "^17.4.0"
   },
   "devDependencies": {
-    "vite": "^2.4.4"
+    "vite": "^2.9.9",
+    "@vitejs/plugin-react": "^1.3.2"
+  },
+  "scripts": {
+    "start": "vite",
+    "serve": "vite preview",
+    "build": "vite build"
   },
   "engines": {
     "node": "16.x",
-    "npm": "8.x"
+    "npm": "7.x"
   },
-  "license": "MIT"
+  "keywords": [
+    "glitch",
+    "react",
+    "coundowntimer"
+  ],
+  "author": "Harrison S.",
+  "license": "ISC",
+  "glitch": {
+    "projectType": "generated_static"
+  }
 }
