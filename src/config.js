@@ -1,6 +1,7 @@
 import pack from "./schedules/pack.js";
 import normal from "./schedules/normal.js";
 import eoy from "./schedules/eoy_exam.js"
+import sky from "./schedules/sky.js";
 // import eoc from "./schedules/eoc.js";
 // import finals_tues from "./schedules/finals-tues.js";
 // import finals_wed from "./schedules/finals-wed.js";
@@ -21,7 +22,7 @@ var showBellTimeList = false; // show the bell time list descriptor
 
 if (doUseAlt == false)
   {
-    scheduleOrder = [null, normal, normal, pack, normal, normal]
+    scheduleOrder = [null, sky, sky, sky,sky, sky]
   }
 else
   {
