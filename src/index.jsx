@@ -50,10 +50,10 @@ class App extends React.Component {
         : { title: "Last Day of School", date: "5/26/2022" },
       tabIndex: 0,
       // scheduleType: this.stored.schedule || "default",
-      // schedule: (this.stored.schedule || "default") == "custom" ? 
-      // this.stored.customSchedule ? 
-      // JSON.parse(this.stored.customSchedule) : 
-      // {} : config.order[this.date.getDay()],
+      schedule: (this.stored.schedule || "default") == "custom" ? 
+      this.stored.customSchedule ? 
+      JSON.parse(this.stored.customSchedule) : 
+      {} : config.order[this.date.getDay()],
       menu: {
         loading: true,
         items: null,
@@ -62,6 +62,7 @@ class App extends React.Component {
 
     this.onSelectLunch = this.onSelectLunch.bind(this);
     this.changeDate = this.changeDate.bind(this);
+    this.onExpire = this.onExpire.bind(this);
   }
 
   componentDidMount() {
@@ -99,6 +100,11 @@ class App extends React.Component {
     }
   }
 
+  onExpire(){
+    window.localStorage.removeItem("countdown");
+    this.setState({expired: true});
+  }
+  
   changeDate(title, date) {
     const obj = { title, date };
     window.localStorage.setItem("countdown", JSON.stringify(obj));
@@ -150,7 +156,11 @@ class App extends React.Component {
                 />
               </TabPanel>
               <TabPanel>
-                <DateCountdown countdown={this.state.countdown} />
+                {this.state.expired ?
+                  <p>Countdown expired. Set a new one in settings.</p>
+                : <DateCountdown countdown={this.state.countdown} onExpire={this.onExpire} />
+                }
+              
               </TabPanel>
               <TabPanel forceRender={true}>
                 <LunchMenu
