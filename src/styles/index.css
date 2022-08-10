@@ -1,0 +1,97 @@
+@font-face {
+  src: url(https://cdn.glitch.me/887c9896-8f4a-43f2-989c-68584c8d1c1a%2FRubik-VariableFont_wght.ttf);
+  font-family: rubik;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 20px;
+}
+
+#root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  overflow: auto;
+  padding: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+body {
+  font-family: rubik, calibri, sans-serif;
+  padding: 0;
+  margin: 0;
+  font-feature-settings: "tnum";
+  background-color: transparent;
+}
+
+.container {
+  padding: 1rem;
+}
+
+select {
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px #cccccc solid;
+}
+
+/* @media screen and (max-width: 1000px){
+  .counters-container {
+}
+} */
+
+.navigation {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  max-height: 2rem;
+  height: 2rem;
+  width: 100vw;
+  white-space:nowrap;
+  border-bottom: 1px #444 solid;
+  overflow-x: auto;
+  display:flex;
+  align-items:center;
+}
+
+.navigation .button {
+  display:flex;
+  align-items:center;
+  cursor: pointer;
+  padding: 10px;
+  /* height: calc(100% + 1px); */
+  height: 100%;
+  float: left;
+  padding: 0.5rem;
+  border-radius: 5px;
+  /* border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0; */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+
+.navigation .button:first-of-type {
+  margin-left: 1rem;
+}
+
+.navigation .button.selected {
+  background-color:white;
+  border: 1px #444 solid;
+  /* border-bottom: none; */
+  padding: calc(0.5rem - 1px);
+}
+
+/* .page {
+  border-top: 2px #000 solid;
+} */
+
+.MenuImage {
+  border-radius: 5px;
+  vertical-align:middle;
+  margin-right:0.5rem;
+}

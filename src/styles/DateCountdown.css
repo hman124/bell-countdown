@@ -1,0 +1,28 @@
+ul.DateCountdown {
+  width: calc(6rem * 4);
+  padding: 0;
+}
+
+ul.DateCountdown li {
+  width: 6rem;
+  text-align: center;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+ul.DateCountdown li p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: block;
+}
+
+@media screen and (max-width: 800px) {
+  ul.DateCountdown {
+    width: 6rem;
+    margin: auto;
+  }
+
+  ul.DateCountdown li {
+    display: block;
+  }
+}
