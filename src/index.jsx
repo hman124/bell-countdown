@@ -39,6 +39,7 @@ class App extends React.Component {
     var today = config.schedule.order[this.date.getDay()];
     var alt = config.schedule.alt;
     this.schedule = alt ? alt : today ? today : config.schedule.default;
+    console.log(this.schedule);
     this.lunch = !!this.schedule.lunches.find(x=>x.id == this.stored.lunch) ? this.stored.lunch : false;
     this.state = {
       lunch: this.lunch,
