@@ -1,36 +1,22 @@
 {
   "name": "bell-countdown",
-  "version": "2.1.7",
-  "description": "Bell Countdown",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "vite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "@vitejs/plugin-react": "^3.0.1",
     "react-circular-progressbar": "hman124/react-circular-progressbar",
     "react-confetti": "^6.1.0",
-    "react-use": "^17.4.0",
-    "react-circular-progressbar": "hman124/react-circular-progressbar"
+    "react-dom": "^18.0.0",
+    "react-use": "^17.4.0"
   },
   "devDependencies": {
-    "vite": "^2.9.9",
-    "@vitejs/plugin-react": "^1.3.2"
-  },
-  "scripts": {
-    "start": "vite",
-    "serve": "vite preview",
-    "build": "vite build"
-  },
-  "engines": {
-    "node": "16.x",
-    "npm": "7.x"
-  },
-  "keywords": [
-    "glitch",
-    "react",
-    "coundowntimer"
-  ],
-  "author": "Harrison S.",
-  "license": "ISC",
-  "glitch": {
-    "projectType": "generated_static"
+    "vite": "^4.0.4"
   }
 }

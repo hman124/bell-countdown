@@ -1,37 +1,42 @@
 import React from "react";
-// import calendar from "../icalfeed.json"
 import "../styles/DateCountdown.css";
 
-export default class YearTime extends React.Component {
+export default class DateCountdown extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      year_time: this.getYearTime(props.countdown)
+      time: {},
     };
 
     this.tick = this.tick.bind(this);
+    this.getYearTime = this.getYearTime.bind(this);
   }
 
   componentDidMount() {
-    this.interval = setInterval(this.tick, 1000);
+    if(this.props.countdown){
+      this.interval = setInterval(this.tick, 1000);
+      this.tick();
+    }
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    if(this.interval){
+      clearInterval(this.interval);
+    }
   }
 
   tick() {
-    this.setState((s) => ({
-      year_time: this.getYearTime(this.props.countdown),
+    this.setState(() => ({
+      time: this.getYearTime(),
     }));
   }
 
-  getYearTime(countdown) {
+  getYearTime() {
     var days = 0,
-      t = new Date(countdown.date),
+      t = new Date(this.props.countdown.date),
       d = new Date();
     if (t < d) {
-      this.props.onExpire();
+      this.props.setCountdown(null);
       return {};
     } else {
 //       const holidays = calendar.map((x) => ({
@@ -80,20 +85,22 @@ export default class YearTime extends React.Component {
 
   render() {
     return (
-      <div className="DateCountdown container">
-        {this.props.countdown.expired ? (
+      <div className="DateCountdown container center">
+        {!this.props.countdown ? (
           <>
-            <h2>Countdown is over, choose a new one in settings</h2>
+          <h3>Countdown</h3>
+            <p>No current countdown, add one in settings</p>
           </>
         ) : (
           <>            
             <h1>{this.props.countdown.title}</h1>
             <span>{this.props.countdown.date}</span>
+            {/* <hr/> */}
             <ul className="DateCountdown">
-              <li><p>{this.state.year_time.days_until}</p> days</li>
-              <li><p>{this.state.year_time.hours_until}</p> hours</li>
-              <li><p>{this.state.year_time.minutes_until}</p> minutes</li>
-              <li><p>{this.state.year_time.secs_until}</p> seconds</li>
+              <li><p>{this.state.time.days_until}</p> days</li>
+              <li><p>{this.state.time.hours_until}</p> hours</li>
+              <li><p>{this.state.time.minutes_until}</p> minutes</li>
+              <li><p>{this.state.time.secs_until}</p> seconds</li>
             </ul>
           </>
         )}

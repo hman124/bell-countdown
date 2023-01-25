@@ -2,10 +2,14 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: 3fr 1fr;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .BellCountdown .progressbar-label {
   text-align: center;
+  margin-top:0.5rem;
+  margin-bottom:0.5rem;
 }
 
 .BellCountdown .progressbar-container {

@@ -1,75 +1,109 @@
 import React from "react";
 import "../styles/Settings.css";
 import LunchChooser from "./LunchChooser.jsx";
-import config from "../config.js"
+import config from "../config.json";
+import themes from "../themes.json";
+import ScheduleInput from "./ScheduleInput.jsx";
 
 export default class Settings extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    const d = new Date;
-    // this.schedule = this.props.schedule || config.order[d.getDay()];
+
     this.state = {
-      page: 0,
-      // scheduleType: this.props.scheduleType,
-      // schedule: this.schedule ? JSON.parse(this.schedule) : [],
+      page: "about",
+      countdown: props.countdown,
+      mobile: window.innerWidth <= 1000,
+      navopen: false,
     };
 
-    // this.fileInput = React.createRef();
+    this.pages = [
+      { t: "countdown", i: "fa-clock" },
+      { t: "theme", i: "fa-paint-brush" },
+      { t: "schedule", i: "fa-calendar" },
+      { t: "about", i: "fa-info-circle" },
+    ];
+
+    this.themes = themes;
+
     this.renderPage = this.renderPage.bind(this);
     this.switchPage = this.switchPage.bind(this);
-    // this.changeBackground = this.changeBackground.bind(this);
-    // this.uploadBackground = this.uploadBackground.bind(this);
     this.close = this.close.bind(this);
     this.dateSub = this.dateSub.bind(this);
+    this.resetCountdown = this.resetCountdown.bind(this);
   }
 
-  // changeBackground(val) {
-  //   if (val) {
-  //     this.props.changeBackground(val);
-  //     window.localStorage.setItem("background", val);
-  //   } else {
-  //     this.props.changeBackground(false);
-  //     window.localStorage.removeItem("background");
-  //   }
-  //   this.close();
-  // }
+  componentDidMount() {
+    window.addEventListener("resize", () => {
+      this.setState({
+        mobile: window.innerWidth <= 1000,
+      });
+    });
+  }
 
-  //   async uploadBackground(e) {
-  //     if (this.fileInput.current.files[0].size > 4000000) {
-  //       alert("Image is too large in size. Must be less than 4MB");
-  //       this.fileInput.current.value = "";
-  //       return;
-  //     } else {
-  //       const toBase64 = file =>
-  //         new Promise((resolve, reject) => {
-  //           const reader = new FileReader();
-  //           reader.readAsDataURL(file);
-  //           reader.onload = () => resolve(reader.result);
-  //           reader.onerror = error => reject(error);
-  //         });
+  setPage(p) {
+    this.setState(() => ({
+      page: p,
+    }));
+  }
 
-  //       this.changeBackground(await toBase64(this.fileInput.current.files[0]));
-  //     }
-  //   }
-
-  // <li onClick={()=>this.switchPage(4)}>Schedule</li>
   renderNav() {
-         // <li onClick={() => this.switchPage(4)} >Schedule</li>
     return (
-      <ul className="settings-nav">
-        <li onClick={() => this.switchPage(1)}>Lunch</li>
-        <li onClick={() => this.switchPage(3)}>Countdown</li>
-        {this.props.prompt && (
-          <li onClick={() => this.props.prompt.prompt()}>Install App</li>
+      <>
+        {this.state.mobile ? (
+          <nav className="settings-nav">
+            <i
+              onClick={() => this.setState((s) => ({ navopen: !s.navopen }))}
+              className="mobilenavopen fa fa-bars"
+            ></i>{" "}
+            <span>{this.state.page}</span>
+            {this.state.navopen && (
+              <ul
+                className="mobilenavitems"
+                onClick={() => this.setState((s) => ({ navopen: false }))}
+              >
+                {this.pages.map((x) => (
+                  <li
+                    key={x.t}
+                    className={this.state.page == x.t ? "current" : ""}
+                    onClick={() => this.setPage(x.t)}
+                  >
+                    <i className={"fa " + x.i}></i>
+                    <span>{x.t}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </nav>
+        ) : (
+          <nav className="settings-nav">
+            <ul>
+              {this.pages.map((x) => (
+                <li
+                  key={x.t}
+                  className={this.state.page == x.t ? "current" : ""}
+                  onClick={() => this.setPage(x.t)}
+                >
+                  <i className={"fa " + x.i}></i>
+                  <span>{x.t}</span>
+                </li>
+              ))}
+              {this.props.prompt && (
+                <li onClick={() => this.props.prompt.prompt()}>Install App</li>
+              )}
+            </ul>
+          </nav>
         )}
-      </ul>
+      </>
     );
   }
-  // <li onClick={()=>this.switchPage(2)}>Background</li>
-  // <li onClick={()=>this.switchPage(5)}>Display</li>
 
   close() {
     this.props.setTab(0);
+  }
+
+  resetCountdown() {
+    this.props.setCountdown(null);
+    this.setState({ countdown: null });
   }
 
   dateSub(e) {
@@ -85,30 +119,42 @@ export default class Settings extends React.Component {
     } else if (e < d) {
       alert("please choose a date in the future");
     } else {
-      this.props.changeDate(e.target.title.value, x);
-      this.props.setTab(1);
+      const countdown = { title: e.target.title.value, date: x };
+      this.setState(() => ({
+        countdown,
+      }));
+      this.props.setCountdown(countdown);
     }
   }
-  
-//   setSchedule(t){
-//     this.props.setSchedule(t);
-//     this.setState({schedule: t});
-//   }
 
   renderPage() {
     switch (this.state.page) {
-      case 0:
+      case "about":
         return (
           <>
-            <h1>Settings</h1>
-            <p>Select a menu item to edit the settings</p>
+            <h1 className="page-title-header">About</h1>
+            <p>
+              Bell Countdown Version {config.version}
+              <br />
+              By <a href="https://github.com/hman124">hman124</a>
+              <hr />
+                <i className="fa fa-bug"></i>{" "}
+              <a href="https://github.com/hman124/bell-countdown/issues/new">
+                Report Bugs
+              </a>
+              <br />
+                <i className="fa-brands fa-github"></i>{" "} 
+              <a href="https://github.com/hman124/bell-countdown">
+                Github Repository
+              </a>
+            </p>
           </>
         );
         break;
-      case 1:
+      case "lunch":
         return (
           <>
-            <h1>Select Lunch</h1>
+            <h1 className="page-title-header">Select Lunch</h1>
             <hr />
             <LunchChooser
               schedule={this.props.schedule}
@@ -119,213 +165,98 @@ export default class Settings extends React.Component {
             />
           </>
         );
-      // case 2:
-      //   return (
-      //     <>
-      //       <h1>Select Background</h1>
-      //       <hr />
-      //       <div className="bg-cont">
-      //         {Array(6)
-      //           .fill(null)
-      //           .reduce((a, e, i) => {
-      //             var url = `/img/${i}.png`;
-      //             a.push(
-      //               <img
-      //                 key={i}
-      //                 className="bg-preview"
-      //                 src={url}
-      //                 onClick={e => this.changeBackground(url)}
-      //               />
-      //             );
-      //             return a;
-      //           }, [])}
-      //       </div>
-      //       <hr />
-      //       <h3>Or upload a file:</h3>
-      //       <input
-      //         type="file"
-      //         value=""
-      //         accept="image/*"
-      //         ref={this.fileInput}
-      //         onChange={this.uploadBackground}
-      //       />
-      //       <input
-      //         type="button"
-      //         onClick={this.changeBackground.bind(this, false)}
-      //         value="Clear Background"
-      //       />
-      //     </>
-      //   );
-      //   break;
-      case 3:
+      case "theme":
         return (
           <>
-            <h1>Countdown</h1>
+            <h1 className="page-title-header">Theme</h1>
             <hr />
-            <form action="#" onSubmit={this.dateSub}>
-              <label>
-                Enter the date you would like to count down to
-                <br />
-                <input
-                  type="date"
-                  min={(() => {
-                    var dtToday = new Date();
-                    dtToday.setDate(dtToday.getDate() + 1);
-                    var month = dtToday.getMonth() + 1;
-                    var day = dtToday.getDate();
-                    var year = dtToday.getFullYear();
-
-                    if (month < 10) month = "0" + month.toString();
-                    if (day < 10) day = "0" + day.toString();
-
-                    return year + "-" + month + "-" + day;
-                  })()}
-                  required
-                  name="date"
-                />
-              </label>
-              <br />
-              <input
-                required
-                type="text"
-                name="title"
-                placeholder="Countdown Title"
-              />
-              <input type="submit" value="Apply" />
-            </form>
-            <hr></hr>
-            <input
-              type="button"
-              value="Use The Last Day of School"
-              onClick={() => {
-                this.props.changeDate("The Last Day of School", "5/26/2022");
-                this.close();
-              }}
-            ></input>
+            {this.themes.map((x, i) => (
+              <div
+                key={x.name || i}
+                title={x.name || "theme color"}
+                onClick={() => this.props.setTheme(x, true)}
+                className="theme"
+              >
+                <div
+                  className="color"
+                  style={{ backgroundColor: x.main }}
+                ></div>
+                <div
+                  className="color"
+                  style={{ backgroundColor: x.background }}
+                ></div>
+              </div>
+            ))}
           </>
         );
         break;
-      case 4:
+      case "countdown":
         return (
           <>
-            <h1>Set Schedule</h1>
+            <h1 className="page-title-header">Countdown</h1>
             <hr />
-            <label>
-              <input type="radio" name="schedule" onClick={()=>this.setSchedule("default")}/> Use the defualt schedule
-            </label>
-            
-            <label>
-              <input type="radio" name="schedule" onClick={()=>this.setSchedule("custom")}/> Use custom schedule
-            </label>
-            <div className={this.state.scheduleType == "default"?"gray":""}>
-            {this.state.schedule?.length > 0 && (
+            {this.state.countdown ? (
               <>
-                <table>
-                  <thead></thead>
-                  <tbody>
-                    <tr>
-                      <th>Period Name</th>
-                      <th>Start Time</th>
-                      <th>End Time</th>
-                      <th>Remove</th>
-                    </tr>
-                    {this.renderPeriodTable()}
-                  </tbody>
-                </table>
-                <button
-                  onClick={() => {
-                    this.setState({ schedule: [] });
-                    window.localStorage.removeItem("schedule");
-                  }}
-                >
-                  Clear Schedule
-                </button>
+                <p>
+                  {this.state.countdown.title}: {this.state.countdown.date}
+                </p>
+                <input
+                  type="button"
+                  onClick={this.resetCountdown}
+                  value="Reset"
+                />
               </>
+            ) : (
+              <form action="#" onSubmit={this.dateSub}>
+                <label>
+                  Select a date:
+                  <input
+                    type="date"
+                    min={(() => {
+                      var dtToday = new Date();
+                      dtToday.setDate(dtToday.getDate() + 1);
+                      var month = dtToday.getMonth() + 1;
+                      var day = dtToday.getDate();
+                      var year = dtToday.getFullYear();
+
+                      if (month < 10) month = "0" + month.toString();
+                      if (day < 10) day = "0" + day.toString();
+
+                      return year + "-" + month + "-" + day;
+                    })()}
+                    required
+                    name="date"
+                  />
+                </label>
+                <label>
+                  Set a title:
+                  <input
+                    required
+                    type="text"
+                    name="title"
+                    maxLength="25"
+                    placeholder="Countdown Title"
+                  />
+                </label>
+                <input type="submit" value="Apply" />
+              </form>
             )}
-            <button
-              onClick={() =>
-                this.setState((s) => {
-                  var e = s.schedule.concat();
-                  e.push({ name: "", time: [] });
-                  return { schedule: e };
-                })
-              }
-            >
-              Add Period
-            </button>
-            </div>
           </>
         );
-      // case 5:
-      //   return (<>
-      //       <h1>Display Settings</h1>
-      //       <hr/>
-      //         <input type="button" value="Aesthetic" onClick={()=>this.setDisplay('aesthetic')}/>
-      //         <input type="button" value="Focused" onClick={()=>this.setDisplay('focused')}/>
-      //     </>);
+        break;
+      case "schedule":
+        return (
+          <>
+            <h1 className="page-title-header">Schedule</h1>
+            <hr />
+            <ScheduleInput
+              schedule={this.props.schedule}
+              setSchedule={this.props.setSchedule}
+            />
+          </>
+        );
     }
   }
-
-    // saveSchedule(e) {
-    //   window.localStorage.setItem("customSchedule", JSON.stringify(e));
-    //   this.props.setSchedule(this.state.scheduleType, e);
-    // }
-
-    // renderPeriodTable() {
-    //   return this.state.schedule.map((x, i) => (
-    //     <tr key={i}>
-    //       <td>
-    //         <input
-    //           onChange={e =>
-    //             this.setState(s => {
-    //               var t = s.schedule.concat();
-    //               t[i].name = e.target.value;
-    //               this.saveSchedule(t);
-    //               return { schedule: t };
-    //             })
-    //           }
-    //           type="text"
-    //           value={x.name}
-    //         />
-    //       </td>
-    //       <td>
-    //         <input
-    //           type="time"
-    //           onChange={e =>
-    //             this.setState(s => {
-    //               var t = s.schedule.concat();
-    //               t[i].time[0] = e.target.value;
-    //               this.saveSchedule(t);
-    //               return { schedule: t };
-    //             })
-    //           }
-    //           value={x.time[0]}
-    //         />
-    //       </td>
-    //       <td>
-    //         <input
-    //           type="time"
-    //           onChange={e =>
-    //             this.setState(s => {
-    //               var t = s.schedule.concat();
-    //               t[i].time[1] = e.target.value;
-    //               this.saveSchedule(t);
-    //               return { schedule: t };
-    //             })
-    //           }
-    //           value={x.time[1]}
-    //         />
-    //       </td>
-    //       <td><input type="button" value="X" onClick={()=>this.setState(
-    //           s => {
-    //               var t = s.schedule.concat();
-    //               t.splice(i, 1);
-    //               this.saveSchedule(t);
-    //               return { schedule: t };
-    //             })}/></td>
-    //     </tr>
-    //   ));
-    // }
 
   switchPage(p) {
     this.setState(() => ({ page: p }));
@@ -333,22 +264,10 @@ export default class Settings extends React.Component {
 
   render() {
     return (
-      <div className="Settings container">
+      <div className="container Settings">
         {this.renderNav()}
-        <div style={{ clear: "both" }}></div>
-        <div className="settings-page">{this.renderPage()}</div>
-        <span className="version">
-          Ver. 2.1.7 (quickfix) |{" "}
-          {/*version number last updated on 5/17/22*/}
-          <a href="https://github.com/hman124/bell-countdown/issues/new">Report Bugs</a> |{" "}
-          <a href="https://github.com/hman124/bell-countdown">Github</a>
-          
-        </span>
+        <div className="settings-main">{this.renderPage()}</div>
       </div>
     );
   }
 }
-
-// <span className="settings-close" onClick={this.close}>
-//   X
-// </span>

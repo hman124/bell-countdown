@@ -1,11 +1,7 @@
 import React from "react";
 
-import { CircularProgressbar } from 'react-circular-progressbar';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-/*
-import "/circular_loading_bar/loading.css"
-import "/circular_loading_bar/loading.js"
-*/
 import "../styles/BellCountdown.css";
 
 class BellCountdown extends React.Component {
@@ -17,6 +13,13 @@ class BellCountdown extends React.Component {
       clock: this.getClock(),
       counter: Math.min(window.innerWidth / 4, window.innerHeight / 4),
     };
+
+    this.styles = buildStyles({
+      pathColor: props.theme.main,
+      textColor: props.theme.main,
+      trailColor: props.theme.type == "light"? "#aaa" : "#fff",
+      backgroundColor: "#aaaaaa"
+    })
 
     this.tick = this.tick.bind(this);
     this.resizeDimensions = this.resizeDimensions.bind(this);
@@ -73,8 +76,7 @@ class BellCountdown extends React.Component {
     const d = new Date();
     if (/[60]/.test(d.getDay())) return { school: false, reason: "Weekend" };
     const mins = d.getHours() * 60 + d.getMinutes(),
-      sched = this.props.schedule,
-      times = sched.getTimes(this.props.lunch),
+      times = this.props.schedule,
       list = times
         .map((x) => x.time)
         .flat()
@@ -174,46 +176,33 @@ class BellCountdown extends React.Component {
 
   render() {
     return (
-      <div className="BellCountdown container">
+      <div className="BellCountdown container center">
         <h1>{this.state.clock}</h1>
-        {this.state.countdown.school && (
+        {this.state.countdown.school ? (
           <>
-            {this.props.display == "counters" && (
-              <>
                 <h1>{this.state.countdown.current}</h1>
                 <div className="counters-container">
                   <div style={{width: this.state.counter, height: this.state.counter}} className="progressbar-container">
-                    <CircularProgressbar value={this.state.countdown.time.minutes} maxValue={this.state.countdown.length} text={this.state.countdown.time.minutes.toString()}/>
+                    <CircularProgressbar styles={this.styles} value={this.state.countdown.time.minutes} maxValue={this.state.countdown.length} text={this.state.countdown.time.minutes.toString()}/>
                   </div>
                   <div style={{width: this.state.counter, height: this.state.counter}} className="progressbar-container">
-                    <CircularProgressbar value={this.state.countdown.time.seconds} maxValue={60} text={this.state.countdown.time.seconds.toString()}/>
+                    <CircularProgressbar styles={this.styles} value={this.state.countdown.time.seconds} maxValue={60} text={this.state.countdown.time.seconds.toString()}/>
                   </div>                  
                   <p className="progressbar-label">Minutes</p>
                   <p className="progressbar-label">Seconds</p>
                 </div>
-              </>
-            )}
             <p>Ends At {this.to12hrTime(this.state.countdown.end)}</p>
-            <p>Next Period: {this.state.countdown.next}</p>
-            <p>{this.props.lunch} Lunch</p>
+            {this.state.countdown.next ? <p>Next Period: {this.state.countdown.next}</p> : null }
           </>
-        )}
-        {!this.state.countdown.school && (
+        ) : (
           <>
             <h1>No School Right Now</h1>
             <p>{this.state.countdown.reason}</p>
-            <p>{this.props.lunch} Lunch</p>
           </>
         )}
       </div>
     );
   }
 }
-
-// <h1>{this.state.clock}</h1>
-//        {this.state.countdown.school && <>
-//          <h1>The Bell Rings in {this.state.countdown.time.minutes}:{this.state.countdown.time.seconds}</h1>
-//          <p>{this.state.countdown.current}</p>
-//        </>}
 
 export default BellCountdown;

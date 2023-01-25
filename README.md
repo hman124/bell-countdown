@@ -1,18 +1,32 @@
-# [Bell Countdown](https://bell-countdown.netlify.app)
+# Bell Countdown 3.0 
 
-A React web app designed to tell useful information like how much time is left in the current class period.
+Bell countdown is a react web app that "counts down" to the next bell in school. 
 
-For now, the schedule is set to the schedule of my school, but in the (near) future, I will be adding support for custom schedules, a feature most similar apps i've found don't have.
+[https://bell-countdown.netlify.app](https://bell-countdown.netlify.app)
 
-It can be viewed live here: [https://bell-countdown.netlify.app/](https://bell-countdown.netlify.app/)<br>
-And you can see the code on github
+## Features Include:
+- custom schedules
+- date countdown to a custom day (such as the last day of school)
+- a bunch of light/dark themes to choose from
+- precise data (exact seconds until bell)
+
+## Plans
+
+- multiple schedules corresponding to specific days of the week
+- multiple countdowns
+- seconds adjustment to synchronize your device and the bell at your school
+- schedules registry with schedules for specific schools (community maintained)
+- updates / announcements tab where users can sign up for updates at their school
 
 ## Issues
 
-When posting issues on GitHub, please include the following information:
+If you find a bug in the code, feel free to create an issue. 
 
-- Error/problem described in detail
-- Version number (in settings at bottom) or "latest" (most recent version)
-- Time/Date problem occurred
-- Cause of problem/reproducability steps (if applicable)
-- Screenshot/Screen recording (if applicable)
+Make sure to include the following:
+- time of day error occurred
+- reproducability steps
+- browser/user agent error occurred on 
+
+## Forks / Self Hosting
+
+Feel free to fork this repository and host your own version, but please don't remove any of the links or info from the "about" page on settings. Please note that this repository is under an MIT license. 
