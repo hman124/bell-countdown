@@ -7,10 +7,18 @@ import "../styles/BellCountdown.css";
 class BellCountdown extends React.Component {
   constructor(props) {
     super(props);
+    this.schedule = props.schedule;
 
+    const days = [ "su", "mo", "tu", "we", "th", "fr", "sa"];
+    const d = new Date();
+
+
+    this.weekday = days[d.getDay()];
+    console.log(this.weekday, props.scheduleList);
     this.state = {
-      countdown: this.getCountdown(),
+      countdown: {},
       clock: this.getClock(),
+      schedule: props.scheduleList.find(x=>x.days.includes(this.weekday)) || null,
       counter: Math.min(window.innerWidth / 4, window.innerHeight / 4),
     };
 
@@ -19,10 +27,11 @@ class BellCountdown extends React.Component {
       textColor: props.theme.main,
       trailColor: props.theme.type == "light"? "#aaa" : "#fff",
       backgroundColor: "#aaaaaa"
-    })
+    });
 
     this.tick = this.tick.bind(this);
     this.resizeDimensions = this.resizeDimensions.bind(this);
+    this.getCountdown = this.getCountdown.bind(this);
   }
 
   resizeDimensions() {
@@ -35,6 +44,7 @@ class BellCountdown extends React.Component {
   componentDidMount() {
     window.addEventListener("resize", this.resizeDimensions);
     this.interval = setInterval(this.tick, 1000);
+    this.setState({countdown: this.getCountdown()})
   }
 
   componentWillUnmount() {
@@ -72,11 +82,11 @@ class BellCountdown extends React.Component {
   }
 
   getCountdown() {
-    // if(this.props.scheduleType !== "default"){return {}};
+    if(!this.state.schedule){return {school: false, reason: "There is no schedule for today"}};
     const d = new Date();
-    if (/[60]/.test(d.getDay())) return { school: false, reason: "Weekend" };
+    // if (/[60]/.test(d.getDay())) return { school: false, reason: "Weekend" };
     const mins = d.getHours() * 60 + d.getMinutes(),
-      times = this.props.schedule,
+      times = this.state.schedule.periods,
       list = times
         .map((x) => x.time)
         .flat()
@@ -200,6 +210,8 @@ class BellCountdown extends React.Component {
             <p>{this.state.countdown.reason}</p>
           </>
         )}
+        {this.state.schedule && <p>{this.state.schedule.name}</p>}
+        {this.props.lunch && <p>{this.props.lunch} Lunch</p>}
       </div>
     );
   }

@@ -20,7 +20,7 @@
   /* padding: 1rem; */
   grid-column: 2 / span 1;
   overflow:auto;
-  height: calc(100% + 40px);
+  height: calc(100% + 20px);
   position:relative;
   margin-top:-20px;
   /* height: var(--main-height);
@@ -42,6 +42,7 @@ nav.settings-nav ul li {
   cursor:pointer;
   margin-bottom: 0.5rem;
   position:relative;
+  display:block;
 }
 
 nav.settings-nav ul li i {

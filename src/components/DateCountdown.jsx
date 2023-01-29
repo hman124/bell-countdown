@@ -13,7 +13,7 @@ export default class DateCountdown extends React.Component {
   }
 
   componentDidMount() {
-    if(this.props.countdown){
+    if(this.props.countdownList.length > 0){
       this.interval = setInterval(this.tick, 1000);
       this.tick();
     }
@@ -27,37 +27,24 @@ export default class DateCountdown extends React.Component {
 
   tick() {
     this.setState(() => ({
-      time: this.getYearTime(),
+      time: this.props.countdownList.map(x=>this.getYearTime(x)),
     }));
   }
 
-  getYearTime() {
+  getYearTime(countdown, index) {
     var days = 0,
-      t = new Date(this.props.countdown.date),
+      t = new Date(countdown.date),
       d = new Date();
     if (t < d) {
-      this.props.setCountdown(null);
+      const z = this.props.countdownList;
+      z.splice(index);
+      this.props.setCountdown(z);
       return {};
     } else {
-//       const holidays = calendar.map((x) => ({
-//         date: x.start.slice(6, 8),
-//         month: x.start.slice(4, 6),
-//         duration: x.duration ? +x.duration.match(/[1-9]+/)[0] : 1,
-//       }));
-
-      // d.setDate(d.getDate() + 1);
       while (d < t) {
-        // if (countdown.holidays && false) {
-          // days++;
-        // } else {
-          // const today = holidays.filter(
-            // (x) => x.date == d.getDate() && x.month == d.getMonth() + 1
-          // );
-          // if (today.length > 0) {
-            // d.setDate(d.getDate() + (+today[0].duration - 1));
-          /*} else */if (!/^[60]{1}$/.test(d.getDay())) {
+        if (!/^[60]{1}$/.test(d.getDay())) {
             days++;
-          }
+        }
         d.setDate(d.getDate() + 1);
     }
 
@@ -86,22 +73,26 @@ export default class DateCountdown extends React.Component {
   render() {
     return (
       <div className="DateCountdown container center">
-        {!this.props.countdown ? (
+        <h1>Countdown</h1>
+        <hr/>
+        {this.props.countdownList.length == 0 ? (
           <>
-          <h3>Countdown</h3>
-            <p>No current countdown, add one in settings</p>
+            <p>No current countdowns, add one in settings</p>
           </>
         ) : (
           <>            
-            <h1>{this.props.countdown.title}</h1>
-            <span>{this.props.countdown.date}</span>
+          {this.props.countdownList.map((x,i,a)=><>
+            <h3>{x.title}</h3>
+            <span>{x.date}</span>
             {/* <hr/> */}
             <ul className="DateCountdown">
-              <li><p>{this.state.time.days_until}</p> days</li>
-              <li><p>{this.state.time.hours_until}</p> hours</li>
-              <li><p>{this.state.time.minutes_until}</p> minutes</li>
-              <li><p>{this.state.time.secs_until}</p> seconds</li>
+              <li><p>{this.state.time[i]?.days_until}</p> days</li>
+              <li><p>{this.state.time[i]?.hours_until}</p> hours</li>
+              <li><p>{this.state.time[i]?.minutes_until}</p> minutes</li>
+              <li><p>{this.state.time[i]?.secs_until}</p> seconds</li>
             </ul>
+            {i !== a.length-1 && <hr/> }
+          </>)}
           </>
         )}
       </div>

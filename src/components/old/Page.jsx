@@ -5,7 +5,6 @@ function Folder(props){
 }
 
 function Page(props){
-    console.log(props.children);
     const {current, page} = props;
     return current === page && <div className="page">
       {props.children}

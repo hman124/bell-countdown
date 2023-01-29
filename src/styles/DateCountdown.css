@@ -1,6 +1,7 @@
 ul.DateCountdown {
   padding:0;
-  margin-top: 4rem;  
+  margin-top: 1rem;  
+  margin-bottom: 1rem;  
     /* outline: 2px var(--theme-main) solid; */
 }
 
@@ -20,7 +21,6 @@ ul.DateCountdown li p {
 }
 
 @media screen and (max-width: 800px) {
-  
   ul.DateCountdown li {
     width:100%;
     display: block;

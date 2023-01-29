@@ -12,7 +12,7 @@ export default class ScheduleInput extends React.Component {
       unsaved: false,
       errors: [],
       dragging: false,
-      mobile: window.innerWidth <= 1000,
+      mobile: window.innerWidth <= 700,
       index: 0
     };
 
@@ -21,7 +21,7 @@ export default class ScheduleInput extends React.Component {
 
   componentDidMount(){
     window.addEventListener("resize", () => {
-      this.setState(s=>({mobile: window.innerWidth <= 1000}));
+      this.setState(s=>({mobile: window.innerWidth <= 700}));
     })
   }
 
@@ -52,7 +52,7 @@ export default class ScheduleInput extends React.Component {
       }
     });
 
-    this.setState({errors, unsaved: errors.filter(x=>!!x).length > 0});
+    this.setState({errors});
 
     if(errors.filter(x=>x!=="").length == 0){
       this.props.setSchedule(t);
@@ -67,6 +67,7 @@ export default class ScheduleInput extends React.Component {
               this.setState((s) => {
                 var t = s.schedule.concat();
                 t[i].name = e.target.value;
+                this.saveSchedule(t);
                 return { schedule: t, unsaved: true };
               })
             }
@@ -82,7 +83,8 @@ export default class ScheduleInput extends React.Component {
               this.setState((s) => {
                 var t = s.schedule.concat();
                 t[i].time[0] = e.target.value;
-                return { schedule: t, unsaved: true };
+                this.saveSchedule(t);
+                return { schedule: t};
               })
             }
             value={x.time[0]||""}
@@ -94,7 +96,8 @@ export default class ScheduleInput extends React.Component {
               this.setState((s) => {
                 var t = s.schedule.concat();
                 t[i].time[1] = e.target.value;
-                return { schedule: t, unsaved: true };
+                this.saveSchedule(t);
+                return { schedule: t };
               })
             }
             value={x.time[1]||""}
@@ -109,7 +112,8 @@ export default class ScheduleInput extends React.Component {
               this.setState((s) => {
                 var t = s.schedule.concat();
                 t[i].name = e.target.value;
-                return { schedule: t, unsaved: true };
+                this.saveSchedule(t);
+                return { schedule: t };
               })
             }
             type="text"
@@ -124,7 +128,8 @@ export default class ScheduleInput extends React.Component {
               this.setState((s) => {
                 var t = s.schedule.concat();
                 t[i].time[0] = e.target.value;
-                return { schedule: t, unsaved: true };
+                this.saveSchedule(t);
+                return { schedule: t };
               })
             }
             value={x.time[0]||""}
@@ -137,7 +142,8 @@ export default class ScheduleInput extends React.Component {
               this.setState((s) => {
                 var t = s.schedule.concat();
                 t[i].time[1] = e.target.value;
-                return { schedule: t, unsaved: true };
+                this.saveSchedule(t);
+                return { schedule: t};
             })
         }
         value={x.time[1]||""}
@@ -150,7 +156,8 @@ export default class ScheduleInput extends React.Component {
               this.setState((s) => {
                 var t = s.schedule.concat();
                 t.splice(i, 1);
-                return { schedule: t, unsaved: true };
+                this.saveSchedule(t);
+                return { schedule: t };
               })
             }
             title="Remove Class Period"
@@ -172,13 +179,14 @@ export default class ScheduleInput extends React.Component {
      <>{this.state.schedule.length > 0 ? (this.state.mobile ? 
       <div className="table-mobile">
         {this.renderPeriodTable()[this.state.index]}
-        <p className="text-center">{this.state.index+1} out of {this.state.schedule.length}</p>
+        <p className="text-center">period {this.state.index+1} out of {this.state.schedule.length}</p>
         <div>
         <button title="delete this period" disabled={this.state.schedule.length==0} onClick={()=>this.setState((s) => {
           if(!confirm("Delete this class period?")) {return}
                 var t = s.schedule.concat();
                 t.splice(s.index, 1);
-                return { schedule: t, index: 0, unsaved: true };
+                this.saveSchedule(t);
+                return { schedule: t, index: 0};
               })}>
           <i className="fa fa-x"></i>
         </button>
@@ -204,16 +212,15 @@ export default class ScheduleInput extends React.Component {
               </tbody>
             </table>
         ) :<p>
-            Nothing here yet. Click the <i className="fa fa-plus-circle"></i> icon to add a class period.</p>}
+            No class periods yet. Click the <i className="fa fa-plus-circle"></i> icon to add a class period.</p>}
     
         <button
         title="New Class Period"
           onClick={() =>
             this.setState((s) => {
               var e = s.schedule.concat();
-              e.push({ name: "", time: [], index: s++ });
-              
-              return { schedule: e, unsaved:true };
+              e.push({ name: "", time: [] });
+              return { schedule: e, index:  e.length-1};
             })
           }
         >
@@ -223,19 +230,12 @@ export default class ScheduleInput extends React.Component {
         title="Reset Schedule"
               onClick={() => {
                 if(!confirm("Delete your entire schedule?")){return;}
-                  this.setState({schedule:[], unsaved:true});
+                this.setState({schedule:[]});
+                this.saveSchedule([]);
               }}
               disabled={this.state.schedule.length == 0}
             >
               <i className="fa fa-trash"></i>
-            </button>
-            <button
-            title="Save Schedule" 
-            disabled={!this.state.unsaved}
-              onClick={() => {
-                this.saveSchedule(this.state.schedule);
-              }}>
-                <i className="fa fa-save"></i>
             </button>
       </>
     );

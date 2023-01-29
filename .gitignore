@@ -3,3 +3,6 @@ node_modules
 build
 public
 package-lock.json
+TODO.md
+.gitignore
+src/components/old

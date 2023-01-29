@@ -8,7 +8,7 @@
     margin:0;
     padding:0;
     transition: background-color 0.2s;
-    user-select:none;
+    /* user-select:none; */
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -75,6 +75,8 @@ nav.home-nav ul li.current::after {
 main {
     height: var(--main-height);
     padding: 20px;
+    padding-bottom: 0;
+    /* padding-right: 0; */
     overflow: auto;
 }
 
@@ -84,7 +86,7 @@ footer {
     height: var(--footer-height);
 }
 
-input:not([type=radio],[type=checkbox]), button {
+input:not([type=radio],[type=checkbox]), button, select {
     padding: 0.5rem;
     border:none;
     border-radius: 10px;
@@ -102,10 +104,10 @@ input.inline, button.inline {
     width: initial;
     height:initial;
     min-width:0;
-    margin:0;
+    margin-bottom:0;
 }
 
-input[type=button], input[type=submit], button {
+input[type=button], input[type=submit], button, select {
     color: var(--theme-contrast);
     background-color: var(--theme-main);
     border:none;
@@ -134,9 +136,9 @@ table td, table th {
     padding: 0.25rem;
 }
 
-form {
+/* form {
     padding: 1rem;
-}
+} */
 
 form input:not([type=radio],[type=checkbox]) {
     display:block;
@@ -212,10 +214,12 @@ hr {
     body {
         font-size: 18px;
     }
-}
 
-@media screen and (max-width: 1000px) {
-    input:not([type=checkbox],[type=radio]), button {
+    table {
+        width: 100%;
+    }
+
+    input:not([type=checkbox],[type=radio]), button, select {
         width:100%;
         margin-right: 0;
     }

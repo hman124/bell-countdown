@@ -1,0 +1,42 @@
+.weekday-container {
+    display:flex;
+    justify-content: space-around;
+    margin-bottom: 1rem;
+}
+
+.weekday {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 2px var(--theme-main) solid;
+    color: var(--theme-main);
+    background-color: var(--theme-background);
+    transition: background 0.2s;
+    display:grid; 
+    place-items:center;
+    float:left;
+    /* margin-right: 0.5rem; */
+    cursor:pointer;
+}
+ 
+
+.weekday:hover {
+    outline: 2px #000 solid;
+}
+
+.weekday:disabled {
+    filter: grayscale(9);
+}
+
+.weekday p {
+    margin:0;
+}
+
+.weekday p:first-letter {
+    text-transform: capitalize;
+}
+
+.weekday.selected {
+    color: var(--theme-contrast);
+    background-color: var(--theme-main);
+}

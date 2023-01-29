@@ -4,6 +4,8 @@ import LunchChooser from "./LunchChooser.jsx";
 import config from "../config.json";
 import themes from "../themes.json";
 import ScheduleInput from "./ScheduleInput.jsx";
+import Modal from "./Modal.jsx";
+import WeekdayInput from "./WeekdayInput";
 
 export default class Settings extends React.Component {
   constructor(props) {
@@ -11,17 +13,26 @@ export default class Settings extends React.Component {
 
     this.state = {
       page: "about",
-      countdown: props.countdown,
+      countdownList: props.countdownList,
+      scheduleList: props.scheduleList,
       mobile: window.innerWidth <= 1000,
       navopen: false,
+      modal: {
+        open: false,
+      },
     };
 
     this.pages = [
       { t: "countdown", i: "fa-clock" },
       { t: "theme", i: "fa-paint-brush" },
-      { t: "schedule", i: "fa-calendar" },
       { t: "about", i: "fa-info-circle" },
     ];
+
+    if (config.schedule.use) {
+      this.pages.push({ t: "lunch", i: "fa-hamburger" });
+    } else {
+      this.pages.push({ t: "schedule", i: "fa-calendar" });
+    }
 
     this.themes = themes;
 
@@ -29,7 +40,9 @@ export default class Settings extends React.Component {
     this.switchPage = this.switchPage.bind(this);
     this.close = this.close.bind(this);
     this.dateSub = this.dateSub.bind(this);
-    this.resetCountdown = this.resetCountdown.bind(this);
+    this.removeCount = this.removeCount.bind(this);
+    this.addSchedule = this.addSchedule.bind(this);
+    this.setScheduleList = this.setScheduleList.bind(this);
   }
 
   componentDidMount() {
@@ -101,9 +114,37 @@ export default class Settings extends React.Component {
     this.props.setTab(0);
   }
 
-  resetCountdown() {
-    this.props.setCountdown(null);
-    this.setState({ countdown: null });
+  removeCount(i) {
+    const s = this.state.countdownList;
+    if (!s[i]) {
+      return;
+    }
+    s.splice(i, 1);
+    this.props.setCountdown(s);
+    this.setState(() => ({ countdownList: s }));
+  }
+
+  setScheduleList(f) {
+    this.setState({ scheduleList: f });
+    this.props.setSchedule(f);
+  }
+
+  saveSchedule(sc, i) {
+    const f = this.state.scheduleList;
+    f[i] = sc;
+    this.setScheduleList(f);
+  }
+
+  saveTimes(i, sc) {
+    const f = this.state.scheduleList;
+    f[i].periods = sc;
+    this.setScheduleList(f);
+  }
+
+  addSchedule() {
+    const f = this.state.scheduleList;
+    f.push({ days: [], periods: [] });
+    this.setScheduleList(f);
   }
 
   dateSub(e) {
@@ -118,12 +159,13 @@ export default class Settings extends React.Component {
       alert("please choose a year less than 3000");
     } else if (e < d) {
       alert("please choose a date in the future");
+    } else if (this.state.countdownList.map((x) => x.date).includes(x)) {
+      alert("You already have a countdown for the selected date.");
     } else {
       const countdown = { title: e.target.title.value, date: x };
-      this.setState(() => ({
-        countdown,
-      }));
-      this.props.setCountdown(countdown);
+      const r = [...this.props.countdownList, countdown];
+      this.props.setCountdown(r);
+      this.setState(() => ({ countdownList: r }));
     }
   }
 
@@ -137,13 +179,15 @@ export default class Settings extends React.Component {
               Bell Countdown Version {config.version}
               <br />
               By <a href="https://github.com/hman124">hman124</a>
-              <hr />
-                <i className="fa fa-bug"></i>{" "}
+            </p>
+            <hr />
+            <p>
+              <i className="fa fa-bug"></i>{" "}
               <a href="https://github.com/hman124/bell-countdown/issues/new">
                 Report Bugs
               </a>
               <br />
-                <i className="fa-brands fa-github"></i>{" "} 
+              <i className="fa-brands fa-github"></i>{" "}
               <a href="https://github.com/hman124/bell-countdown">
                 Github Repository
               </a>
@@ -157,11 +201,9 @@ export default class Settings extends React.Component {
             <h1 className="page-title-header">Select Lunch</h1>
             <hr />
             <LunchChooser
-              schedule={this.props.schedule}
-              submit={(lunch) => {
-                this.props.setLunch(lunch);
-                this.props.setTab(0);
-              }}
+              lunch={this.props.lunch}
+              lunches={config.schedule.lunches}
+              setLunch={this.props.setLunch}
             />
           </>
         );
@@ -195,52 +237,64 @@ export default class Settings extends React.Component {
           <>
             <h1 className="page-title-header">Countdown</h1>
             <hr />
-            {this.state.countdown ? (
-              <>
-                <p>
-                  {this.state.countdown.title}: {this.state.countdown.date}
-                </p>
-                <input
-                  type="button"
-                  onClick={this.resetCountdown}
-                  value="Reset"
-                />
-              </>
+            <h3 className="heading">Current</h3>
+            {this.state.countdownList.length > 0 ? (
+              <table>
+                <tbody>
+                  {this.state.countdownList.map((x, i) => (
+                    <tr key={x.date}>
+                      <td>{x.title}</td>
+                      <td>{x.date}</td>
+                      <td>
+                        <button
+                          className="inline"
+                          onClick={() => this.removeCount(i)}
+                        >
+                          <i className="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             ) : (
-              <form action="#" onSubmit={this.dateSub}>
-                <label>
-                  Select a date:
-                  <input
-                    type="date"
-                    min={(() => {
-                      var dtToday = new Date();
-                      dtToday.setDate(dtToday.getDate() + 1);
-                      var month = dtToday.getMonth() + 1;
-                      var day = dtToday.getDate();
-                      var year = dtToday.getFullYear();
-
-                      if (month < 10) month = "0" + month.toString();
-                      if (day < 10) day = "0" + day.toString();
-
-                      return year + "-" + month + "-" + day;
-                    })()}
-                    required
-                    name="date"
-                  />
-                </label>
-                <label>
-                  Set a title:
-                  <input
-                    required
-                    type="text"
-                    name="title"
-                    maxLength="25"
-                    placeholder="Countdown Title"
-                  />
-                </label>
-                <input type="submit" value="Apply" />
-              </form>
+              <p>Nothing yet. Add a countdown below.</p>
             )}
+            <hr />
+            <h3 className="heading">Create</h3>
+            <form action="#" onSubmit={this.dateSub}>
+              <label>
+                Date
+                <input
+                  type="date"
+                  min={(() => {
+                    var dtToday = new Date();
+                    dtToday.setDate(dtToday.getDate() + 1);
+                    var month = dtToday.getMonth() + 1;
+                    var day = dtToday.getDate();
+                    var year = dtToday.getFullYear();
+
+                    if (month < 10) month = "0" + month.toString();
+                    if (day < 10) day = "0" + day.toString();
+
+                    return year + "-" + month + "-" + day;
+                  })()}
+                  required
+                  name="date"
+                />
+              </label>
+              <label>
+                Title:
+                <input
+                  required
+                  type="text"
+                  name="title"
+                  maxLength="25"
+                  placeholder="Countdown Title"
+                />
+              </label>
+              <input type="submit" value="Add Countdown" />
+            </form>
           </>
         );
         break;
@@ -249,9 +303,105 @@ export default class Settings extends React.Component {
           <>
             <h1 className="page-title-header">Schedule</h1>
             <hr />
-            <ScheduleInput
-              schedule={this.props.schedule}
-              setSchedule={this.props.setSchedule}
+            <h3 className="heading">Current</h3>
+            {this.state.scheduleList.length > 0 ?
+            (<table>
+              <tbody>
+                {this.state.scheduleList.map((x, i) => (
+                  <React.Fragment key={i}>
+                    <tr>
+                      <td>{x.name || "untitled schedule"}</td>
+                      <td>
+                        <button
+                          className="inline"
+                          onClick={() =>
+                            this.setState({ modal: { open: true, index: i } })
+                          }
+                        >
+                          <i className="fa fa-pencil"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          className="inline"
+                          onClick={() => {
+                            const c = confirm(
+                              "Are you sure you want to delete this schedule?"
+                            );
+                            if (!c) {
+                              return;
+                            }
+                            const s = this.state.scheduleList.concat();
+                            s.splice(i, 1);
+                            this.setState({ scheduleList: s });
+                            this.props.setSchedule(s);
+                          }}
+                        >
+                          <i className="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>) : <p>No schedules yet. Add one below.</p>}
+
+            {this.state.modal.open && (
+              <Modal
+                title="Schedule"
+                close={() => this.setState({ modal: { open: false } })}
+              >
+                <p>
+                  <i className="fa fa-save"></i> saves automatically
+                </p>
+                <p>Schedule Name:</p>
+                <input
+                  maxLength="40"
+                  type="text"
+                  placeholder="Schedule name"
+                  value={
+                    this.state.scheduleList[this.state.modal.index].name || ""
+                  }
+                  onChange={(event) => {
+                    const f = this.state.scheduleList;
+                    f[this.state.modal.index].name = event.target.value;
+                    this.setState((s) => ({
+                      scheduleList: f,
+                    }));
+                    this.props.setSchedule(f);
+                  }}
+                />
+
+                <p>Applies to:</p>
+                <WeekdayInput
+                  days={this.state.scheduleList[this.state.modal.index].days}
+                  onChange={(s) => {
+                    const f = this.state.scheduleList;
+                    f[this.state.modal.index].days = s;
+                    this.setState((s) => ({
+                      scheduleList: f,
+                    }));
+                    this.props.setSchedule(f);
+                  }}
+                ></WeekdayInput>
+                <hr />
+                <ScheduleInput
+                  schedule={
+                    this.state.scheduleList[this.state.modal.index].periods
+                  }
+                  setSchedule={(sc) =>
+                    this.saveTimes(this.state.modal.index, sc)
+                  }
+                ></ScheduleInput>
+              </Modal>
+            )}
+
+            <hr />
+            <h3 className="heading">Create</h3>
+            <input
+              type="button"
+              onClick={this.addSchedule}
+              value="Add Schedule"
             />
           </>
         );

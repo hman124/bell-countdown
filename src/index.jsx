@@ -12,19 +12,23 @@ import LunchChooser from "./components/LunchChooser.jsx";
 import ScheduleChooser from "./components/ScheduleChooser.jsx";
 import DateCountdown from "./components/DateCountdown.jsx";
 import BellCountdown from "./components/BellCountdown.jsx";
-// import LunchMenu from "./components/LunchMenu.jsx";
 import Settings from "./components/Settings.jsx";
-// import Updates from "./components/Updates.jsx";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
     //saved items from localstorage
+    this.scheduleType = window.localStorage.getItem("scheduleType");
+
     this.schedule = window.localStorage.getItem("schedule");
-    // this.lunch = window.localStorage.getItem("lunch");
-    this.theme = window.localStorage.getItem("theme");
+    this.scheduleList = window.localStorage.getItem("scheduleList");
+
     this.countdown = window.localStorage.getItem("countdown");
+    this.countdownList = window.localStorage.getItem("countdownList");
+
+    this.theme = window.localStorage.getItem("theme");
+    this.lunch = window.localStorage.getItem("lunch");
 
     //config variables
     this.apiEndpoint = config.apiEndpoint;
@@ -32,10 +36,12 @@ class App extends React.Component {
 
     this.state = {
       page: "schedule",
-      countdown: this.countdown ? JSON.parse(this.countdown) : null,
-      schedule: this.schedule ? JSON.parse(this.schedule) : null,
+      countdownList: this.countdownList ? JSON.parse(this.countdownList) : [],
+      scheduleList: this.scheduleList ? JSON.parse(this.scheduleList) : [],
+      scheduleType: config.schedule.use ? "preset" : "custom",
       theme: this.theme ? themes.find((x) => x.name == this.theme) : themes[0],
-      // lunch: this.lunch
+      lunch: this.lunch || null,
+      scheduleFile: null,
     };
 
     //pages for nav
@@ -51,18 +57,65 @@ class App extends React.Component {
     this.setCountdown = this.setCountdown.bind(this);
     this.setSchedule = this.setSchedule.bind(this);
     this.setTheme = this.setTheme.bind(this);
+    this.setLunch = this.setLunch.bind(this);
   }
 
   componentDidMount() {
     this.setTheme(this.state.theme, false);
+
+    //import the preset schedule
+    if (config.schedule.use) {
+      const schedules = Promise.all(config.schedule.path.map(x=>import(
+        `./schedules/schedule-${x}.json`
+      )));
+      schedules
+        .then((schedules) => {
+          this.setState({
+            scheduleType: "preset",
+            scheduleFile: schedules,
+          });
+          window.localStorage.setItem("scheduleType", "preset");
+        })
+        .catch((err) => {
+          console.error(
+            `${err} Error importing custom schedule at path
+             src/schedules/schedule-${config.schedule.path}.json`
+          );
+        });
+    }
+
+    //update single schedule to list
+    if (this.schedule) {
+      const f = [
+        ...this.state.scheduleList,
+        {
+          periods: JSON.parse(this.schedule),
+          name: "",
+          days: ["mo", "tu", "we", "th", "fr", "sa", "su"],
+        },
+      ];
+      this.setState((s) => ({
+        scheduleList: f,
+      }));
+      window.localStorage.removeItem("schedule");
+      window.localStorage.setItem("scheduleList", JSON.stringify(f));
+    }
+
+    //update single countdown to list
+    if (this.countdown) {
+      this.setState((s) => ({
+        countdownList: [...s.countdownList, JSON.parse(this.countdown)],
+      }));
+      window.localStorage.removeItem("countdown");
+    }
   }
 
   setCountdown(obj) {
     this.setState(() => ({
-      countdown: obj,
+      countdownList: obj,
     }));
 
-    window.localStorage.setItem("countdown", JSON.stringify(obj));
+    window.localStorage.setItem("countdownList", JSON.stringify(obj));
   }
 
   setPage(id) {
@@ -75,26 +128,32 @@ class App extends React.Component {
   }
 
   setLunch(l) {
-    if (!this.schedule.lunches.includes(l)) {
-      console.error(
-        "can't set this lunch because it's not defined in the schedule"
-      );
-      return;
-    }
+    this.setSchedule(
+      this.state.scheduleFile.map(x=>({
+        name: x.name,
+        days: x.days,
+        periods: [
+          ...x.classes.regular,
+          ...x.classes.lunch[l],
+        ]}
+        )),
+      "preset"
+    );
+
     this.setState(() => ({
       lunch: l,
     }));
+
     window.localStorage.setItem("lunch", l);
   }
 
-  setSchedule(s) {
-    if (s.length == 0) {
-      s = null;
-    }
+  setSchedule(schedule) {
+    const s = schedule.map((x) => (x.length == 0 ? null : x));
     this.setState(() => ({
-      schedule: s,
+      scheduleList: s,
     }));
-    window.localStorage.setItem("schedule", JSON.stringify(s));
+
+    window.localStorage.setItem("scheduleList", JSON.stringify(s));
   }
 
   setTheme(t, a) {
@@ -111,7 +170,7 @@ class App extends React.Component {
       window.localStorage.setItem("theme", t.name);
     }
   }
-
+  //myers - mesa alma stake dobson ward
   render() {
     return (
       <>
@@ -130,41 +189,45 @@ class App extends React.Component {
         </nav>
         <main>
           {this.state.page == "schedule" &&
-            (this.state.schedule ? (
-              this.state.lunch ? (
-                <LunchChooser setLunch={this.props.setLunch} />
-              ) : (
-                <BellCountdown
-                  lunch={this.state.lunch}
-                  schedule={this.state.schedule}
-                  scheduleType={this.state.scheduleType}
-                  setLunch={this.setLunch}
-                  display="counters"
-                  theme={this.state.theme}
-                />
-              )
+            (this.state.scheduleList.length > 0 ? (
+              <BellCountdown
+                lunch={this.state.lunch}
+                scheduleList={this.state.scheduleList}
+                scheduleType={this.state.scheduleType}
+                setLunch={this.setLunch}
+                display="counters"
+                theme={this.state.theme}
+              />
+            ) : this.state.scheduleType == "preset" ? (
+              <LunchChooser
+                lunch={this.state.lunch}
+                lunches={config.schedule.lunches}
+                setLunch={this.setLunch}
+              />
             ) : (
               <ScheduleChooser setSchedule={this.setSchedule} />
             ))}
           {this.state.page == "countdown" && (
             <DateCountdown
               setCountdown={this.setCountdown}
-              countdown={this.state.countdown}
+              countdownList={this.state.countdownList}
             />
           )}
           {this.state.page == "settings" && (
             <Settings
-              setLunch={this.onSelectLunch}
-              schedule={this.state.schedule}
+              setLunch={this.setLunch}
+              lunch={this.state.lunch}
+              scheduleList={this.state.scheduleList}
+              scheduleType={this.state.scheduleType}
+              scheduleFile={this.state.scheduleFile}
               setSchedule={this.setSchedule}
               setTheme={this.setTheme}
               setPage={this.setPage}
-              countdown={this.state.countdown}
+              countdownList={this.state.countdownList}
               setCountdown={this.setCountdown}
             />
           )}
           {this.state.page == "updates" && <Updates />}
-
           {this.state.page == "lunchmenu" && <LunchMenu />}
         </main>
         <footer>

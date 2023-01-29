@@ -1,4 +1,16 @@
 {
-    "apiEndpoint": "https://bell-countdown-api-production.up.railway.app",
-    "version": "3.0.0"
+  "version": "3.1.0",
+  "updates": {
+    "use": false,
+    "apiEndpoint": "https://api.example.com/"
+  }, "schedule": {
+    "use": false,
+    "path": ["sample", "alternate"],
+    "lunches": [
+      { "id": "A", "name": "A Lunch" },
+      { "id": "B", "name": "B Lunch" },
+      { "id": "C", "name": "C Lunch" },
+      { "id": "D", "name": "D Lunch" }
+    ]
+  }
 }
