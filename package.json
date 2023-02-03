@@ -1,23 +1,25 @@
 {
   "name": "bell-countdown",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "3.0.1",
+  "description": "countdown app for bell schedule",
   "scripts": {
     "start": "vite",
     "build": "vite build"
   },
-  "keywords": [],
+  "keywords": ["react", "vite"],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
+  "engines": {
+    "node": "16.x",
+    "npm": "8.x"
+  },
   "dependencies": {
-    "@vitejs/plugin-react": "^3.0.1",
+    "react": "^18.2.0",
     "react-circular-progressbar": "hman124/react-circular-progressbar",
-    "react-confetti": "^6.1.0",
-    "react-dom": "^18.0.0",
-    "react-use": "^17.4.0"
+    "react-dom": "^18.0.0"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^3.0.1",
     "vite": "^4.0.4"
   }
 }
