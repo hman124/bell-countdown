@@ -1,76 +1,81 @@
 .popup {
   /* position:relative; */
-    background-color: rgba(0,0,0,0.9);
-    width:100vw;
-    height:100vh;
-    position: fixed;
-    top:0;
-    left:0;
-    z-index: 300;
-    display:grid;
-    place-items:center;
-  }
-  
-  .popup .content {
-    transition: transform 0.3s ease-in-out;
-    overflow: auto;
-    max-height:calc(100vh - 2rem);
-    border-radius: 10px;
-    background-color: var(--theme-background);
-    padding-left: 1rem;
-    padding-right: 1rem;
-    width:auto;
-    max-width: calc(100vw - 1rem);
-    
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-  overflow-x: hidden;
-  }
+  background-color: rgba(0, 0, 0, 0.9);
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+}
 
-  .popup .content::-webkit-scrollbar{
-    display:none;
-  }
-  
-  .popup .content .header {
-    height:4rem;
-    position: sticky;
-    top:0;
-    display:flex;
-    align-items:center;
-    border-radius: inherit;
-    border-bottom-left-radius:0;
-    border-bottom-right-radius:0;
-    width:calc(100% + 2rem);
-    background-color: var(--theme-main);
-    color: var(--theme-contrast);
-    padding: 1rem;
-    margin-left: -1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0px 0px 18px 5px rgba(0,0,0,0.3);
-  }
-  
-  .popup .content .header h1 {
+.popup .content {
+  transition: transform 0.3s ease-in-out;
+  overflow: auto;
+  max-height: calc(100vh - 2rem);
+  border-radius: 10px;
+  background-color: var(--theme-background);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: auto;
+  max-width: calc(100vw - 1rem);
+  min-width: 600px;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  overflow-x: hidden;
+}
+
+.popup .content::-webkit-scrollbar {
+  display: none;
+}
+
+.popup .content .header {
+  height: 4rem;
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  border-radius: inherit;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  width: calc(100% + 2rem);
+  background-color: var(--theme-main);
+  color: var(--theme-contrast);
+  padding: 1rem;
+  margin-left: -1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0px 0px 18px 5px rgba(0, 0, 0, 0.3);
+}
+
+.popup .content table {
+  width: 100%;
+  text-align:center;
+}
+
+.popup .content .header h1 {
   /*   float:left; */
-    margin:0;
-    padding: 0;
-    text-align:left;
-  }
-  
-  .popup .content .header span{
-    position: absolute;
-    top:1rem;
-    right:1rem;
-    cursor:pointer;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.popup .content .header span {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
   /*   float:right; */
-  }
-  
-  /* .popup .content form {
+}
+
+/* .popup .content form {
     padding: 1rem;
     max-height:calc(90vh - 4rem);
     overflow: auto;
   }
    */
-  /* .popup input:not([type='checkbox']), .popup textarea, .popup select {
+/* .popup input:not([type='checkbox']), .popup textarea, .popup select {
     width:100%;
     margin-bottom: 1rem;
     display:block;
@@ -81,13 +86,13 @@
     padding: 0.8rem;
     outline:none;
   } */
-  
-  /* .popup input[type=checkbox] {
+
+/* .popup input[type=checkbox] {
     margin-left: 1rem;
     font-size:larger;
   } */
-  
-  /* .popup input.withButton {
+
+/* .popup input.withButton {
     width:90%;
     float:left;
     border-top-right-radius:0;
@@ -103,20 +108,29 @@
     border-bottom-left-radius:0;
   }
    */
-   @keyframes rollout {
-    0% { transform: scale(0.0000001); }
-    100% { transform: scale(1);}
-  }@keyframes rollback {
-      0% { transform: scale(1);}
-      100% { transform: scale(0.0000001); }
+@keyframes rollout {
+  0% {
+    transform: scale(0.0000001);
   }
-  
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes rollback {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.0000001);
+  }
+}
+
 .roll-out {
-    animation-fill-mode:forwards;
-      animation: rollout 0.4s;
+  animation-fill-mode: forwards;
+  animation: rollout 0.4s;
 }
 
 .closing {
-    animation-fill-mode:forwards;
-    animation: rollback 0.4s; 
+  animation-fill-mode: forwards;
+  animation: rollback 0.4s;
 }
