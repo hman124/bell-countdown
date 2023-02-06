@@ -42,6 +42,7 @@ class App extends React.Component {
       theme: this.theme ? themes.find((x) => x.name == this.theme) : themes[0],
       lunch: this.lunch || null,
       scheduleFile: null,
+      settingsPage: null
     };
 
     //pages for nav
@@ -65,9 +66,11 @@ class App extends React.Component {
 
     //import the preset schedule
     if (config.schedule.use) {
-      const schedules = Promise.all(config.schedule.path.map(x=>import(
-        `./schedules/schedule-${x}.json`
-      )));
+      const schedules = Promise.all(
+        config.schedule.path.map((x) =>
+          import(`./schedules/schedule-${x}.json`)
+        )
+      );
       schedules
         .then((schedules) => {
           this.setState({
@@ -82,6 +85,15 @@ class App extends React.Component {
              src/schedules/schedule-${config.schedule.path}.json`
           );
         });
+    } else if (this.scheduleType == "preset") {
+      window.localStorage.removeItem("scheduleType");
+      window.localStorage.removeItem("lunch");
+      window.localStorage.removeItem("scheduleList");
+      this.setState(() => ({
+        scheduleList: [],
+        lunch: null,
+        schedeuleType: "custom",
+      }));
     }
 
     //update single schedule to list
@@ -100,7 +112,6 @@ class App extends React.Component {
       window.localStorage.removeItem("schedule");
       window.localStorage.setItem("scheduleList", JSON.stringify(f));
     }
-
     //update single countdown to list
     if (this.countdown) {
       this.setState((s) => ({
@@ -124,19 +135,17 @@ class App extends React.Component {
     }
     this.setState(() => ({
       page: id,
+      settingsPage: null
     }));
   }
 
   setLunch(l) {
     this.setSchedule(
-      this.state.scheduleFile.map(x=>({
+      this.state.scheduleFile.map((x) => ({
         name: x.name,
         days: x.days,
-        periods: [
-          ...x.classes.regular,
-          ...x.classes.lunch[l],
-        ]}
-        )),
+        periods: [...x.classes.regular, ...x.classes.lunch[l]],
+      })),
       "preset"
     );
 
@@ -205,7 +214,10 @@ class App extends React.Component {
                 setLunch={this.setLunch}
               />
             ) : (
-              <ScheduleChooser setSchedule={this.setSchedule} />
+              <ScheduleChooser settings={()=>{
+                this.setPage("settings")
+                this.setState({settingsPage: "schedule"});
+              }} />
             ))}
           {this.state.page == "countdown" && (
             <DateCountdown
@@ -223,6 +235,7 @@ class App extends React.Component {
               setSchedule={this.setSchedule}
               setTheme={this.setTheme}
               setPage={this.setPage}
+              page={this.state.settingsPage}
               countdownList={this.state.countdownList}
               setCountdown={this.setCountdown}
             />

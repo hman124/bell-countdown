@@ -12,7 +12,7 @@ export default class Settings extends React.Component {
     super(props);
 
     this.state = {
-      page: "about",
+      page: props.page || "about",
       countdownList: props.countdownList,
       scheduleList: props.scheduleList,
       mobile: window.innerWidth <= 1000,
@@ -24,8 +24,7 @@ export default class Settings extends React.Component {
 
     this.pages = [
       { t: "countdown", i: "fa-clock" },
-      { t: "theme", i: "fa-paint-brush" },
-      { t: "about", i: "fa-info-circle" },
+      { t: "theme", i: "fa-paint-brush" }
     ];
 
     if (config.schedule.use) {
@@ -34,6 +33,8 @@ export default class Settings extends React.Component {
       this.pages.push({ t: "schedule", i: "fa-calendar" });
     }
 
+    this.pages.push({ t: "about", i: "fa-info-circle" });
+    
     this.themes = themes;
 
     this.renderPage = this.renderPage.bind(this);

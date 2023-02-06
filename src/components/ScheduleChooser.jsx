@@ -40,7 +40,7 @@ export default function ScheduleChooser(props) {
       <h3 className="heading">Find Your School's Schedule</h3>
       <input
         type="button"
-        onClick={() => setEnter(true)}
+        onClick={() => props.settings()}
         key="entermanually"
         value="Enter Manually"
       />
