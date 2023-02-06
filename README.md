@@ -20,7 +20,7 @@ Bell countdown is a react web app that "counts down" to the next bell in school.
 - schedules registry with schedules for specific schools (community maintained)
 - updates / announcements tab where users can sign up for updates at their school
 
-## Issues and **Bugs**
+## Issues and Bugs
 
 If you find a bug in the code, **please create an issue**. 
 Most of the current code does not have sufficient error handling yet and there will likely be some serious errors.
