@@ -1,5 +1,5 @@
 {
-  "version": "3.1.0",
+  "version": "3.2.0",
   "updates": {
     "use": false,
     "apiEndpoint": "https://api.example.com/"
