@@ -7,7 +7,7 @@
     "build": "vite build"
   },
   "keywords": ["react", "vite"],
-  "author": "",
+  "author": "hman124",
   "license": "MIT",
   "engines": {
     "node": "16.x",
