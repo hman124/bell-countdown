@@ -12,6 +12,10 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+*:not(input, textarea, select, button){
+    user-select:none;
+}
+
 :root {
     font-size: 22px;
     --nav-height: 50px;
@@ -133,6 +137,7 @@ table input, table button  {
 }
 
 table td, table th {
+    text-align:center;
     padding: 0.25rem;
 }
 
@@ -149,6 +154,10 @@ label {
     margin-bottom: 1rem;
 }
 
+sup, sub {
+    font-size:0.5rem;
+}
+
 a {
     color: var(--theme-main);
     text-decoration:none;
@@ -158,8 +167,12 @@ a:hover {
     text-decoration: underline;
 }
 
+a.normal {
+    color:var(--theme-text);
+}
+
 p {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 hr {

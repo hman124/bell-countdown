@@ -133,6 +133,8 @@ class App extends React.Component {
     if (this.state.page == id) {
       return;
     }
+
+    document.title = "Bell Countdown";
     this.setState(() => ({
       page: id,
       settingsPage: null
@@ -179,7 +181,7 @@ class App extends React.Component {
       window.localStorage.setItem("theme", t.name);
     }
   }
-  //myers - mesa alma stake dobson ward
+
   render() {
     return (
       <>

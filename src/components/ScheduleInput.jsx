@@ -1,7 +1,7 @@
 import React from "react";
 
 //this file is very erroneous, long, and repetitive
-//but it works 
+//but it works
 
 export default class ScheduleInput extends React.Component {
   constructor(props) {
@@ -13,20 +13,20 @@ export default class ScheduleInput extends React.Component {
       errors: [],
       dragging: false,
       mobile: window.innerWidth <= 700,
-      index: 0
+      index: 0,
     };
 
     this.saveSchedule = this.saveSchedule.bind(this);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     window.addEventListener("resize", () => {
-      this.setState(s=>({mobile: window.innerWidth <= 700}));
-    })
+      this.setState((s) => ({ mobile: window.innerWidth <= 700 }));
+    });
   }
 
-  dTime(t){
-    let [h,m]=t.split(":");
+  dTime(t) {
+    let [h, m] = t.split(":");
 
     let d = new Date();
     d.setHours(h);
@@ -35,34 +35,54 @@ export default class ScheduleInput extends React.Component {
     return d;
   }
 
-  saveSchedule(t){
-    console.log("wow");
-    //check for invalid class periods
-    let errors = t.map((x,i, a)=>{
-      console.log(x);
-      if(!x.name || !x.time.length || !x.time[0] || !x.time[1]){
+  saveSchedule(t) {
+    
+    //check for blank class periods - we can't sort if so
+    let blank = t.map((x) => {
+      if (!x.name || !x.time.length || !x.time[0] || !x.time[1]) {
         console.log("blank");
         return "Please fill in all fields";
-      } else if(this.dTime(x.time[0]) > this.dTime(x.time[1])){
-        return "Invalid times. Start time must be before end time";
-      } else if(i > 0 && a[i-1].time[1] && this.dTime(x.time[0]) < this.dTime(a[i-1].time[1]) ) {
-        return "Invalid times. Start time must be after previous end time";
-      } else {
-        return "";
       }
+
+      return null;
     });
 
-    this.setState({errors});
-
-    if(errors.filter(x=>x!=="").length == 0){
-      this.props.setSchedule(t);
+    if (blank.filter((x) => !!x ).length > 0) {
+      this.setState({ errors: blank });
+      console.log("returning");
+      return;
     }
+
+    //sort the schedule
+    let sr = t.sort((a, b) => this.dTime(a.time[0]) - this.dTime(b.time[0]));
+    console.log(sr);
+    //if problems persist, list them here
+    let time = sr.map((x, i, a) => {
+      if (this.dTime(x.time[0]) > this.dTime(x.time[1])) {
+        return "Invalid times. Start time must be before end time";
+      } else if (
+        i > 0 &&
+        a[i - 1].time[1] &&
+        this.dTime(x.time[0]) < this.dTime(a[i - 1].time[1])
+      ) {
+        return "Invalid times. Start time must be after previous end time";
+      }
+      
+      return "";
+    });
+
+
+    this.setState({ errors: time });
+    
+    this.props.setSchedule(sr);
   }
 
   renderPeriodTable() {
-    return this.state.schedule.map((x, i) => (
-      this.state.mobile? <React.Fragment>
-        <p>Period Name</p>  <input
+    return this.state.schedule.map((x, i) =>
+      this.state.mobile ? (
+        <React.Fragment>
+          <p>Period Name</p>{" "}
+          <input
             onChange={(e) =>
               this.setState((s) => {
                 var t = s.schedule.concat();
@@ -73,9 +93,8 @@ export default class ScheduleInput extends React.Component {
             }
             type="text"
             placeholder="1st Period"
-            value={x.name||""}
+            value={x.name || ""}
           />
-
           <p>Start Time</p>
           <input
             type="time"
@@ -84,10 +103,10 @@ export default class ScheduleInput extends React.Component {
                 var t = s.schedule.concat();
                 t[i].time[0] = e.target.value;
                 this.saveSchedule(t);
-                return { schedule: t};
+                return { schedule: t };
               })
             }
-            value={x.time[0]||""}
+            value={x.time[0] || ""}
           />
           <p>End Time</p>
           <input
@@ -100,105 +119,136 @@ export default class ScheduleInput extends React.Component {
                 return { schedule: t };
               })
             }
-            value={x.time[1]||""}
+            value={x.time[1] || ""}
           />
           <span className="error">{this.state.errors[i]}</span>
-        </React.Fragment>: 
+        </React.Fragment>
+      ) : (
         <React.Fragment key={i}>
-        <tr>
-        <td>
-        <input
-            onChange={(e) =>
-              this.setState((s) => {
-                var t = s.schedule.concat();
-                t[i].name = e.target.value;
-                this.saveSchedule(t);
-                return { schedule: t };
-              })
-            }
-            type="text"
-            placeholder="1st Period"
-            value={x.name||""}
-          />
-        </td>
-        <td>
-          <input
-            type="time"
-            onChange={(e) =>
-              this.setState((s) => {
-                var t = s.schedule.concat();
-                t[i].time[0] = e.target.value;
-                this.saveSchedule(t);
-                return { schedule: t };
-              })
-            }
-            value={x.time[0]||""}
-          />
-        </td>
-        <td>
-          <input
-            type="time"
-            onChange={(e) =>
-              this.setState((s) => {
-                var t = s.schedule.concat();
-                t[i].time[1] = e.target.value;
-                this.saveSchedule(t);
-                return { schedule: t};
-            })
-        }
-        value={x.time[1]||""}
-        />
-        </td>
-        <td>
-          <button
-            className="inline"
-            onClick={() =>
-              this.setState((s) => {
-                var t = s.schedule.concat();
-                t.splice(i, 1);
-                this.saveSchedule(t);
-                return { schedule: t };
-              })
-            }
-            title="Remove Class Period"
-            >
-            <i className="fa fa-x"></i>
-          </button>
-        </td>
-      </tr><tr>
-        <td colSpan="3">
-          {this.state.errors[i] && <p className="error">{this.state.errors[i]}</p>}
-        </td>
-
-      </tr></React.Fragment>
-    ));
+          <tr>
+            <td>
+              <input
+                onChange={(e) =>
+                  this.setState((s) => {
+                    var t = s.schedule.concat();
+                    t[i].name = e.target.value;
+                    this.saveSchedule(t);
+                    return { schedule: t };
+                  })
+                }
+                type="text"
+                placeholder="1st Period"
+                value={x.name || ""}
+              />
+            </td>
+            <td>
+              <input
+                type="time"
+                onChange={(e) =>
+                  this.setState((s) => {
+                    var t = s.schedule.concat();
+                    t[i].time[0] = e.target.value;
+                    this.saveSchedule(t);
+                    return { schedule: t };
+                  })
+                }
+                value={x.time[0] || ""}
+              />
+            </td>
+            <td>
+              <input
+                type="time"
+                onChange={(e) =>
+                  this.setState((s) => {
+                    var t = s.schedule.concat();
+                    t[i].time[1] = e.target.value;
+                    this.saveSchedule(t);
+                    return { schedule: t };
+                  })
+                }
+                value={x.time[1] || ""}
+              />
+            </td>
+            <td>
+              <button
+                className="inline"
+                onClick={() =>
+                  this.setState((s) => {
+                    var t = s.schedule.concat();
+                    t.splice(i, 1);
+                    this.saveSchedule(t);
+                    return { schedule: t };
+                  })
+                }
+                title="Remove Class Period"
+              >
+                <i className="fa fa-x"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td colSpan="3">
+              {this.state.errors[i] && (
+                <p className="error">{this.state.errors[i]}</p>
+              )}
+            </td>
+          </tr>
+        </React.Fragment>
+      )
+    );
   }
 
   render() {
     return (
-     <>{this.state.schedule.length > 0 ? (this.state.mobile ? 
-      <div className="table-mobile">
-        {this.renderPeriodTable()[this.state.index]}
-        <p className="text-center">period {this.state.index+1} out of {this.state.schedule.length}</p>
-        <div>
-        <button title="delete this period" disabled={this.state.schedule.length==0} onClick={()=>this.setState((s) => {
-          if(!confirm("Delete this class period?")) {return}
-                var t = s.schedule.concat();
-                t.splice(s.index, 1);
-                this.saveSchedule(t);
-                return { schedule: t, index: 0};
-              })}>
-          <i className="fa fa-x"></i>
-        </button>
-        <button disabled={this.state.index==0} onClick={()=>this.setState(s=>({index:Math.max(s.index-1, 0)}))}>
-          <i className="fa fa-arrow-left"></i>
-        </button>
-        <button disabled={this.state.index==this.state.schedule.length-1} onClick={()=>this.setState(s=>({index:Math.min(s.index+1, s.schedule.length-1)}))}>
-          <i className="fa fa-arrow-right"></i>
-        </button>
-        </div>
-      </div>
-      :
+      <>
+        {this.state.schedule.length > 0 ? (
+          this.state.mobile ? (
+            <div className="table-mobile">
+              {this.renderPeriodTable()[this.state.index]}
+               <button
+                  title="delete this period"
+                  disabled={this.state.schedule.length == 0}
+                  onClick={() =>
+                    this.setState((s) => {
+                      if (!confirm("Delete this class period?")) {
+                        return; 
+                      }
+                      var t = s.schedule.concat();
+                      t.splice(s.index, 1);
+                      this.saveSchedule(t);
+                      return { schedule: t, index: 0 };
+                    })
+                  }
+                >
+                  <i className="fa fa-x"></i>
+                </button>
+              <p className="text-center">
+                <button
+                style={{marginRight: "1rem"}}
+                className="inline"
+                  disabled={this.state.index == 0}
+                  onClick={() =>
+                    this.setState((s) => ({ index: Math.max(s.index - 1, 0) }))
+                  }>
+                  <i className="fa fa-arrow-left"></i>
+                </button>
+                period {this.state.index + 1} out of{" "}
+                {this.state.schedule.length}
+                <button
+                style={{marginLeft: "1rem"}}
+                className="inline"
+                  disabled={this.state.index == this.state.schedule.length - 1}
+                  onClick={() =>
+                    this.setState((s) => ({
+                      index: Math.min(s.index + 1, s.schedule.length - 1),
+                    }))
+                  }
+                >
+                  <i className="fa fa-arrow-right"></i>
+                </button>
+              </p>
+            </div>
+          ) : (
             <table>
               <thead></thead>
               <tbody>
@@ -211,32 +261,39 @@ export default class ScheduleInput extends React.Component {
                 {this.renderPeriodTable()}
               </tbody>
             </table>
-        ) :<p>
-            No class periods yet. Click the <i className="fa fa-plus-circle"></i> icon to add a class period.</p>}
-    
+          )
+        ) : (
+          <p>
+            No class periods yet. Click the{" "}
+            <i className="fa fa-plus-circle"></i> icon to add a class period.
+          </p>
+        )}
+<hr/>
         <button
-        title="New Class Period"
+          title="New Class Period"
           onClick={() =>
             this.setState((s) => {
               var e = s.schedule.concat();
               e.push({ name: "", time: [] });
-              return { schedule: e, index:  e.length-1};
+              return { schedule: e, index: e.length - 1 };
             })
           }
         >
-            <i className="fa fa-plus-circle"></i>
+          <i className="fa fa-plus-circle"></i>
         </button>
         <button
-        title="Reset Schedule"
-              onClick={() => {
-                if(!confirm("Delete your entire schedule?")){return;}
-                this.setState({schedule:[]});
-                this.saveSchedule([]);
-              }}
-              disabled={this.state.schedule.length == 0}
-            >
-              <i className="fa fa-trash"></i>
-            </button>
+          title="Reset Schedule"
+          onClick={() => {
+            if (!confirm("Delete your entire schedule?")) {
+              return;
+            }
+            this.setState({ schedule: [] });
+            this.saveSchedule([]);
+          }}
+          disabled={this.state.schedule.length == 0}
+        >
+          <i className="fa fa-trash"></i>
+        </button>
       </>
     );
   }

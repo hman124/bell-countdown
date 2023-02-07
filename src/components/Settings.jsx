@@ -353,8 +353,7 @@ export default class Settings extends React.Component {
                 close={() => this.setState({ modal: { open: false } })}
               >
                 <p>
-                  <i className="fa fa-save"></i> saves automatically
-                </p>
+                  <i className="fa fa-save"></i> auto save | <i className="fa fa-arrow-up"></i> auto sort</p>
                 <p>Schedule Name:</p>
                 <input
                   maxLength="40"

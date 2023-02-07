@@ -1,32 +1,34 @@
 import React from "react";
 
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 import "../styles/BellCountdown.css";
+import Modal from "./Modal.jsx";
 
 class BellCountdown extends React.Component {
   constructor(props) {
     super(props);
     this.schedule = props.schedule;
 
-    const days = [ "su", "mo", "tu", "we", "th", "fr", "sa"];
+    const days = ["su", "mo", "tu", "we", "th", "fr", "sa"];
     const d = new Date();
-
 
     this.weekday = days[d.getDay()];
     console.log(this.weekday, props.scheduleList);
     this.state = {
       countdown: {},
       clock: this.getClock(),
-      schedule: props.scheduleList.find(x=>x.days.includes(this.weekday)) || null,
+      schedule:
+        props.scheduleList.find((x) => x.days.includes(this.weekday)) || null,
       counter: Math.min(window.innerWidth / 4, window.innerHeight / 4),
+      schedulemodal: false,
     };
 
     this.styles = buildStyles({
       pathColor: props.theme.main,
       textColor: props.theme.main,
-      trailColor: props.theme.type == "light"? "#aaa" : "#fff",
-      backgroundColor: "#aaaaaa"
+      trailColor: props.theme.type == "light" ? "#aaa" : "#fff",
+      backgroundColor: "#aaaaaa",
     });
 
     this.tick = this.tick.bind(this);
@@ -44,7 +46,7 @@ class BellCountdown extends React.Component {
   componentDidMount() {
     window.addEventListener("resize", this.resizeDimensions);
     this.interval = setInterval(this.tick, 1000);
-    this.setState({countdown: this.getCountdown()})
+    this.setState({ countdown: this.getCountdown() });
   }
 
   componentWillUnmount() {
@@ -82,7 +84,9 @@ class BellCountdown extends React.Component {
   }
 
   getCountdown() {
-    if(!this.state.schedule){return {school: false, reason: "There is no schedule for today"}};
+    if (!this.state.schedule) {
+      return { school: false, reason: "There is no schedule for today" };
+    }
     const d = new Date();
     // if (/[60]/.test(d.getDay())) return { school: false, reason: "Weekend" };
     const mins = d.getHours() * 60 + d.getMinutes(),
@@ -111,9 +115,10 @@ class BellCountdown extends React.Component {
         beg = this.toMins(prevPeriod.time[1]);
       return {
         school: true,
-        current: `Passing Period (after ${prevPeriod.name})`,
+        current: `Passing Period`,
         next: nextPeriod.name,
         end: nextPeriod.time[0],
+        start: prevPeriod.time[1],
         percent: Math.trunc(((mins - beg) / (end - beg)) * 100),
         time: this.getTimeLeft(end - mins),
         length: end - beg,
@@ -128,6 +133,7 @@ class BellCountdown extends React.Component {
         current: period.name,
         next: next ? next.name : false,
         end: period.time[1],
+        start: period.time[0],
         percent: Math.trunc(((mins - beg) / (end - beg)) * 100),
         time: this.getTimeLeft(end - mins),
         length: end - beg,
@@ -150,29 +156,14 @@ class BellCountdown extends React.Component {
   }
 
   tick() {
-    const d = new Date(),
-      seconds = 60 - d.getSeconds();
-    if (
-      seconds % 15 == 0 ||
-      seconds == 0 ||
-      seconds == 59 ||
-      this.getClock() !== this.state.clock
-    ) {
-      this.setState({
-        clock: this.getClock(),
-        countdown: this.getCountdown(),
-      });
-    } else if (this.state.countdown.school) {
-      this.setState((s) => ({
-        countdown: {
-          ...s.countdown,
-          time: {
-            ...s.countdown.time,
-            seconds: this.zeroPad(seconds),
-          },
-        },
-      }));
-    }
+    const count = this.getCountdown();
+
+    this.setState({
+      clock: this.getClock(),
+      countdown: count,
+    });
+
+    document.title = `${count.time.minutes}:${count.time.seconds} - Bell Countdown`;
   }
 
   to12hrTime(time) {
@@ -180,7 +171,7 @@ class BellCountdown extends React.Component {
       (((+time.split(":")[0] + 11) % 12) + 1).toString() +
       ":" +
       time.split(":")[1] +
-      (+time.split(":")[0] >= 12 ? " PM" : "")
+      (+time.split(":")[0] >= 12 ? " PM" : " AM")
     );
   }
 
@@ -190,19 +181,43 @@ class BellCountdown extends React.Component {
         <h1>{this.state.clock}</h1>
         {this.state.countdown.school ? (
           <>
-                <h1>{this.state.countdown.current}</h1>
-                <div className="counters-container">
-                  <div style={{width: this.state.counter, height: this.state.counter}} className="progressbar-container">
-                    <CircularProgressbar styles={this.styles} value={this.state.countdown.time.minutes} maxValue={this.state.countdown.length} text={this.state.countdown.time.minutes.toString()}/>
-                  </div>
-                  <div style={{width: this.state.counter, height: this.state.counter}} className="progressbar-container">
-                    <CircularProgressbar styles={this.styles} value={this.state.countdown.time.seconds} maxValue={60} text={this.state.countdown.time.seconds.toString()}/>
-                  </div>                  
-                  <p className="progressbar-label">Minutes</p>
-                  <p className="progressbar-label">Seconds</p>
-                </div>
-            <p>Ends At {this.to12hrTime(this.state.countdown.end)}</p>
-            {this.state.countdown.next ? <p>Next Period: {this.state.countdown.next}</p> : null }
+            <h1>{this.state.countdown.current}</h1>
+            <div className="counters-container">
+              <div
+                style={{
+                  width: this.state.counter,
+                  height: this.state.counter,
+                }}
+                className="progressbar-container"
+              >
+                <CircularProgressbar
+                  styles={this.styles}
+                  value={this.state.countdown.time.minutes}
+                  maxValue={this.state.countdown.length}
+                  text={this.state.countdown.time.minutes.toString()}
+                />
+              </div>
+              <div
+                style={{
+                  width: this.state.counter,
+                  height: this.state.counter,
+                }}
+                className="progressbar-container"
+              >
+                <CircularProgressbar
+                  styles={this.styles}
+                  value={this.state.countdown.time.seconds}
+                  maxValue={60}
+                  text={this.state.countdown.time.seconds.toString()}
+                />
+              </div>
+              <p className="progressbar-label">Minutes</p>
+              <p className="progressbar-label">Seconds</p>
+            </div>
+            <p><i className="fa fa-clock"></i> {this.to12hrTime(this.state.countdown.start)} - {this.to12hrTime(this.state.countdown.end)}</p>
+            {this.state.countdown.next ? (
+              <p><i className="fa fa-angles-right"></i> {this.state.countdown.next}</p>
+            ) : null}
           </>
         ) : (
           <>
@@ -210,7 +225,48 @@ class BellCountdown extends React.Component {
             <p>{this.state.countdown.reason}</p>
           </>
         )}
-        {this.state.schedule && <p>{this.state.schedule.name}</p>}
+        {this.state.schedule && (
+          <>
+          <p><i className="fa fa-calendar"></i>{" "}
+            {this.state.schedule.name}{" "}
+            (<a
+              href="#"
+              onClick={() => this.setState(() => ({ schedulemodal: true }))}
+              >view</a>)
+              </p>
+
+            {this.state.schedulemodal && (
+              <Modal
+                open={this.state.schedulemodal}
+                title="Schedule"
+                close={() => this.setState(() => ({ schedulemodal: false }))}
+              >
+                <table>
+                  <tbody>
+                    <tr>
+                      <th>Name</th>
+                      <th>Start</th>
+                      <th>End</th>
+                    </tr>
+                    {this.state.schedule.periods
+                      .sort(
+                        (a, b) =>
+                          this.toMins(a.time[0]) - this.toMins(b.time[0])
+                      )
+                      .map((x, i) => (
+                        <tr key={i}>
+                          <td>{x.name}</td>
+                          <td>{this.to12hrTime(x.time[0])}</td>
+                          <td>{this.to12hrTime(x.time[1])}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </Modal>
+            )}
+          </>
+        )}
+
         {this.props.lunch && <p>{this.props.lunch} Lunch</p>}
       </div>
     );
