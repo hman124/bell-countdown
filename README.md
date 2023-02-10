@@ -6,6 +6,7 @@ Bell countdown is a react web app that "counts down" to the next bell in school.
 
 ## About 
 
+Bell Countdown started as a way to count down every agonizing second left of school. Times were rough. Nowadays, the app has a ton of cool features and is quite useful when in class. Thanks for using Bell Countdown! 
 
 ## Features
 
