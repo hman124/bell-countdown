@@ -21,6 +21,7 @@
     --nav-height: 50px;
     --footer-height: 25px;
     --main-height: calc(100vh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
+    --main-height: calc(100svh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
     
     --theme-main: rgb(57, 107, 243);
     --theme-text: black;
