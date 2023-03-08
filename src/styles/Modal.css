@@ -133,3 +133,13 @@
   animation-fill-mode: forwards;
   animation: rollback 0.4s;
 }
+
+@media screen and (max-width: 800px){
+  .popup .content {
+    width: 100vw;
+    height: 100vh;
+    height: 100svh;
+    max-height:unset;
+    border-radius: 0;
+  }
+}
