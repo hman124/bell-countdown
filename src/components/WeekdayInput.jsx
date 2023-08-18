@@ -19,6 +19,5 @@ export default function WeekdayInput(props) {
         props.onChange(d);
       }} className={"weekday"+ (days.includes(x)? " selected" : "")}><p>{x}</p></div>
     )}
-    <div style={{clear:"both"}}></div>
     </div>
 }

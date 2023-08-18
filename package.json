@@ -3,7 +3,7 @@
   "version": "3.0.1",
   "description": "countdown app for bell schedule",
   "scripts": {
-    "start": "vite",
+    "start": "vite --host",
     "build": "vite build"
   },
   "keywords": ["react", "vite"],

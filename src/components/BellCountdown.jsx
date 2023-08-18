@@ -84,13 +84,17 @@ class BellCountdown extends React.Component {
   }
 
   getCountdown() {
-    if (!this.state.schedule) {
+    if (!this.state.schedule || !this.state.schedule.periods) {
       return { school: false, reason: "There is no schedule for today" };
     }
     const d = new Date();
     // if (/[60]/.test(d.getDay())) return { school: false, reason: "Weekend" };
-    const mins = d.getHours() * 60 + d.getMinutes(),
-      times = this.state.schedule.periods,
+    if(!times){
+      return;
+    }
+    
+    const times = this.state.schedule.periods,
+      mins = d.getHours() * 60 + d.getMinutes(),
       list = times
         .map((x) => x.time)
         .flat()

@@ -404,9 +404,10 @@ export default class Settings extends React.Component {
                   setSchedule={(sc) =>
                     this.saveTimes(this.state.scheduleModal.index, sc)
                   }
+                  saveAction={this.state.scheduleModal.close}
                 ></ScheduleInput>
 
-                <button onClick={()=>this.state.scheduleModal.close()}><i className="fa fa-save"></i> Save</button>
+                
               </Modal>
             )}
 

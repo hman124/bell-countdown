@@ -17,9 +17,9 @@
 }
 
 :root {
-    font-size: 22px;
+    font-size: 1.8rem;
     --nav-height: 50px;
-    --footer-height: 25px;
+    --footer-height: 1rem;
     --main-height: calc(100vh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
     --main-height: calc(100svh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
     
@@ -27,6 +27,8 @@
     --theme-text: black;
     --theme-contrast: white;
     --theme-background: white;
+
+    --input-margin: 1rem;
     
 }
 
@@ -79,7 +81,7 @@ nav.home-nav ul li.current::after {
 
 main {
     height: var(--main-height);
-    padding: 20px;
+    padding: 1rem;
     padding-bottom: 0;
     /* padding-right: 0; */
     overflow: auto;
@@ -95,19 +97,24 @@ input:not([type=radio],[type=checkbox]), button, select {
     padding: 0.5rem;
     border:none;
     border-radius: 10px;
-    font-size: 0.8em;
-    margin-right: 1rem;
-    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    margin-right: var(--input-margin);
+    margin-bottom: var(--input-margin);
     height: 2rem;
     background-color:var(--theme-background);
     color: var(--theme-text);
     border: 2px var(--theme-main) solid;
     width: 10rem;
+    /* display:block; */
+}
+
+input:last-of-type, button:last-of-type, select:last-of-type {
+    margin-right:0;
 }
 
 input.inline, button.inline {
     width: initial;
-    height:initial;
+    /* height:initial; */
     min-width:0;
     margin-bottom:0;
 }
@@ -119,6 +126,8 @@ input[type=button], input[type=submit], button, select {
     cursor:pointer;
     width:auto;
     min-width: 10rem;
+    /* font-size: 0.5rem; */
+    /* font-weight: bold; */
 } 
 
 input[type=button]:disabled, input[type=submit]:disabled, button:disabled {
@@ -144,6 +153,10 @@ table input, table button  {
 table td, table th {
     text-align:center;
     padding: 0.25rem;
+}
+
+table td button {
+    width: 4rem;
 }
 
 /* form {
@@ -220,6 +233,10 @@ hr {
     border-radius: 10px;
 }
 
+.width-third {
+    width: calc((100% / 3) - (var(--input-margin) * (2/3)));
+}
+
 @keyframes underline {
     from {
         width: 0;
@@ -228,9 +245,9 @@ hr {
     }
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 1000px) {
     body {
-        font-size: 18px;
+        font-size: 0.8rem;
     }
 
     table {
@@ -240,5 +257,9 @@ hr {
     input:not([type=checkbox],[type=radio]), button, select {
         width:100%;
         margin-right: 0;
+    }
+
+    .width-third {
+        width: 100%;
     }
 }

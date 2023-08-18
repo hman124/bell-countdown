@@ -7,6 +7,7 @@
 .weekday {
     width: 2rem;
     height: 2rem;
+    aspect-ratio: 1 / 1;
     border-radius: 50%;
     border: 2px var(--theme-main) solid;
     color: var(--theme-main);
@@ -39,4 +40,10 @@
 .weekday.selected {
     color: var(--theme-contrast);
     background-color: var(--theme-main);
+}
+@media screen and (max-width:1000px){
+    .weekday {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
 }

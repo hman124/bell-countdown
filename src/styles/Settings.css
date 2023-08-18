@@ -70,7 +70,6 @@ nav.settings-nav ul li.current::after {
 } 
 
 nav.settings-nav ul li span {
-
   display:inline-block;
 }
 
@@ -118,8 +117,9 @@ div.color {
   background-color:var(--theme-background);
   padding: 1rem;
   z-index: 80000;
-  height: calc(var(--main-height) - 2rem);
+  height: calc(var(--main-height) - (2.5rem));
   left:0;
+  bottom: 1rem;
   font-size: 1rem;
 }
 
@@ -158,4 +158,6 @@ div.color {
   .page-title-header {
     display:none;
   }
+
+  
 }

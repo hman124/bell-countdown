@@ -12,7 +12,7 @@ export default class ScheduleInput extends React.Component {
       unsaved: false,
       errors: [],
       dragging: false,
-      mobile: window.innerWidth <= 700,
+      mobile: window.innerWidth <= 1000,
       index: 0,
     };
 
@@ -21,7 +21,7 @@ export default class ScheduleInput extends React.Component {
 
   componentDidMount() {
     window.addEventListener("resize", () => {
-      this.setState((s) => ({ mobile: window.innerWidth <= 700 }));
+      this.setState((s) => ({ mobile: window.innerWidth <= 1000 }));
     });
   }
 
@@ -36,7 +36,7 @@ export default class ScheduleInput extends React.Component {
   }
 
   saveSchedule(t) {
-    
+
     //check for blank class periods - we can't sort if so
     let blank = t.map((x) => {
       if (!x.name || !x.time.length || !x.time[0] || !x.time[1]) {
@@ -47,7 +47,7 @@ export default class ScheduleInput extends React.Component {
       return null;
     });
 
-    if (blank.filter((x) => !!x ).length > 0) {
+    if (blank.filter((x) => !!x).length > 0) {
       this.setState({ errors: blank });
       console.log("returning");
       return;
@@ -67,13 +67,13 @@ export default class ScheduleInput extends React.Component {
       ) {
         return "Invalid times. Start time must be after previous end time";
       }
-      
+
       return "";
     });
 
 
     this.setState({ errors: time });
-    
+
     this.props.setSchedule(sr);
   }
 
@@ -205,27 +205,29 @@ export default class ScheduleInput extends React.Component {
           this.state.mobile ? (
             <div className="table-mobile">
               {this.renderPeriodTable()[this.state.index]}
-               <button
-                  title="delete this period"
-                  disabled={this.state.schedule.length == 0}
-                  onClick={() =>
-                    this.setState((s) => {
-                      if (!confirm("Delete this class period?")) {
-                        return; 
-                      }
-                      var t = s.schedule.concat();
-                      t.splice(s.index, 1);
-                      this.saveSchedule(t);
-                      return { schedule: t, index: 0 };
-                    })
-                  }
-                >
-                  <i className="fa fa-x"></i>
-                </button>
+              <button
+                className="icon-with-text"
+                title="delete this period"
+                disabled={this.state.schedule.length == 0}
+                onClick={() =>
+                  this.setState((s) => {
+                    if (!confirm("Delete this class period?")) {
+                      return;
+                    }
+                    var t = s.schedule.concat();
+                    t.splice(s.index, 1);
+                    this.saveSchedule(t);
+                    return { schedule: t, index: 0 };
+                  })
+                }
+              >
+                <i className="fa fa-x"></i>
+                Delete Period
+              </button>
               <p className="text-center">
                 <button
-                style={{marginRight: "1rem"}}
-                className="inline"
+                  style={{ marginRight: "1rem" }}
+                  className="inline"
                   disabled={this.state.index == 0}
                   onClick={() =>
                     this.setState((s) => ({ index: Math.max(s.index - 1, 0) }))
@@ -235,8 +237,8 @@ export default class ScheduleInput extends React.Component {
                 period {this.state.index + 1} out of{" "}
                 {this.state.schedule.length}
                 <button
-                style={{marginLeft: "1rem"}}
-                className="inline"
+                  style={{ marginLeft: "1rem" }}
+                  className="inline"
                   disabled={this.state.index == this.state.schedule.length - 1}
                   onClick={() =>
                     this.setState((s) => ({
@@ -268,8 +270,9 @@ export default class ScheduleInput extends React.Component {
             <i className="fa fa-plus-circle"></i> icon to add a class period.
           </p>
         )}
-<hr/>
+        <hr />
         <button
+          className="icon-with-text width-third"
           title="New Class Period"
           onClick={() =>
             this.setState((s) => {
@@ -283,6 +286,7 @@ export default class ScheduleInput extends React.Component {
           Add Class
         </button>
         <button
+          className="icon-with-text width-third"
           title="Reset Schedule"
           onClick={() => {
             if (!confirm("Delete your entire schedule?")) {
@@ -296,6 +300,7 @@ export default class ScheduleInput extends React.Component {
           <i className="fa fa-trash"></i>
           Clear Schedule
         </button>
+        <button onClick={()=>this.props.saveAction()} className="icon-with-text width-third"><i className="fa fa-save"></i> Save</button>
       </>
     );
   }

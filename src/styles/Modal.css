@@ -9,6 +9,7 @@
   z-index: 300;
   display: grid;
   place-items: center;
+  --header-height: 4rem;
 }
 
 .popup .content {
@@ -34,7 +35,7 @@
 }
 
 .popup .content .header {
-  height: 4rem;
+  height: var(--header-height);
   position: sticky;
   top: 0;
   display: flex;
@@ -65,13 +66,13 @@
 
 .popup .content .header span {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: calc(var(--header-height) / 4);
+  right: calc(var(--header-height) / 4);
   cursor: pointer;
   /*   float:right; */
 }
 
-.popup .content button i.fa:not(.fa-x) {
+.popup .content button.icon-with-text i.fa {
   margin-right: 10px;
 }
 
@@ -141,8 +142,14 @@
   animation: rollback 0.4s;
 }
 
-@media screen and (max-width: 800px){
+@media screen and (max-width: 1000px){
+  .popup {
+    --header-height: 2rem;
+  }
+
   .popup .content {
+    position:fixed;
+    top:0;
     width: 100vw;
     height: 100vh;
     height: 100svh;
