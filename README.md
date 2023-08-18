@@ -1,6 +1,6 @@
 # Bell Countdown 3.1.0
 
-Bell countdown is a react web app that "counts down" to the next bell in school. 
+Bell countdown is a react web app that counts down to the next bell in school. 
 
 [https://bell-countdown.netlify.app](https://bell-countdown.netlify.app)
 
