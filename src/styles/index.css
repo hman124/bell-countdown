@@ -133,6 +133,10 @@ table {
     margin-bottom: 1rem;
 }
 
+table.no-border {
+    border:none;
+}
+
 table input, table button  {
     margin:0 !important;
 }

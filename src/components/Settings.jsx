@@ -17,7 +17,9 @@ export default class Settings extends React.Component {
       scheduleList: props.scheduleList,
       mobile: window.innerWidth <= 1000,
       navopen: false,
-      modal: {
+      scheduleModal: {
+        open: false,
+      }, qrcodeModal: {
         open: false,
       },
     };
@@ -34,7 +36,7 @@ export default class Settings extends React.Component {
     }
 
     this.pages.push({ t: "about", i: "fa-info-circle" });
-    
+
     this.themes = themes;
 
     this.renderPage = this.renderPage.bind(this);
@@ -306,65 +308,75 @@ export default class Settings extends React.Component {
             <hr />
             <h3 className="heading">Current</h3>
             {this.state.scheduleList.length > 0 ?
-            (<table>
-              <tbody>
-                {this.state.scheduleList.map((x, i) => (
-                  <React.Fragment key={i}>
-                    <tr>
-                      <td>{x.name || "untitled schedule"}</td>
-                      <td>
-                        <button
-                          className="inline"
-                          onClick={() =>
-                            this.setState({ modal: { open: true, index: i } })
-                          }
-                        >
-                          <i className="fa fa-pencil"></i>
-                        </button>
-                      </td>
-                      <td>
-                        <button
-                          className="inline"
-                          onClick={() => {
-                            const c = confirm(
-                              "Are you sure you want to delete this schedule?"
-                            );
-                            if (!c) {
-                              return;
+              (<table>
+                <tbody>
+                  {this.state.scheduleList.map((x, i) => (
+                    <React.Fragment key={i}>
+                      <tr>
+                        <td>{x.name || "untitled schedule"}</td>
+                        <td>
+                          <button
+                            className="inline"
+                            onClick={() =>
+                              this.setState({ scheduleModal: { open: true, index: i } })
                             }
-                            const s = this.state.scheduleList.concat();
-                            s.splice(i, 1);
-                            this.setState({ scheduleList: s });
-                            this.props.setSchedule(s);
-                          }}
-                        >
-                          <i className="fa fa-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>) : <p>No schedules yet. Add one below.</p>}
+                          >
+                            <i className="fa fa-pencil"></i>
+                          </button>
+                        </td>
+                        <td>
+                          <button
+                            className="inline"
+                            onClick={() => {
+                              const c = confirm(
+                                "Are you sure you want to delete this schedule?"
+                              );
+                              if (!c) {
+                                return;
+                              }
+                              const s = this.state.scheduleList.concat();
+                              s.splice(i, 1);
+                              this.setState({ scheduleList: s });
+                              this.props.setSchedule(s);
+                            }}
+                          >
+                            <i className="fa fa-trash"></i>
+                          </button>
+                        </td>
+                        {/* <td>
+                          <button className="inline" onClick={() => this.setState({ qrcodeModal: { open: true, index: i } })}>
+                            <i className="fa fa-qrcode"></i>
+                          </button>
+                        </td> */}
+                      </tr>
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>) : <p>No schedules yet. Add one below.</p>}
 
-            {this.state.modal.open && (
+              {this.state.qrcodeModal.open && (
+                <Modal title="Share Schedule" close={()=>this.setState({qrcodeModal: {open: false}})}>
+                  <p>wowsers, content!</p>
+                </Modal>
+              )}
+
+            {this.state.scheduleModal.open && (
               <Modal
                 title="Schedule"
-                close={() => this.setState({ modal: { open: false } })}
+                onLoad={cb=>this.setState(s=>({scheduleModal: {...s.scheduleModal, close: cb}}))}
+                close={() => this.setState({ scheduleModal: { open: false } })}
               >
-                <p>
-                  <i className="fa fa-save"></i> auto save | <i className="fa fa-arrow-up"></i> auto sort</p>
                 <p>Schedule Name:</p>
                 <input
                   maxLength="40"
                   type="text"
                   placeholder="Schedule name"
                   value={
-                    this.state.scheduleList[this.state.modal.index].name || ""
+                    this.state.scheduleList[this.state.scheduleModal.index].name || ""
                   }
                   onChange={(event) => {
                     const f = this.state.scheduleList;
-                    f[this.state.modal.index].name = event.target.value;
+                    f[this.state.scheduleModal.index].name = event.target.value;
                     this.setState((s) => ({
                       scheduleList: f,
                     }));
@@ -374,10 +386,10 @@ export default class Settings extends React.Component {
 
                 <p>Applies to:</p>
                 <WeekdayInput
-                  days={this.state.scheduleList[this.state.modal.index].days}
+                  days={this.state.scheduleList[this.state.scheduleModal.index].days}
                   onChange={(s) => {
                     const f = this.state.scheduleList;
-                    f[this.state.modal.index].days = s;
+                    f[this.state.scheduleModal.index].days = s;
                     this.setState((s) => ({
                       scheduleList: f,
                     }));
@@ -387,12 +399,14 @@ export default class Settings extends React.Component {
                 <hr />
                 <ScheduleInput
                   schedule={
-                    this.state.scheduleList[this.state.modal.index].periods
+                    this.state.scheduleList[this.state.scheduleModal.index].periods
                   }
                   setSchedule={(sc) =>
-                    this.saveTimes(this.state.modal.index, sc)
+                    this.saveTimes(this.state.scheduleModal.index, sc)
                   }
                 ></ScheduleInput>
+
+                <button onClick={()=>this.state.scheduleModal.close()}><i className="fa fa-save"></i> Save</button>
               </Modal>
             )}
 

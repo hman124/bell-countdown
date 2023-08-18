@@ -249,7 +249,7 @@ export default class ScheduleInput extends React.Component {
               </p>
             </div>
           ) : (
-            <table>
+            <table className="no-border">
               <thead></thead>
               <tbody>
                 <tr>
@@ -280,6 +280,7 @@ export default class ScheduleInput extends React.Component {
           }
         >
           <i className="fa fa-plus-circle"></i>
+          Add Class
         </button>
         <button
           title="Reset Schedule"
@@ -293,6 +294,7 @@ export default class ScheduleInput extends React.Component {
           disabled={this.state.schedule.length == 0}
         >
           <i className="fa fa-trash"></i>
+          Clear Schedule
         </button>
       </>
     );

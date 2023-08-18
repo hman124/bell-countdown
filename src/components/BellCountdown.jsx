@@ -157,13 +157,16 @@ class BellCountdown extends React.Component {
 
   tick() {
     const count = this.getCountdown();
-
     this.setState({
       clock: this.getClock(),
       countdown: count,
     });
 
-    document.title = `${count.time.minutes}:${count.time.seconds} - Bell Countdown`;
+    if(count.school){
+      document.title = `${count.time.minutes}:${count.time.seconds} - Bell Countdown`;
+    } else { 
+      document.title = `Bell Countdown`;
+    }
   }
 
   to12hrTime(time) {

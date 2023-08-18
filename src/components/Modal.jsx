@@ -8,6 +8,12 @@ export default function Modal(props) {
       setTimeout(props.close, 200);
     }
 
+    React.useEffect(()=>{
+      if(typeof props.onLoad == "function"){
+        props.onLoad(close);
+      }
+    }, []);
+    
   return (
     <>
       <div className="popup" onClick={close}>

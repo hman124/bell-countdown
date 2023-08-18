@@ -12,7 +12,10 @@
 }
 
 .popup .content {
-  transition: transform 0.3s ease-in-out;
+  transition-property: transform, width, height;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
+  /* transition: transform 0.3s ease-in-out, min-width 0.3s, min-height 0.3s; */
   overflow: auto;
   max-height: calc(100vh - 2rem);
   border-radius: 10px;
@@ -66,6 +69,10 @@
   right: 1rem;
   cursor: pointer;
   /*   float:right; */
+}
+
+.popup .content button i.fa:not(.fa-x) {
+  margin-right: 10px;
 }
 
 /* .popup .content form {
