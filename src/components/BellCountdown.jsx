@@ -274,7 +274,7 @@ class BellCountdown extends React.Component {
           </>
         )}
 
-        {this.props.lunch && <p>{this.props.lunch} Lunch</p>}
+        {this.props.lunch && <p><i className="fa fa-hamburger"></i> {config.schedule.lunches[lunchthis.props.lunch].name} Lunch</p>}
       </div>
     );
   }

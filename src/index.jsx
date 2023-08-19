@@ -120,7 +120,10 @@ class App extends React.Component {
       window.localStorage.removeItem("countdown");
     }
 
-    navigator.serviceWorker.register("/sw.js", {scope: "/"});
+    if ("serviceWorker" in navigator) {
+      // Supported!
+      navigator.serviceWorker.register("/sw.js", {scope: "/"});
+    }
   }
 
   setCountdown(obj) {
