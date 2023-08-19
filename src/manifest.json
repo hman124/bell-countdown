@@ -4,8 +4,14 @@
     "start_url": ".",
     "display": "standalone",
     "background_color": "#ffffff",
+    "theme_color": "#ffffff",
     "description": "Enter your schedule and always know how much time is left in class!",
     "icons": [
+      {
+        "src": "images/android/maskable_icon_x192.png",
+        "sizes": "192x192",
+        "purpose": "any maskable"
+      },
       {
         "src": "images/windows11/SmallTile.scale-100.png",
         "sizes": "71x71"
