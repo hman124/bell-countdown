@@ -32,27 +32,10 @@ Make sure to include the following:
 - browser/user agent error occurred on 
 - relevant errors you find in the devtools console
 
-## Custom School Config
+## Custom School Config (not available yet)
 
-If you would like to fork and re-host this for your school (see also: "Forks / Self-Hosting"), you can program in your school's schedule to share it with others at your school. Just edit `src/config.js` as shown below:
-
-```
-...
-
-"schedule": {
-    "use": true,
-    "path": ["ID", "ID2", "..."],
-    "lunches": [ 
-        {"id": "A", "name": "A Lunch"},
-        {"id": "B", "name": "B Lunch"},
-        ...
-    ]
-}
-
-...
-```
-
-Add your schedule(s) to the folder `src/schedules` (make sure to follow the naming scheme of `schedule-ID.json`) and use the sample files as templates when filling in your school's information.
+If you would like to fork and re-host this for your school (see also: "Forks / Self-Hosting"), you can program in your schedule to share it with others at your school. 
+Head over to [https://steedster.net/projects/bell-countdown/schedule-builder](https://steedster.net/projects/bell-countdown/schedule-builder) and follow the instructions to build a schedule file.
 
 Please note that this feature may be buggy as it is pretty new. Please create an issue if you find anything that doesn't seem right.
 

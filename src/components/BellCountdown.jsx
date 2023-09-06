@@ -87,13 +87,8 @@ class BellCountdown extends React.Component {
     if (!this.state.schedule || !this.state.schedule.periods) {
       return { school: false, reason: "There is no schedule for today" };
     }
-    const d = new Date();
-    // if (/[60]/.test(d.getDay())) return { school: false, reason: "Weekend" };
-    if(!times){
-      return;
-    }
-    
-    const times = this.state.schedule.periods,
+    const d = new Date(),
+      times = this.state.schedule.periods,
       mins = d.getHours() * 60 + d.getMinutes(),
       list = times
         .map((x) => x.time)
@@ -166,9 +161,9 @@ class BellCountdown extends React.Component {
       countdown: count,
     });
 
-    if(count.school){
+    if (count.school) {
       document.title = `${count.time.minutes}:${count.time.seconds} - Bell Countdown`;
-    } else { 
+    } else {
       document.title = `Bell Countdown`;
     }
   }
@@ -234,13 +229,13 @@ class BellCountdown extends React.Component {
         )}
         {this.state.schedule && (
           <>
-          <p><i className="fa fa-calendar"></i>{" "}
-            {this.state.schedule.name}{" "}
-            (<a
-              href="#"
-              onClick={() => this.setState(() => ({ schedulemodal: true }))}
+            <p><i className="fa fa-calendar"></i>{" "}
+              {this.state.schedule.name}{" "}
+              (<a
+                href="#"
+                onClick={() => this.setState(() => ({ schedulemodal: true }))}
               >view</a>)
-              </p>
+            </p>
 
             {this.state.schedulemodal && (
               <Modal
