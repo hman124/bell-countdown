@@ -6,17 +6,12 @@
     "start": "vite --host",
     "build": "vite build"
   },
-  "keywords": ["react", "vite"],
   "author": "hman124",
-  "license": "MIT",
-  "engines": {
-    "node": "16.x",
-    "npm": "8.x"
-  },
   "dependencies": {
     "react": "^18.2.0",
     "react-circular-progressbar": "hman124/react-circular-progressbar",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "react-qr-code": "^2.0.12"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^3.0.1",

@@ -9,7 +9,7 @@
   z-index: 300;
   display: grid;
   place-items: center;
-  --header-height: 4rem;
+  --header-height: 3rem;
 }
 
 .popup .content {

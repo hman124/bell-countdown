@@ -17,7 +17,7 @@
 }
 
 :root {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     --nav-height: 50px;
     --footer-height: 1rem;
     --main-height: calc(100vh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));

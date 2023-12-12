@@ -1,11 +1,13 @@
 import React from "react";
 import "../styles/DateCountdown.css";
+import "../styles/CustomCheckbox.css";
 
 export default class DateCountdown extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       time: {},
+      weekdaysOnly: true
     };
 
     this.tick = this.tick.bind(this);
@@ -36,17 +38,29 @@ export default class DateCountdown extends React.Component {
       t = new Date(countdown.date),
       d = new Date();
     if (t < d) {
+      // if this countdown has expired, remove it
       const z = this.props.countdownList;
       z.splice(index);
       this.props.setCountdown(z);
       return {};
     } else {
-      while (d < t) {
-        if (!/^[60]{1}$/.test(d.getDay())) {
+
+      // if counting all of the weekdays
+      if(this.state.weekdaysOnly){
+
+        while (d < t) {
+          if (!/^[60]{1}$/.test(d.getDay())) {
             days++;
+          }
+          d.setDate(d.getDate() + 1);
         }
-        d.setDate(d.getDate() + 1);
-    }
+      } else {
+        const tt = t.getTime();
+        const dt = d.getTime();
+        const diff = tt - dt;
+
+        days = Math.trunc(diff / (24*60*60*1000));
+      }
 
       const twelve = new Date();
       twelve.setDate(twelve.getDate()+1);
@@ -73,7 +87,18 @@ export default class DateCountdown extends React.Component {
   render() {
     return (
       <div className="DateCountdown container center">
-        <h1>Countdown</h1>
+        <h1 style={{float:"left"}}>Countdown</h1>
+        <label style={{float:"right"}} className="checkbox-container">
+          Only Count Weekdays
+          <input type="checkbox" 
+            onChange={ evt => {
+              this.setState(s=>({weekdaysOnly: !s.weekdaysOnly}), () => {
+                this.tick();
+              });
+            }} checked={this.state.weekdaysOnly}/>
+          <span className="checkmark"></span>
+        </label>
+        <div style={{clear: "both"}}></div>
         <hr/>
         {this.props.countdownList.length == 0 ? (
           <>
@@ -81,7 +106,7 @@ export default class DateCountdown extends React.Component {
           </>
         ) : (
           <>            
-          {this.props.countdownList.map((x,i,a)=><>
+          {this.props.countdownList.map((x,i,a)=><React.Fragment key={i}>
             <h3>{x.title}</h3>
             <span>{x.date}</span>
             {/* <hr/> */}
@@ -92,10 +117,9 @@ export default class DateCountdown extends React.Component {
               <li><p>{this.state.time[i]?.secs_until}</p> seconds</li>
             </ul>
             {i !== a.length-1 && <hr/> }
-          </>)}
+          </React.Fragment>)}
           </>
-        )}
-      </div>
+        )}      </div>
     );
   }
 }

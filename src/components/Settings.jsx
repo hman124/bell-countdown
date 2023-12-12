@@ -17,11 +17,12 @@ export default class Settings extends React.Component {
       scheduleList: props.scheduleList,
       mobile: window.innerWidth <= 1000,
       navopen: false,
+      countdownModal: {
+        open: false
+      },
       scheduleModal: {
         open: false,
-      }, qrcodeModal: {
-        open: false,
-      },
+      }
     };
 
     this.pages = [
@@ -169,6 +170,8 @@ export default class Settings extends React.Component {
       const r = [...this.props.countdownList, countdown];
       this.props.setCountdown(r);
       this.setState(() => ({ countdownList: r }));
+
+      this.state.countdownModal.close();
     }
   }
 
@@ -265,39 +268,47 @@ export default class Settings extends React.Component {
             )}
             <hr />
             <h3 className="heading">Create</h3>
-            <form action="#" onSubmit={this.dateSub}>
-              <label>
-                Date
-                <input
-                  type="date"
-                  min={(() => {
-                    var dtToday = new Date();
-                    dtToday.setDate(dtToday.getDate() + 1);
-                    var month = dtToday.getMonth() + 1;
-                    var day = dtToday.getDate();
-                    var year = dtToday.getFullYear();
+            <input type="button" onClick={() => this.setState(s => ({ countdownModal: { open: true } }))} value="Add Countdown" />
+            {this.state.countdownModal.open &&
+              <Modal 
+                title="New Countdown" 
+                close={() => this.setState(s => ({ countdownModal: { open: false } }))}
+                onLoad={cb => this.setState(s => ({ countdownModal: { ...s.countdownModal, close: cb } }))}>
 
-                    if (month < 10) month = "0" + month.toString();
-                    if (day < 10) day = "0" + day.toString();
+                <form action="#" onSubmit={this.dateSub}>
+                  <label>
+                    Date
+                    <input
+                      type="date"
+                      min={(() => {
+                        var dtToday = new Date();
+                        dtToday.setDate(dtToday.getDate() + 1);
+                        var month = dtToday.getMonth() + 1;
+                        var day = dtToday.getDate();
+                        var year = dtToday.getFullYear();
 
-                    return year + "-" + month + "-" + day;
-                  })()}
-                  required
-                  name="date"
-                />
-              </label>
-              <label>
-                Title:
-                <input
-                  required
-                  type="text"
-                  name="title"
-                  maxLength="25"
-                  placeholder="Countdown Title"
-                />
-              </label>
-              <input type="submit" value="Add Countdown" />
-            </form>
+                        if (month < 10) month = "0" + month.toString();
+                        if (day < 10) day = "0" + day.toString();
+
+                        return year + "-" + month + "-" + day;
+                      })()}
+                      required
+                      name="date"
+                    />
+                  </label>
+                  <label>
+                    Title:
+                    <input
+                      required
+                      type="text"
+                      name="title"
+                      maxLength="25"
+                      placeholder="Countdown Title"
+                    />
+                  </label>
+                  <input type="submit" value="Add Countdown" />
+                </form>
+              </Modal>}
           </>
         );
         break;
@@ -343,27 +354,16 @@ export default class Settings extends React.Component {
                             <i className="fa fa-trash"></i>
                           </button>
                         </td>
-                        {/* <td>
-                          <button className="inline" onClick={() => this.setState({ qrcodeModal: { open: true, index: i } })}>
-                            <i className="fa fa-qrcode"></i>
-                          </button>
-                        </td> */}
                       </tr>
                     </React.Fragment>
                   ))}
                 </tbody>
               </table>) : <p>No schedules yet. Add one below.</p>}
 
-              {this.state.qrcodeModal.open && (
-                <Modal title="Share Schedule" close={()=>this.setState({qrcodeModal: {open: false}})}>
-                  <p>wowsers, content!</p>
-                </Modal>
-              )}
-
             {this.state.scheduleModal.open && (
               <Modal
                 title="Schedule"
-                onLoad={cb=>this.setState(s=>({scheduleModal: {...s.scheduleModal, close: cb}}))}
+                onLoad={cb => this.setState(s => ({ scheduleModal: { ...s.scheduleModal, close: cb } }))}
                 close={() => this.setState({ scheduleModal: { open: false } })}
               >
                 <p>Schedule Name:</p>
@@ -407,7 +407,7 @@ export default class Settings extends React.Component {
                   saveAction={this.state.scheduleModal.close}
                 ></ScheduleInput>
 
-                
+
               </Modal>
             )}
 
