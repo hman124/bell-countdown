@@ -249,7 +249,7 @@ export default class Settings extends React.Component {
 
               <br />
               <i className="fa fa-code"></i>{" "}
-              <a href="javascript:void(0)" onClick={()=>{
+              <a href="#" onClick={()=>{
                 this.setState(s=>{
                   window.localStorage.setItem("devOptions", (!s.devOptions).toString());
                   return {devOptions: !s.devOptions};
@@ -431,8 +431,6 @@ export default class Settings extends React.Component {
                   ))}
                 </tbody>
               </table>) : <p>No schedules yet. Add one below.</p>}
-
-              <button onClick={()=>toast("this is very cool, epic, etc")}>Toast!</button>
             {this.state.scheduleModal.open && (
               <Modal
                 title="Schedule"
