@@ -96,7 +96,7 @@ footer {
 }
 
 input:not([type=radio], [type=checkbox]),
-button,
+button:not(.Toastify button),
 select {
     padding: 0.5rem;
     border: none;
@@ -119,7 +119,7 @@ select:last-of-type {
 }
 
 input.inline,
-button.inline {
+button.inline:not(.Toastify button) {
     width: initial;
     /* height:initial; */
     min-width: 0;
@@ -128,7 +128,7 @@ button.inline {
 
 input[type=button],
 input[type=submit],
-button,
+button:not(.Toastify button),
 select {
     color: var(--theme-contrast);
     background-color: var(--theme-main);
