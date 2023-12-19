@@ -96,7 +96,7 @@ footer {
 }
 
 input:not([type=radio], [type=checkbox]),
-button:not(.Toastify button),
+button,
 select {
     padding: 0.5rem;
     border: none;
@@ -119,7 +119,7 @@ select:last-of-type {
 }
 
 input.inline,
-button.inline:not(.Toastify button) {
+button.inline {
     width: initial;
     /* height:initial; */
     min-width: 0;
@@ -128,7 +128,7 @@ button.inline:not(.Toastify button) {
 
 input[type=button],
 input[type=submit],
-button:not(.Toastify button),
+button,
 select {
     color: var(--theme-contrast);
     background-color: var(--theme-main);
@@ -288,4 +288,11 @@ hr {
     .width-third {
         width: 100%;
     }
+}
+
+.Toastify__close-button {
+    min-width: unset;
+    width: auto;
+    height: auto;
+    margin:0;
 }
