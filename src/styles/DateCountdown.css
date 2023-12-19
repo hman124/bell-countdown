@@ -20,10 +20,25 @@ ul.DateCountdown li p {
   margin:0;
 }
 
+.header {
+  float:left;
+}
+
+.checkbox-container {
+  float:right;
+}
+
 @media screen and (max-width: 800px) {
   ul.DateCountdown li {
     width:100%;
     display: block;
     margin-bottom: 1rem;
+  }
+
+  .header {
+    margin-bottom: 0.5rem;
+  }
+  .checkbox-container, .header {
+    float:unset;
   }
 }

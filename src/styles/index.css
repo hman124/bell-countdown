@@ -5,15 +5,15 @@
 
 * {
     box-sizing: border-box;
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
     transition: background-color 0.2s;
     /* user-select:none; */
     -webkit-tap-highlight-color: transparent;
 }
 
-*:not(input, textarea, select, button){
-    user-select:none;
+*:not(input, textarea, select, button) {
+    user-select: none;
 }
 
 :root {
@@ -22,44 +22,46 @@
     --footer-height: 1rem;
     --main-height: calc(100vh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
     --main-height: calc(100svh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
-    
+
     --theme-main: rgb(57, 107, 243);
     --theme-text: black;
     --theme-contrast: white;
     --theme-background: white;
 
     --input-margin: 1rem;
-    
+
 }
 
 body {
-    font-family:'FiraSans-Medium', Arial, sans-serif;
+    font-family: 'FiraSans-Medium', Arial, sans-serif;
     background-color: var(--theme-background);
     color: var(--theme-text);
 }
 
-nav.home-nav, main, footer {
+nav.home-nav,
+main,
+footer {
     width: 100%;
 }
 
 nav.home-nav {
     height: var(--nav-height);
-    display:grid;
-    place-items:center;
-    box-shadow: 0px 0px 18px 5px rgba(0,0,0,0.3);
+    display: grid;
+    place-items: center;
+    box-shadow: 0px 0px 18px 5px rgba(0, 0, 0, 0.3);
     position: relative;
     z-index: 4;
 }
 
 nav.home-nav ul li {
-    float:left;
-    display:block;
+    float: left;
+    display: block;
     margin-right: 1rem;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 nav.home-nav ul li:last-of-type {
-    margin:0;
+    margin: 0;
 }
 
 nav.home-nav ul li:first-letter {
@@ -68,11 +70,11 @@ nav.home-nav ul li:first-letter {
 
 nav.home-nav ul li.current::after {
     content: "";
-    display:block;
+    display: block;
     background-color: var(--theme-main);
     width: 0;
     height: 3px;
-    margin:auto;
+    margin: auto;
     animation-name: underline;
     animation-duration: 0.3s;
     animation-play-state: running;
@@ -93,47 +95,57 @@ footer {
     height: var(--footer-height);
 }
 
-input:not([type=radio],[type=checkbox]), button, select {
+input:not([type=radio], [type=checkbox]),
+button,
+select {
     padding: 0.5rem;
-    border:none;
+    border: none;
     border-radius: 10px;
     font-size: 0.8rem;
     margin-right: var(--input-margin);
     margin-bottom: var(--input-margin);
     height: 2rem;
-    background-color:var(--theme-background);
+    background-color: var(--theme-background);
     color: var(--theme-text);
     border: 2px var(--theme-main) solid;
     width: 10rem;
     /* display:block; */
 }
 
-input:last-of-type, button:last-of-type, select:last-of-type {
-    margin-right:0;
+input:last-of-type,
+button:last-of-type,
+select:last-of-type {
+    margin-right: 0;
 }
 
-input.inline, button.inline {
+input.inline,
+button.inline {
     width: initial;
     /* height:initial; */
-    min-width:0;
-    margin-bottom:0;
+    min-width: 0;
+    margin-bottom: 0;
 }
 
-input[type=button], input[type=submit], button, select {
+input[type=button],
+input[type=submit],
+button,
+select {
     color: var(--theme-contrast);
     background-color: var(--theme-main);
-    border:none;
-    cursor:pointer;
-    width:auto;
+    border: none;
+    cursor: pointer;
+    width: auto;
     min-width: 10rem;
     /* font-size: 0.5rem; */
     /* font-weight: bold; */
-} 
+}
 
-input[type=button]:disabled, input[type=submit]:disabled, button:disabled {
+input[type=button]:disabled,
+input[type=submit]:disabled,
+button:disabled {
     opacity: 0.7;
     filter: grayscale();
-    cursor:not-allowed;
+    cursor: not-allowed;
 }
 
 table {
@@ -143,15 +155,17 @@ table {
 }
 
 table.no-border {
-    border:none;
+    border: none;
 }
 
-table input, table button  {
-    margin:0 !important;
+table input,
+table button {
+    margin: 0 !important;
 }
 
-table td, table th {
-    text-align:center;
+table td,
+table th {
+    text-align: center;
     padding: 0.25rem;
 }
 
@@ -163,30 +177,32 @@ table td button {
     padding: 1rem;
 } */
 
-form input:not([type=radio],[type=checkbox]) {
-    display:block;
+form input:not([type=radio], [type=checkbox]) {
+    display: block;
 }
 
 label {
-    display:block;
+    display: block;
     margin-bottom: 1rem;
 }
 
-sup, sub {
-    font-size:0.5rem;
+sup,
+sub {
+    font-size: 0.5rem;
 }
 
 a {
     color: var(--theme-main);
-    text-decoration:none;
+    text-decoration: none;
 }
 
-a:hover {
+a:not(.no-underline):hover {
     text-decoration: underline;
+    text-decoration-color: var(--theme-main);
 }
 
 a.normal {
-    color:var(--theme-text);
+    color: var(--theme-text);
 }
 
 p {
@@ -194,9 +210,9 @@ p {
 }
 
 hr {
-    border:none;
+    border: none;
     border-top: 2px var(--theme-main) solid;
-    display:block;
+    display: block;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 }
@@ -206,7 +222,7 @@ hr {
 }
 
 .text-center {
-    text-align:center;
+    text-align: center;
 }
 
 .container {
@@ -214,8 +230,8 @@ hr {
 }
 
 .container.center {
-    margin:auto;
-    width: min(700px, 100vw - 2rem);  
+    margin: auto;
+    width: min(700px, 100vw - 2rem);
 }
 
 .oneline {
@@ -224,8 +240,14 @@ hr {
     margin-right: 0.5rem;
 }
 
+.underline {
+    text-decoration: underline;
+    text-decoration-color: var(--theme-main);
+    text-decoration-thickness: 3px;
+}
+
 .clear {
-    clear:both;
+    clear: both;
 }
 
 .mobiletable {
@@ -240,7 +262,9 @@ hr {
 @keyframes underline {
     from {
         width: 0;
-    } to {
+    }
+
+    to {
         width: 100%;
     }
 }
@@ -254,8 +278,10 @@ hr {
         width: 100%;
     }
 
-    input:not([type=checkbox],[type=radio]), button, select {
-        width:100%;
+    input:not([type=checkbox], [type=radio]),
+    button,
+    select {
+        width: 100%;
         margin-right: 0;
     }
 

@@ -14,7 +14,7 @@ class BellCountdown extends React.Component {
     const d = new Date();
 
     this.weekday = days[d.getDay()];
-    console.log(this.weekday, props.scheduleList);
+
     this.state = {
       countdown: {},
       clock: this.getClock(),
@@ -178,6 +178,10 @@ class BellCountdown extends React.Component {
   }
 
   render() {
+    if (!this.props.visible) {
+      return (<></>);
+    }
+
     return (
       <div className="BellCountdown container center">
         <h1>{this.state.clock}</h1>
@@ -229,12 +233,15 @@ class BellCountdown extends React.Component {
         )}
         {this.state.schedule && (
           <>
-            <p><i className="fa fa-calendar"></i>{" "}
-              {this.state.schedule.name}{" "}
-              (<a
+            <p>
+              <a
                 href="#"
+                className="normal no-underline"
                 onClick={() => this.setState(() => ({ schedulemodal: true }))}
-              >view</a>)
+              >
+                <i className="fa fa-calendar"></i>{" "}
+                <span className="underline">{this.state.schedule.name}</span>
+              </a>
             </p>
 
             {this.state.schedulemodal && (

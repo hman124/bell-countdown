@@ -87,8 +87,8 @@ export default class DateCountdown extends React.Component {
   render() {
     return (
       <div className="DateCountdown container center">
-        <h1 style={{float:"left"}}>Countdown</h1>
-        <label style={{float:"right"}} className="checkbox-container">
+        <h1 className="header">Countdown</h1>
+        <label className="checkbox-container">
           Only Count Weekdays
           <input type="checkbox" 
             onChange={ evt => {

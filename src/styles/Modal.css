@@ -1,64 +1,82 @@
 .popup {
-  /* position:relative; */
-  background-color: rgba(0, 0, 0, 0.9);
+  --header-height: 3rem;
+  
+  animation-duration: var(--_anim-duration);
+  animation-fill-mode: forwards;
+
   width: 100vw;
   height: 100vh;
+
   position: fixed;
   top: 0;
   left: 0;
   z-index: 300;
+  
   display: grid;
   place-items: center;
-  --header-height: 3rem;
 }
 
 .popup .content {
-  transition-property: transform, width, height;
-  transition-duration: 0.3s;
-  transition-timing-function: ease-in-out;
+  /* transition-property: transform, width, height;
+  transition-duration: var(--_anim-duration);
+  transition-timing-function: ease-in-out; */
   /* transition: transform 0.3s ease-in-out, min-width 0.3s, min-height 0.3s; */
-  overflow: auto;
-  max-height: calc(100vh - 2rem);
+
   border-radius: 10px;
   background-color: var(--theme-background);
+
   padding-left: 1rem;
   padding-right: 1rem;
-  min-width:  min(600px, 100vw);
+
+  max-height: calc(100vh - 2rem);
+  min-width: min(600px, 100vw);
   max-width: 100vw;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+
+  overflow: auto;
+  /* hide the scrollbar */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
   overflow-x: hidden;
+
+  animation-fill-mode: forwards;
+  animation-duration: var(--_anim-duration);
 }
 
+/* hide the scrollbar */
 .popup .content::-webkit-scrollbar {
   display: none;
 }
 
 .popup .content .header {
-  height: var(--header-height);
   position: sticky;
   top: 0;
+  
   display: flex;
   align-items: center;
+
   border-radius: inherit;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  width: calc(100% + 2rem);
   background-color: var(--theme-main);
   color: var(--theme-contrast);
+  box-shadow: 0px 0px 18px 5px rgba(0, 0, 0, 0.3);
+  
+  height: var(--header-height);
+  width: calc(100% + 2rem);
+  
   padding: 1rem;
   margin-left: -1rem;
   margin-bottom: 1rem;
-  box-shadow: 0px 0px 18px 5px rgba(0, 0, 0, 0.3);
+  
 }
 
 .popup .content table {
   width: 100%;
-  /* text-align:center; */
 }
 
 .popup .content .header h1 {
-  /*   float:left; */
   margin: 0;
   padding: 0;
   text-align: left;
@@ -76,84 +94,81 @@
   margin-right: 10px;
 }
 
-/* .popup .content form {
-    padding: 1rem;
-    max-height:calc(90vh - 4rem);
-    overflow: auto;
-  }
-   */
-/* .popup input:not([type='checkbox']), .popup textarea, .popup select {
-    width:100%;
-    margin-bottom: 1rem;
-    display:block;
-    background-color: rgb(36,36,36);
-    border: none;
-    border-radius: 5px;
-    color:white;
-    padding: 0.8rem;
-    outline:none;
-  } */
-
-/* .popup input[type=checkbox] {
-    margin-left: 1rem;
-    font-size:larger;
-  } */
-
-/* .popup input.withButton {
-    width:90%;
-    float:left;
-    border-top-right-radius:0;
-    border-bottom-right-radius:0;
-  } */
-/*   
-  .popup input.remove {
-    float:right;
-    width:10%;
-    color: red;
-    border-left: 1px #494949 solid;
-    border-top-left-radius:0;
-    border-bottom-left-radius:0;
-  }
-   */
 @keyframes rollout {
   0% {
     transform: scale(0.0000001);
   }
+
   100% {
     transform: scale(1);
   }
 }
+
 @keyframes rollback {
   0% {
     transform: scale(1);
   }
+
   100% {
     transform: scale(0.0000001);
   }
 }
 
-.roll-out {
-  animation-fill-mode: forwards;
-  animation: rollout 0.4s;
+
+@keyframes fadein {
+  from {
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  to {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
 }
 
-.closing {
-  animation-fill-mode: forwards;
-  animation: rollback 0.4s;
+@keyframes fadeout {
+  from {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  to {
+    background-color: rgba(0, 0, 0, 0);
+  }
+
 }
 
-@media screen and (max-width: 1000px){
+.popup.fadeout {
+  animation-name: fadeout;
+}
+
+.popup.fadein {
+  animation-name: fadein;
+}
+
+.popup.fadein .content {
+  animation-name: rollout;
+}
+
+.popup.fadeout .content {
+  animation-name: rollback;
+}
+
+@media screen and (max-width: 800px) {
   .popup {
     --header-height: 2rem;
   }
 
+  .popup .content .header h1 {
+    font-size: 1rem;
+  }
+
   .popup .content {
-    position:fixed;
-    top:0;
+    position: fixed;
+    top: 0;
     width: 100vw;
     height: 100vh;
     height: 100svh;
-    max-height:unset;
+    max-height: unset;
     border-radius: 0;
   }
 }

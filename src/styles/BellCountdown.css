@@ -15,3 +15,13 @@
 .BellCountdown .progressbar-container {
   margin: auto;
 }
+
+@media screen and (max-width: 1000px){
+  .BellCountdown .counters-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, 1fr);
+
+    row-gap: 2rem;
+
+  }
+}

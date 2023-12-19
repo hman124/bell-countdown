@@ -139,7 +139,6 @@ class App extends React.Component {
       return;
     }
 
-    document.title = "Bell Countdown";
     this.setState(() => ({
       page: id,
       settingsPage: null
@@ -204,17 +203,17 @@ class App extends React.Component {
           </ul>
         </nav>
         <main>
-          {this.state.page == "schedule" &&
-            (this.state.scheduleList.length > 0 ? (
-              <BellCountdown
-                lunch={this.state.lunch}
-                scheduleList={this.state.scheduleList}
-                scheduleType={this.state.scheduleType}
-                setLunch={this.setLunch}
-                display="counters"
-                theme={this.state.theme}
-              />
-            ) : this.state.scheduleType == "preset" ? (
+          <BellCountdown
+            visible={this.state.page == "schedule" && this.state.scheduleList.length > 0}
+            lunch={this.state.lunch}
+            scheduleList={this.state.scheduleList}
+            scheduleType={this.state.scheduleType}
+            setLunch={this.setLunch}
+            theme={this.state.theme}
+          />
+
+          {this.state.page == "schedule" && !this.state.scheduleList.length > 0 &&
+            (this.state.scheduleType == "preset" ? (
               <LunchChooser
                 lunch={this.state.lunch}
                 lunches={config.schedule.lunches}
@@ -226,6 +225,7 @@ class App extends React.Component {
                 this.setState({settingsPage: "schedule"});
               }} />
             ))}
+
           {this.state.page == "countdown" && (
             <DateCountdown
               setCountdown={this.setCountdown}
