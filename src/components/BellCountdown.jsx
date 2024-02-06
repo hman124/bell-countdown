@@ -93,7 +93,8 @@ class BellCountdown extends React.Component {
       list = times
         .map((x) => x.time)
         .flat()
-        .map((x) => this.toMins(x)),
+        .map((x) => this.toMins(x))
+        .sort((a,b)=>a-b),
       itm = list.find((c, i, a) => i > 0 && mins < c && mins >= a[i - 1]),
       i = list.indexOf(itm) + (itm == mins ? 1 : 0);
 
