@@ -1,0 +1,40 @@
+.toggle-slider {
+    height: 1rem;
+    border-radius: 1rem;
+
+    width: 2rem;
+    /* padding: 0.1rem; */
+    padding: 2px;
+
+    background-color: var(--theme-background);
+    border: 2px var(--theme-main) solid;
+
+    display: inline-block;
+}
+
+.toggle-handle {
+    height: calc(1rem - 8px);
+    width: calc(1rem - 8px);
+
+    background-color: var(--theme-main);
+    border-radius: 50%;
+
+    transition: margin 0.2s, background-color 0.3s;
+}
+
+.toggle-slider.active {
+    background-color: var(--theme-main);
+}
+
+.toggle-slider.active .toggle-handle {
+    margin-left: 1rem;
+
+    background-color: var(--theme-background);
+}
+
+.toggle-slider.disabled {
+    background-color: gray;
+    user-select:none;
+    pointer-events: none;
+    border-color: gray;
+}

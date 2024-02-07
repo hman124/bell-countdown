@@ -17,7 +17,7 @@
 }
 
 :root {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     --nav-height: 50px;
     --footer-height: 1rem;
     --main-height: calc(100vh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
@@ -109,7 +109,7 @@ select {
     color: var(--theme-text);
     border: 2px var(--theme-main) solid;
     width: 10rem;
-    /* display:block; */
+    display:block;
 }
 
 input:last-of-type,
@@ -120,6 +120,7 @@ select:last-of-type {
 
 input.inline,
 button.inline {
+    display: inline-block;
     width: initial;
     /* height:initial; */
     min-width: 0;
@@ -250,6 +251,21 @@ hr {
     clear: both;
 }
 
+.info {
+    background-color: var(--theme-main);
+    color: var(--theme-background);
+
+    border-radius: 10px;
+    padding: 0.5rem;
+
+    font-size: 0.8rem;
+
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+
+    display: inline-block;
+}
+
 .mobiletable {
     border: 2px var(--theme-main) solid;
     border-radius: 10px;
@@ -257,6 +273,7 @@ hr {
 
 .width-third {
     width: calc((100% / 3) - (var(--input-margin) * (2/3)));
+    display: inline-block;
 }
 
 @keyframes underline {

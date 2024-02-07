@@ -19,8 +19,7 @@ class BellCountdown extends React.Component {
       countdown: {},
       clock: this.getClock(),
       schedule:
-        props.scheduleList.find((x) => x.days.includes(this.weekday)) || null,
-      counter: Math.min(window.innerWidth / 4, window.innerHeight / 4),
+        props.scheduleList.find((x) => (!("enabled" in x) || x.enabled) && x.days.includes(this.weekday)) || null,
       schedulemodal: false,
     };
 
@@ -32,25 +31,15 @@ class BellCountdown extends React.Component {
     });
 
     this.tick = this.tick.bind(this);
-    this.resizeDimensions = this.resizeDimensions.bind(this);
     this.getCountdown = this.getCountdown.bind(this);
   }
 
-  resizeDimensions() {
-    this.setState({
-      counter: Math.min(window.innerWidth / 4, window.innerHeight / 4),
-    });
-    // this.forceUpdate()
-  }
-
   componentDidMount() {
-    window.addEventListener("resize", this.resizeDimensions);
     this.interval = setInterval(this.tick, 1000);
     this.setState({ countdown: this.getCountdown() });
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.resizeDimensions);
     clearInterval(this.interval);
   }
 
@@ -94,7 +83,7 @@ class BellCountdown extends React.Component {
         .map((x) => x.time)
         .flat()
         .map((x) => this.toMins(x))
-        .sort((a,b)=>a-b),
+        .sort((a, b) => a - b),
       itm = list.find((c, i, a) => i > 0 && mins < c && mins >= a[i - 1]),
       i = list.indexOf(itm) + (itm == mins ? 1 : 0);
 
@@ -190,36 +179,24 @@ class BellCountdown extends React.Component {
           <>
             <h1>{this.state.countdown.current}</h1>
             <div className="counters-container">
-              <div
-                style={{
-                  width: this.state.counter,
-                  height: this.state.counter,
-                }}
-                className="progressbar-container"
-              >
+              <div className="progressbar-container">
                 <CircularProgressbar
                   styles={this.styles}
                   value={this.state.countdown.time.minutes}
                   maxValue={this.state.countdown.length}
                   text={this.state.countdown.time.minutes.toString()}
                 />
+                <p className="progressbar-label">Minutes</p>
               </div>
-              <div
-                style={{
-                  width: this.state.counter,
-                  height: this.state.counter,
-                }}
-                className="progressbar-container"
-              >
+              <div className="progressbar-container">
                 <CircularProgressbar
                   styles={this.styles}
                   value={this.state.countdown.time.seconds}
                   maxValue={60}
                   text={this.state.countdown.time.seconds.toString()}
                 />
+                <p className="progressbar-label">Seconds</p>
               </div>
-              <p className="progressbar-label">Minutes</p>
-              <p className="progressbar-label">Seconds</p>
             </div>
             <p><i className="fa fa-clock"></i> {this.to12hrTime(this.state.countdown.start)} - {this.to12hrTime(this.state.countdown.end)}</p>
             {this.state.countdown.next ? (
@@ -277,7 +254,7 @@ class BellCountdown extends React.Component {
           </>
         )}
 
-        {this.props.lunch && <p><i className="fa fa-hamburger"></i> {config.schedule.lunches[lunchthis.props.lunch].name} Lunch</p>}
+        {/* {this.props.lunch && <p><i className="fa fa-hamburger"></i> {config.schedule.lunches[this.props.lunch].name} Lunch</p>} */}
       </div>
     );
   }

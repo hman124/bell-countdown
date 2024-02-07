@@ -1,7 +1,7 @@
 .BellCountdown .counters-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 3fr 1fr;
+  grid-template-rows: 1fr;
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
@@ -14,14 +14,25 @@
 
 .BellCountdown .progressbar-container {
   margin: auto;
+  margin-bottom: 2rem;
+
+  /* aspect-ratio: 1 */
+  width: min(25vw, 25vh);
+  height: min(25vw, 25vh);
+
 }
 
-@media screen and (max-width: 1000px){
+@media screen and (max-width: 700px) {
   .BellCountdown .counters-container {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(2, 1fr);
-
+  
     row-gap: 2rem;
+  
+  }
 
+  .BellCountdown .progressbar-container {
+    width: 40vw;
+    height: 40vw;
   }
 }

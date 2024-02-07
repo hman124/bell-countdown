@@ -42,7 +42,8 @@ class App extends React.Component {
       theme: this.theme ? themes.find((x) => x.name == this.theme) : themes[0],
       lunch: this.lunch || null,
       scheduleFile: null,
-      settingsPage: null
+      settingsPage: null,
+      installPrompt: null
     };
 
     //pages for nav
@@ -55,8 +56,8 @@ class App extends React.Component {
     ];
 
     this.setPage = this.setPage.bind(this);
-    this.setCountdown = this.setCountdown.bind(this);
-    this.setSchedule = this.setSchedule.bind(this);
+    this.setCountdownList = this.setCountdownList.bind(this);
+    this.setScheduleList = this.setScheduleList.bind(this);
     this.setTheme = this.setTheme.bind(this);
     this.setLunch = this.setLunch.bind(this);
   }
@@ -71,6 +72,8 @@ class App extends React.Component {
           import(`./schedules/schedule-${x}.json`)
         )
       );
+
+      // set the schedules in the state
       schedules
         .then((schedules) => {
           this.setState({
@@ -86,47 +89,60 @@ class App extends React.Component {
           );
         });
     } else if (this.scheduleType == "preset") {
+      // if the schedule is not set to `use`, but is stored as preset,
+      // clean up the localstorage and state to match
       window.localStorage.removeItem("scheduleType");
       window.localStorage.removeItem("lunch");
       window.localStorage.removeItem("scheduleList");
       this.setState(() => ({
         scheduleList: [],
         lunch: null,
-        schedeuleType: "custom",
+        scheduleType: "custom",
       }));
     }
 
+    // ---- compat for older version ----
     //update single schedule to list
-    if (this.schedule) {
-      const f = [
-        ...this.state.scheduleList,
-        {
-          periods: JSON.parse(this.schedule),
-          name: "",
-          days: ["mo", "tu", "we", "th", "fr", "sa", "su"],
-        },
-      ];
-      this.setState((s) => ({
-        scheduleList: f,
-      }));
-      window.localStorage.removeItem("schedule");
-      window.localStorage.setItem("scheduleList", JSON.stringify(f));
-    }
+    // if (this.schedule) {
+    //   const f = [
+    //     ...this.state.scheduleList,
+    //     {
+    //       periods: JSON.parse(this.schedule),
+    //       name: "",
+    //       days: ["mo", "tu", "we", "th", "fr", "sa", "su"],
+    //       preset: false
+    //     },
+    //   ];
+    //   this.setState((s) => ({
+    //     scheduleList: f,
+    //   }));
+    //   window.localStorage.removeItem("schedule");
+    //   window.localStorage.setItem("scheduleList", JSON.stringify(f));
+    // }
+
+
+    // ---- compat for older version ---- 
     //update single countdown to list
-    if (this.countdown) {
-      this.setState((s) => ({
-        countdownList: [...s.countdownList, JSON.parse(this.countdown)],
-      }));
-      window.localStorage.removeItem("countdown");
-    }
+    // if (this.countdown) {
+    //   this.setState((s) => ({
+    //     countdownList: [...s.countdownList, JSON.parse(this.countdown)],
+    //   }));
+    //   window.localStorage.removeItem("countdown");
+    // }
 
     if ("serviceWorker" in navigator) {
       // Supported!
       navigator.serviceWorker.register("/sw.js", {scope: "/"});
+
+      window.addEventListener("beforeinstallprompt", event => {
+        event.preventDefault();
+
+        this.setState({installPrompt: event});
+      });
     }
   }
 
-  setCountdown(obj) {
+  setCountdownList(obj) {
     this.setState(() => ({
       countdownList: obj,
     }));
@@ -146,11 +162,12 @@ class App extends React.Component {
   }
 
   setLunch(l) {
-    this.setSchedule(
+    this.setScheduleList(
       this.state.scheduleFile.map((x) => ({
         name: x.name,
         days: x.days,
         periods: [...x.classes.regular, ...x.classes.lunch[l]],
+        preset: true
       })),
       "preset"
     );
@@ -162,8 +179,10 @@ class App extends React.Component {
     window.localStorage.setItem("lunch", l);
   }
 
-  setSchedule(schedule) {
-    const s = schedule.map((x) => (x.length == 0 ? null : x));
+  // sets the schedule list in the state
+  // and in local storage
+  setScheduleList(schedule) {
+    const s = schedule.map((x) => (x.length == 0 ? [] : x));
     this.setState(() => ({
       scheduleList: s,
     }));
@@ -210,6 +229,7 @@ class App extends React.Component {
             scheduleType={this.state.scheduleType}
             setLunch={this.setLunch}
             theme={this.state.theme}
+            key={JSON.stringify(this.state.scheduleList)}
           />
 
           {this.state.page == "schedule" && !this.state.scheduleList.length > 0 &&
@@ -228,7 +248,6 @@ class App extends React.Component {
 
           {this.state.page == "countdown" && (
             <DateCountdown
-              setCountdown={this.setCountdown}
               countdownList={this.state.countdownList}
             />
           )}
@@ -239,12 +258,13 @@ class App extends React.Component {
               scheduleList={this.state.scheduleList}
               scheduleType={this.state.scheduleType}
               scheduleFile={this.state.scheduleFile}
-              setSchedule={this.setSchedule}
+              setScheduleList={this.setScheduleList}
               setTheme={this.setTheme}
               setPage={this.setPage}
               page={this.state.settingsPage}
               countdownList={this.state.countdownList}
-              setCountdown={this.setCountdown}
+              setCountdownList={this.setCountdownList}
+              installPrompt={this.state.installPrompt}
             />
           )}
           {this.state.page == "updates" && <Updates />}

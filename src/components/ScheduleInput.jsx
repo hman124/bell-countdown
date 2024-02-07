@@ -1,4 +1,5 @@
 import React from "react";
+import ToggleSlider from "./ToggleSlider";
 
 //this file is very erroneous, long, and repetitive
 //but it works

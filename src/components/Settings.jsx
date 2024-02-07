@@ -8,6 +8,7 @@ import Modal from "./Modal.jsx";
 import WeekdayInput from "./WeekdayInput";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ToggleSlider from "./ToggleSlider.jsx";
 
 export default class Settings extends React.Component {
   constructor(props) {
@@ -32,16 +33,14 @@ export default class Settings extends React.Component {
 
     this.pages = [
       { t: "countdown", i: "fa-clock" },
-      { t: "theme", i: "fa-paint-brush" }
+      { t: "theme", i: "fa-paint-brush" },
+      { t: "schedule", i: "fa-calendar" },
+      { t: "about", i: "fa-info-circle" }
     ];
 
     if (config.schedule.use) {
-      this.pages.push({ t: "lunch", i: "fa-hamburger" });
-    } else {
-      this.pages.push({ t: "schedule", i: "fa-calendar" });
+      this.pages.splice(2, 0, { t: "lunch", i: "fa-hamburger" });
     }
-
-    this.pages.push({ t: "about", i: "fa-info-circle" });
 
     this.themes = themes;
 
@@ -49,9 +48,10 @@ export default class Settings extends React.Component {
     this.switchPage = this.switchPage.bind(this);
     this.close = this.close.bind(this);
     this.dateSub = this.dateSub.bind(this);
-    this.removeCount = this.removeCount.bind(this);
+    this.removeCountdown = this.removeCountdown.bind(this);
     this.addSchedule = this.addSchedule.bind(this);
     this.setScheduleList = this.setScheduleList.bind(this);
+    this.toggleSchedule = this.toggleSchedule.bind(this);
   }
 
   componentDidMount() {
@@ -63,9 +63,7 @@ export default class Settings extends React.Component {
   }
 
   setPage(p) {
-    this.setState(() => ({
-      page: p,
-    }));
+    this.setState({ page: p });
   }
 
   renderNav() {
@@ -109,8 +107,8 @@ export default class Settings extends React.Component {
                   <span>{x.t}</span>
                 </li>
               ))}
-              {this.props.prompt && (
-                <li onClick={() => this.props.prompt.prompt()}>Install App</li>
+              {this.props.installPrompt && (
+                <li onClick={() => this.props.installPrompt.prompt()}><i className="fa fa-circle-down"></i> Install App</li>
               )}
             </ul>
           </nav>
@@ -123,19 +121,19 @@ export default class Settings extends React.Component {
     this.props.setTab(0);
   }
 
-  removeCount(i) {
+  removeCountdown(i) {
     const s = this.state.countdownList;
     if (!s[i]) {
       return;
     }
     s.splice(i, 1);
-    this.props.setCountdown(s);
+    this.props.setCountdownList(s);
     this.setState(() => ({ countdownList: s }));
   }
 
   setScheduleList(f) {
     this.setState({ scheduleList: f });
-    this.props.setSchedule(f);
+    this.props.setScheduleList(f);
   }
 
   saveSchedule(sc, i) {
@@ -173,14 +171,14 @@ export default class Settings extends React.Component {
     } else {
       const countdown = { title: e.target.title.value, date: x };
       const r = [...this.props.countdownList, countdown];
-      this.props.setCountdown(r);
+      this.props.setCountdownList(r);
       this.setState(() => ({ countdownList: r }));
 
       this.state.countdownModal.close();
     }
   }
 
-  downloadSchedule(idx){
+  downloadSchedule(idx) {
     const file = JSON.stringify(this.state.scheduleList[idx]);
 
     const blob = new Blob([file]);
@@ -197,26 +195,33 @@ export default class Settings extends React.Component {
     a.remove();
   }
 
-  uploadSchedule(event){
+  toggleSchedule(i, val) {
+    const schedules = this.state.scheduleList.concat();
+    schedules[i].active = val;
+
+    this.setScheduleList(schedules);
+  }
+
+  uploadSchedule(event) {
     const file = event.target.files[0];
-    if(!file){return;}
-    
+    if (!file) { return; }
+
     const reader = new FileReader();
     reader.onload = (response) => {
       try {
 
         const parsed = JSON.parse(response.target.result);
         parsed.name += " (uploaded)";
-        
+
         this.setState(s => {
           const scheduleList = [...s.scheduleList, parsed];
           window.localStorage.setItem("scheduleList", JSON.stringify(scheduleList));
-          return {scheduleList}
+          return { scheduleList }
         });
 
         toast.info("Uploaded File");
-        
-      } catch(err) {
+
+      } catch (err) {
 
       }
     };
@@ -249,10 +254,10 @@ export default class Settings extends React.Component {
 
               <br />
               <i className="fa fa-code"></i>{" "}
-              <a href="#" onClick={()=>{
-                this.setState(s=>{
+              <a href="#" onClick={() => {
+                this.setState(s => {
                   window.localStorage.setItem("devOptions", (!s.devOptions).toString());
-                  return {devOptions: !s.devOptions};
+                  return { devOptions: !s.devOptions };
                 });
               }}>
                 {this.state.devOptions ? "Disable" : "Enable"} Developer Options
@@ -315,7 +320,7 @@ export default class Settings extends React.Component {
                       <td>
                         <button
                           className="inline"
-                          onClick={() => this.removeCount(i)}
+                          onClick={() => this.removeCountdown(i)}
                         >
                           <i className="fa fa-trash"></i>
                         </button>
@@ -329,10 +334,12 @@ export default class Settings extends React.Component {
             )}
             <hr />
             <h3 className="heading">Create</h3>
-            <input type="button" onClick={() => this.setState(s => ({ countdownModal: { open: true } }))} value="Add Countdown" />
+            <button onClick={() => this.setState(s => ({ countdownModal: { open: true } }))}>
+              <i className="fa fa-plus-circle"></i> Add Countdown
+            </button>
             {this.state.countdownModal.open &&
-              <Modal 
-                title="New Countdown" 
+              <Modal
+                title="New Countdown"
                 close={() => this.setState(s => ({ countdownModal: { open: false } }))}
                 onLoad={cb => this.setState(s => ({ countdownModal: { ...s.countdownModal, close: cb } }))}>
 
@@ -378,7 +385,9 @@ export default class Settings extends React.Component {
           <>
             <h1 className="page-title-header">Schedule</h1>
             <hr />
-            <h3 className="heading">Current Schedules</h3>
+            {config.schedule.use && <div className="info">
+              This version of bell countdown comes preloaded with schedules from your school.
+            </div>}
             {this.state.scheduleList.length > 0 ?
               (<table>
                 <tbody>
@@ -386,8 +395,10 @@ export default class Settings extends React.Component {
                     <React.Fragment key={i}>
                       <tr>
                         <td>{x.name || "untitled schedule"}</td>
+
                         <td>
                           <button
+                            disabled={x.preset}
                             title="Edit this schedule"
                             className="inline"
                             onClick={() =>
@@ -399,6 +410,7 @@ export default class Settings extends React.Component {
                         </td>
                         <td>
                           <button
+                            disabled={x.preset}
                             title="Delete this schedule"
                             className="inline"
                             onClick={() => {
@@ -411,21 +423,25 @@ export default class Settings extends React.Component {
                               const s = this.state.scheduleList.concat();
                               s.splice(i, 1);
                               this.setState({ scheduleList: s });
-                              this.props.setSchedule(s);
+                              this.props.setScheduleList(s);
                             }}
                           >
                             <i className="fa fa-trash"></i>
                           </button>
                         </td>
                         {this.state.devOptions && <td>
-                          <button 
-                            className="inline" 
+                          <button
+                            className="inline"
                             title="Download Schedule"
                             onClick={() => this.downloadSchedule(i)}
                           >
-                          <i className="fa fa-file-arrow-down"></i>
+                            <i className="fa fa-file-arrow-down"></i>
                           </button>
-                          </td>}
+                        </td>}
+
+                        <td title="Toggle this Schedule">
+                          <ToggleSlider disabled={x.preset} active={!("active" in x) || x.active} onChange={(val) => this.toggleSchedule(i, val)}></ToggleSlider>
+                        </td>
                       </tr>
                     </React.Fragment>
                   ))}
@@ -451,7 +467,7 @@ export default class Settings extends React.Component {
                     this.setState((s) => ({
                       scheduleList: f,
                     }));
-                    this.props.setSchedule(f);
+                    this.props.setScheduleList(f);
                   }}
                 />
 
@@ -464,7 +480,7 @@ export default class Settings extends React.Component {
                     this.setState((s) => ({
                       scheduleList: f,
                     }));
-                    this.props.setSchedule(f);
+                    this.props.setScheduleList(f);
                   }}
                 ></WeekdayInput>
                 <hr />
@@ -482,36 +498,34 @@ export default class Settings extends React.Component {
               </Modal>
             )}
 
-            <hr />
-            <h3 className="heading">Create</h3>
             <button
-              title="Create a new Schedule" 
+              title="Create a new Schedule"
               onClick={this.addSchedule}>
               <i className="fa fa-plus-circle"></i>{" "}
               Add Schedule
             </button>
 
-            {this.state.devOptions && 
-            <button
-              title="Upload Schedule File"
-              onClick={()=>this.setState(({scheduleUploadModal: {open: true}}))}
-            >
-              <i className="fa fa-file-arrow-up"></i> {" "}
-              Upload Schedule 
-            </button> }
+            {this.state.devOptions &&
+              <button
+                title="Upload Schedule File"
+                onClick={() => this.setState(({ scheduleUploadModal: { open: true } }))}
+              >
+                <i className="fa fa-file-arrow-up"></i> {" "}
+                Upload Schedule
+              </button>}
 
-            {this.state.scheduleUploadModal.open && 
-            <Modal 
-              onLoad={(cb)=>this.setState(s=>({scheduleUploadModal: {...s.scheduleUploadModal, close: cb}}))} 
-              close={() => this.setState({ scheduleUploadModal: { open: false } })}
-              title="Upload Schedule">
-              <h3>Choose a schedule ".json" file</h3>
-              <input type="file" onChange={evt=>{
-                this.uploadSchedule(evt);
-                this.state.scheduleUploadModal.close()  
-              }}/>
+            {this.state.scheduleUploadModal.open &&
+              <Modal
+                onLoad={(cb) => this.setState(s => ({ scheduleUploadModal: { ...s.scheduleUploadModal, close: cb } }))}
+                close={() => this.setState({ scheduleUploadModal: { open: false } })}
+                title="Upload Schedule">
+                <h3>Choose a schedule ".json" file</h3>
+                <input type="file" onChange={evt => {
+                  this.uploadSchedule(evt);
+                  this.state.scheduleUploadModal.close()
+                }} />
               </Modal>}
-            
+
           </>
         );
     }
