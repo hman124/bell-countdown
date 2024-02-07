@@ -44,6 +44,7 @@ class BellCountdown extends React.Component {
   }
 
   toMins(time) {
+    console.log(time);
     const pattern = /[0-9]{1,2}:[0-9]{1,2}/;
     if (pattern.test(time)) {
       const [hours, minutes] = time.split(":");
@@ -74,60 +75,69 @@ class BellCountdown extends React.Component {
 
   getCountdown() {
     if (!this.state.schedule || !this.state.schedule.periods) {
-      return { school: false, reason: "There is no schedule for today" };
-    }
-    const d = new Date(),
-      times = this.state.schedule.periods,
-      mins = d.getHours() * 60 + d.getMinutes(),
-      list = times
-        .map((x) => x.time)
-        .flat()
-        .map((x) => this.toMins(x))
-        .sort((a, b) => a - b),
-      itm = list.find((c, i, a) => i > 0 && mins < c && mins >= a[i - 1]),
-      i = list.indexOf(itm) + (itm == mins ? 1 : 0);
-
-    if (i < 0) {
-      //no school
       return {
         school: false,
-        reason:
-          mins > list[0]
-            ? "School is over for the day"
-            : "School hasn't started yet",
-      };
-    } else if (i % 2 == 0) {
-      //passing period
-      const prevPeriod = times[Math.trunc(i / 2) - 1],
-        nextPeriod = times[Math.trunc(i / 2)],
-        end = this.toMins(nextPeriod.time[0]),
-        beg = this.toMins(prevPeriod.time[1]);
-      return {
-        school: true,
-        current: `Passing Period`,
-        next: nextPeriod.name,
-        end: nextPeriod.time[0],
-        start: prevPeriod.time[1],
-        percent: Math.trunc(((mins - beg) / (end - beg)) * 100),
-        time: this.getTimeLeft(end - mins),
-        length: end - beg,
-      };
-    } else {
-      //class period
-      const period = times[Math.trunc(i / 2)],
-        [beg, end] = period.time.map((x) => this.toMins(x)),
-        next = times[Math.trunc(i / 2) + 1];
-      return {
-        school: true,
-        current: period.name,
-        next: next ? next.name : false,
-        end: period.time[1],
-        start: period.time[0],
-        percent: Math.trunc(((mins - beg) / (end - beg)) * 100),
-        time: this.getTimeLeft(end - mins),
-        length: end - beg,
+        reason: "There is no schedule for today"
       };
     }
+    const d = new Date();
+    const periods = this.state.schedule.periods;
+
+    // sort the class periods by their start time
+    periods.sort((a, b) => this.toMins(a.time[0]) - this.toMins(b.time[0]));
+
+    const mins = d.getHours() * 60 + d.getMinutes();
+
+    const first_st = this.toMins(periods[0].time[0]);
+    const last_nd = this.toMins(periods[periods.length - 1].time[1]);
+
+    if (mins < first_st || mins > last_nd) {
+      return {
+        school: false,
+        reason: mins < first_st ? "School has not started yet" : "School is over for the day"
+      }
+    }
+
+    for (let i = 0; i < periods.length; i++) {
+      const curr = periods[i];
+      const prev = periods[Math.max(i - 1, 0)];
+
+      // current start and end
+      const st = this.toMins(curr.time[0]);
+      const nd = this.toMins(curr.time[1]);
+
+      if (mins >= st && mins < nd) {
+        // middle of class period
+        return {
+          school: true,
+          current: curr.name,
+          end: curr.time[1],
+          start: curr.time[0],
+          time: this.getTimeLeft(nd - mins),
+          length: nd - st
+        }
+      }
+
+      // if no previous period, keep checking
+      if (!prev) { continue }
+
+      // previous start
+      const pd = this.toMins(prev.time[1]);
+
+      if (mins >= pd && mins < st) {
+        // passing period
+        return {
+          school: true,
+          current: "Passing Period",
+          end: curr.time[0],
+          start: prev.time[1],
+          time: this.getTimeLeft(st - mins),
+          length: st - pd
+        }
+      }
+    }
+
+    return {};
   }
 
   getClock() {
@@ -236,7 +246,7 @@ class BellCountdown extends React.Component {
                       <th>End</th>
                     </tr>
                     {this.state.schedule.periods
-                      .sort(
+                      .toSorted(
                         (a, b) =>
                           this.toMins(a.time[0]) - this.toMins(b.time[0])
                       )
