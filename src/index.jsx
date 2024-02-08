@@ -46,6 +46,8 @@ class App extends React.Component {
       installPrompt: null
     };
 
+    console.log(this.state.scheduleList)
+
     //pages for nav
     this.pages = [
       "schedule",
@@ -91,6 +93,8 @@ class App extends React.Component {
           );
         });
     } else if (this.scheduleType == "preset") {
+
+      console.log("clearing")
       // if the schedule is not set to `use`, but is stored as preset,
       // clean up the localstorage and state to match
       window.localStorage.removeItem("scheduleType");
@@ -229,7 +233,7 @@ class App extends React.Component {
           <BellCountdown
             visible={this.state.page == "schedule" && this.state.scheduleList.length > 0}
             lunch={this.state.lunch}
-            scheduleFile={this.state.scheduleList}
+            scheduleList={this.state.scheduleList}
             scheduleType={this.state.scheduleType}
             setLunch={this.setLunch}
             theme={this.state.theme}

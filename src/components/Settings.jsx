@@ -28,7 +28,7 @@ export default class Settings extends React.Component {
       }, devOptions: window.localStorage.getItem("devOptions") == "true",
       scheduleUploadModal: {
         open: false
-      }
+      }, installButton: !!props.installPrompt
     };
 
     this.pages = [
@@ -107,8 +107,11 @@ export default class Settings extends React.Component {
                   <span>{x.t}</span>
                 </li>
               ))}
-              {this.props.installPrompt && (
-                <li onClick={() => this.props.installPrompt.prompt()}><i className="fa fa-circle-down"></i> Install App</li>
+              {this.state.installButton && (
+                <li onClick={() => {
+                  this.setState({ installButton: false });
+                  this.props.installPrompt.prompt();
+                }}><i className="fa fa-circle-down"></i> Install App</li>
               )}
             </ul>
           </nav>
@@ -440,7 +443,7 @@ export default class Settings extends React.Component {
                         </td>}
 
                         <td title="Toggle this Schedule">
-                          <ToggleSlider disabled={x.preset} active={!("active" in x) || x.active} onChange={(val) => this.toggleSchedule(i, val)}></ToggleSlider>
+                          <ToggleSlider active={!("active" in x) || x.active} onChange={(val) => this.toggleSchedule(i, val)}></ToggleSlider>
                         </td>
                       </tr>
                     </React.Fragment>

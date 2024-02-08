@@ -16,7 +16,7 @@ class BellCountdown extends React.Component {
 
     this.weekday = days[d.getDay()];
 
-    this.schedule = props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null;
+    this.schedule = (props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null);
 
     this.state = {
       countdown: {},
@@ -43,23 +43,22 @@ class BellCountdown extends React.Component {
     this.tick();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate() {
 
-    if (!_.isEqual(prevProps.theme, this.props.theme)) {
-      this.styles = buildStyles({
-        pathColor: this.props.theme.main,
-        textColor: this.props.theme.main,
-        trailColor: this.props.theme.type == "light" ? "#aaa" : "#fff",
-        backgroundColor: "#aaaaaa",
-      });
-    }
+    this.styles = buildStyles({
+      pathColor: this.props.theme.main,
+      textColor: this.props.theme.main,
+      trailColor: this.props.theme.type == "light" ? "#aaa" : "#fff",
+      backgroundColor: "#aaaaaa",
+    });
 
-    console.log(_.isEqual(prevProps.scheduleList, this.props.scheduleList));
-    if(!_.isEqual(prevProps.scheduleList, this.props.scheduleList)){
-      this.schedule = this.props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null;
-      this.tick();
-    }
-    
+  
+
+    console.log(this.props.scheduleList);
+    this.schedule = this.props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null;
+    // this.tick();
+
+
   }
 
   componentWillUnmount() {
