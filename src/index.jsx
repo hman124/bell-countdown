@@ -78,8 +78,10 @@ class App extends React.Component {
         .then((schedules) => {
           this.setState({
             scheduleType: "preset",
-            scheduleFile: schedules,
           });
+
+          this.scheduleFile = schedules;
+          
           window.localStorage.setItem("scheduleType", "preset");
         })
         .catch((err) => {
@@ -162,8 +164,9 @@ class App extends React.Component {
   }
 
   setLunch(l) {
+  
     this.setScheduleList(
-      this.state.scheduleFile.map((x) => ({
+      this.scheduleFile.map((x) => ({
         name: x.name,
         days: x.days,
         periods: [...x.classes.regular, ...x.classes.lunch[l]],
@@ -200,6 +203,7 @@ class App extends React.Component {
     document.documentElement.style.setProperty("--theme-contrast", t.contrast);
 
     if (a) {
+      console.log("settings");
       this.setState((s) => ({ theme: t }));
       window.localStorage.setItem("theme", t.name);
     }
@@ -225,11 +229,10 @@ class App extends React.Component {
           <BellCountdown
             visible={this.state.page == "schedule" && this.state.scheduleList.length > 0}
             lunch={this.state.lunch}
-            scheduleList={this.state.scheduleList}
+            scheduleFile={this.state.scheduleList}
             scheduleType={this.state.scheduleType}
             setLunch={this.setLunch}
             theme={this.state.theme}
-            key={JSON.stringify(this.state.scheduleList)}
           />
 
           {this.state.page == "schedule" && !this.state.scheduleList.length > 0 &&

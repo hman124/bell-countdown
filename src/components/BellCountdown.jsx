@@ -4,6 +4,7 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import "../styles/BellCountdown.css";
 import Modal from "./Modal.jsx";
+import _ from "lodash";
 
 class BellCountdown extends React.Component {
   constructor(props) {
@@ -15,11 +16,11 @@ class BellCountdown extends React.Component {
 
     this.weekday = days[d.getDay()];
 
+    this.schedule = props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null;
+
     this.state = {
       countdown: {},
       clock: this.getClock(),
-      schedule:
-        props.scheduleList.find((x) => (!("enabled" in x) || x.enabled) && x.days.includes(this.weekday)) || null,
       schedulemodal: false,
     };
 
@@ -30,21 +31,42 @@ class BellCountdown extends React.Component {
       backgroundColor: "#aaaaaa",
     });
 
+
     this.tick = this.tick.bind(this);
     this.getCountdown = this.getCountdown.bind(this);
   }
 
   componentDidMount() {
-    this.interval = setInterval(this.tick, 1000);
-    this.setState({ countdown: this.getCountdown() });
+    this.timerID = setInterval(() => this.tick(), 1000);
+    // this.setState({ countdown: this.getCountdown() });
+
+    this.tick();
+  }
+
+  componentDidUpdate(prevProps) {
+
+    if (!_.isEqual(prevProps.theme, this.props.theme)) {
+      this.styles = buildStyles({
+        pathColor: this.props.theme.main,
+        textColor: this.props.theme.main,
+        trailColor: this.props.theme.type == "light" ? "#aaa" : "#fff",
+        backgroundColor: "#aaaaaa",
+      });
+    }
+
+    console.log(_.isEqual(prevProps.scheduleList, this.props.scheduleList));
+    if(!_.isEqual(prevProps.scheduleList, this.props.scheduleList)){
+      this.schedule = this.props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null;
+      this.tick();
+    }
+    
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearTimeout(this.timerID);
   }
 
   toMins(time) {
-    console.log(time);
     const pattern = /[0-9]{1,2}:[0-9]{1,2}/;
     if (pattern.test(time)) {
       const [hours, minutes] = time.split(":");
@@ -74,14 +96,14 @@ class BellCountdown extends React.Component {
   }
 
   getCountdown() {
-    if (!this.state.schedule || !this.state.schedule.periods) {
+    if (!this.schedule || !this.schedule.periods) {
       return {
         school: false,
         reason: "There is no schedule for today"
       };
     }
     const d = new Date();
-    const periods = this.state.schedule.periods;
+    const periods = this.schedule.periods;
 
     // sort the class periods by their start time
     periods.sort((a, b) => this.toMins(a.time[0]) - this.toMins(b.time[0]));
@@ -219,7 +241,7 @@ class BellCountdown extends React.Component {
             <p>{this.state.countdown.reason}</p>
           </>
         )}
-        {this.state.schedule && (
+        {this.schedule && (
           <>
             <p>
               <a
@@ -228,13 +250,13 @@ class BellCountdown extends React.Component {
                 onClick={() => this.setState(() => ({ schedulemodal: true }))}
               >
                 <i className="fa fa-calendar"></i>{" "}
-                <span className="underline">{this.state.schedule.name}</span>
+                <span className="underline">{this.schedule.name}</span>
               </a>
             </p>
 
-            {this.state.schedulemodal && (
+            {this.schedulemodal && (
               <Modal
-                open={this.state.schedulemodal}
+                open={this.schedulemodal}
                 title="Schedule"
                 close={() => this.setState(() => ({ schedulemodal: false }))}
               >
@@ -245,7 +267,7 @@ class BellCountdown extends React.Component {
                       <th>Start</th>
                       <th>End</th>
                     </tr>
-                    {this.state.schedule.periods
+                    {this.schedule.periods
                       .toSorted(
                         (a, b) =>
                           this.toMins(a.time[0]) - this.toMins(b.time[0])
