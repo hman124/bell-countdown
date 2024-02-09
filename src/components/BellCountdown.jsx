@@ -4,7 +4,6 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import "../styles/BellCountdown.css";
 import Modal from "./Modal.jsx";
-import _ from "lodash";
 
 class BellCountdown extends React.Component {
   constructor(props) {
@@ -43,7 +42,7 @@ class BellCountdown extends React.Component {
     this.tick();
   }
 
-  componentDidUpdate() {
+  UNSAFE_componentWillReceiveProps() {
 
     this.styles = buildStyles({
       pathColor: this.props.theme.main,
@@ -52,13 +51,8 @@ class BellCountdown extends React.Component {
       backgroundColor: "#aaaaaa",
     });
 
-  
-
-    console.log(this.props.scheduleList);
     this.schedule = this.props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null;
-    // this.tick();
-
-
+    this.tick();
   }
 
   componentWillUnmount() {
@@ -94,8 +88,8 @@ class BellCountdown extends React.Component {
     };
   }
 
-  getCountdown() {
-    if (!this.schedule || !this.schedule.periods) {
+  getCountdown(schedule) {
+    if (!schedule || !schedule.periods) {
       return {
         school: false,
         reason: "There is no schedule for today"
@@ -161,7 +155,7 @@ class BellCountdown extends React.Component {
     return {};
   }
 
-  getClock() {
+  static getClock() {
     const d = new Date();
     return (
       ((d.getHours() + 11) % 12) +
@@ -189,7 +183,7 @@ class BellCountdown extends React.Component {
     }
   }
 
-  to12hrTime(time) {
+  static to12hrTime(time) {
     return (
       (((+time.split(":")[0] + 11) % 12) + 1).toString() +
       ":" +
@@ -246,16 +240,19 @@ class BellCountdown extends React.Component {
               <a
                 href="#"
                 className="normal no-underline"
-                onClick={() => this.setState(() => ({ schedulemodal: true }))}
+                onClick={() => {
+                  console.log("schedule modal")
+                  this.setState(() => ({ schedulemodal: true }))
+                }}
               >
                 <i className="fa fa-calendar"></i>{" "}
                 <span className="underline">{this.schedule.name}</span>
               </a>
             </p>
 
-            {this.schedulemodal && (
+            {this.state.schedulemodal &&
               <Modal
-                open={this.schedulemodal}
+                open={this.state.schedulemodal}
                 title="Schedule"
                 close={() => this.setState(() => ({ schedulemodal: false }))}
               >
@@ -280,8 +277,7 @@ class BellCountdown extends React.Component {
                       ))}
                   </tbody>
                 </table>
-              </Modal>
-            )}
+              </Modal>}
           </>
         )}
 

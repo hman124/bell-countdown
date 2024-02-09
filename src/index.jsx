@@ -46,8 +46,6 @@ class App extends React.Component {
       installPrompt: null
     };
 
-    console.log(this.state.scheduleList)
-
     //pages for nav
     this.pages = [
       "schedule",

@@ -4,7 +4,7 @@
     "use": false,
     "apiEndpoint": "https://api.example.com/"
   }, "schedule": {
-    "use": false,
+    "use": true,
     "path": ["sample", "alternate"],
     "lunches": [
       { "id": "A", "name": "A Lunch" },
