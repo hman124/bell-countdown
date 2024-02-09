@@ -138,50 +138,63 @@ class BellCountdown extends React.Component {
 
     this.weekday = days[d.getDay()];
 
-    this.schedule = (props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null);
+    const schedule = (props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null);
 
-    this.state = {
-      countdown: {},
-      clock: getClock(),
-      schedulemodal: false,
-    };
-
-    this.styles = buildStyles({
+    const styles = buildStyles({
       pathColor: props.theme.main,
       textColor: props.theme.main,
       trailColor: props.theme.type == "light" ? "#aaa" : "#fff",
       backgroundColor: "#aaaaaa",
     });
 
+    this.state = {
+      countdown: {},
+      clock: getClock(),
+      schedulemodal: false,
+      schedule, styles
+    };
 
     this.tick = this.tick.bind(this);
   }
 
   componentDidMount() {
     this.timerID = setInterval(() => this.tick(), 1000);
-    // this.setState({ countdown: getCountdown() });
-
     this.tick();
   }
 
-  static getDerivedStateFromProps(prev, next) {
+  static getDerivedStateFromProps(props, state) {
+    const days = ["su", "mo", "tu", "we", "th", "fr", "sa"];
+    const d = new Date();
 
-    
-    getClock();
+    const weekday = days[d.getDay()];
+
+    const schedule = (props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(weekday)) || null);
+    const count = getCountdown(schedule);
+
+    if (count.school) {
+      document.title = `${count.time.minutes}:${count.time.seconds} - Bell Countdown`;
+    } else {
+      document.title = `Bell Countdown`;
+    }
+
+    return {
+      clock: getClock(),
+      countdown: count
+    };
   }
 
-  UNSAFE_componentWillReceiveProps() {
+  // UNSAFE_componentWillReceiveProps() {
 
-    this.styles = buildStyles({
-      pathColor: this.props.theme.main,
-      textColor: this.props.theme.main,
-      trailColor: this.props.theme.type == "light" ? "#aaa" : "#fff",
-      backgroundColor: "#aaaaaa",
-    });
+  //   this.styles = buildStyles({
+  //     pathColor: this.props.theme.main,
+  //     textColor: this.props.theme.main,
+  //     trailColor: this.props.theme.type == "light" ? "#aaa" : "#fff",
+  //     backgroundColor: "#aaaaaa",
+  //   });
 
-    this.schedule = this.props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null;
-    this.tick();
-  }
+  //   this.schedule = this.props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null;
+  //   this.tick();
+  // }
 
   componentWillUnmount() {
     clearTimeout(this.timerID);
@@ -215,7 +228,7 @@ class BellCountdown extends React.Component {
             <div className="counters-container">
               <div className="progressbar-container">
                 <CircularProgressbar
-                  styles={this.styles}
+                  styles={this.state.styles}
                   value={this.state.countdown.time.minutes}
                   maxValue={this.state.countdown.length}
                   text={this.state.countdown.time.minutes.toString()}
@@ -224,7 +237,7 @@ class BellCountdown extends React.Component {
               </div>
               <div className="progressbar-container">
                 <CircularProgressbar
-                  styles={this.styles}
+                  styles={this.state.styles}
                   value={this.state.countdown.time.seconds}
                   maxValue={60}
                   text={this.state.countdown.time.seconds.toString()}
