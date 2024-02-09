@@ -14,6 +14,7 @@ import DateCountdown from "./components/DateCountdown.jsx";
 import BellCountdown from "./components/BellCountdown.jsx";
 import Settings from "./components/Settings.jsx";
 
+window.onerror = alert;
 class App extends React.Component {
   constructor(props) {
     super(props);
