@@ -19,8 +19,8 @@
   margin-bottom: 2rem;
 
   /* aspect-ratio: 1 */
-  width: min(25vw, 20vh);
-  height: min(25vw, 20vh);
+  width: min(25vw, 200px);
+  height: min(25vw, 200px);
 }
 
 @media screen and (max-width: 700px) {
