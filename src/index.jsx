@@ -39,7 +39,7 @@ class App extends React.Component {
       page: "schedule",
       countdownList: this.countdownList ? JSON.parse(this.countdownList) : [],
       scheduleList: this.scheduleList ? JSON.parse(this.scheduleList) : [],
-      scheduleType: config.schedule.use ? "preset" : "custom",
+      scheduleType: this.scheduleType,
       theme: this.theme ? themes.find((x) => x.name == this.theme) : themes[0],
       lunch: this.lunch || null,
       scheduleFile: null,
@@ -66,8 +66,8 @@ class App extends React.Component {
   componentDidMount() {
     this.setTheme(this.state.theme, false);
 
-    //import the preset schedule
-    if (config.schedule.use) {
+    // load the preset schedules in
+    if (config.schedule.use && (this.state.scheduleList.length == 0 || this.scheduleType !== "preset")) {
       const schedules = Promise.all(
         config.schedule.path.map((x) =>
           import(`./schedules/schedule-${x}.json`)
@@ -78,31 +78,31 @@ class App extends React.Component {
       schedules
         .then((schedules) => {
           this.setState({
-            scheduleType: "preset",
+            scheduleType: "preset"
           });
 
           this.scheduleFile = schedules;
-          
-          window.localStorage.setItem("scheduleType", "preset");
+          // window.localStorage.setItem("scheduleType", "preset");
         })
         .catch((err) => {
           console.error(
-            `${err} Error importing custom schedule at path
+            `${err} Error importing custsom schedule at path
              src/schedules/schedule-${config.schedule.path}.json`
           );
         });
-    } else if (this.scheduleType == "preset") {
+    }
 
-      console.log("clearing")
+    // opposite case: clear out preset stuff
+    if (!config.schedule.use && this.scheduleType == "preset") {
+
       // if the schedule is not set to `use`, but is stored as preset,
       // clean up the localstorage and state to match
-      window.localStorage.removeItem("scheduleType");
       window.localStorage.removeItem("lunch");
       window.localStorage.removeItem("scheduleList");
+
       this.setState(() => ({
-        scheduleList: [],
-        lunch: null,
-        scheduleType: "custom",
+        presetSchedules: [],
+        lunch: null
       }));
     }
 
@@ -137,12 +137,11 @@ class App extends React.Component {
 
     if ("serviceWorker" in navigator) {
       // Supported!
-      navigator.serviceWorker.register("/sw.js", {scope: "/"});
+      navigator.serviceWorker.register("/sw.js", { scope: "/" });
 
       window.addEventListener("beforeinstallprompt", event => {
         event.preventDefault();
-
-        this.setState({installPrompt: event});
+        this.setState({ installPrompt: event });
       });
     }
   }
@@ -167,7 +166,7 @@ class App extends React.Component {
   }
 
   setLunch(l) {
-  
+
     this.setScheduleList(
       this.scheduleFile.map((x) => ({
         name: x.name,
@@ -239,16 +238,16 @@ class App extends React.Component {
           />
 
           {this.state.page == "schedule" && !this.state.scheduleList.length > 0 &&
-            (this.state.scheduleType == "preset" ? (
+            (config.schedule.use ? (
               <LunchChooser
                 lunch={this.state.lunch}
                 lunches={config.schedule.lunches}
                 setLunch={this.setLunch}
               />
             ) : (
-              <ScheduleChooser settings={()=>{
+              <ScheduleChooser settings={() => {
                 this.setPage("settings")
-                this.setState({settingsPage: "schedule"});
+                this.setState({ settingsPage: "schedule" });
               }} />
             ))}
 
