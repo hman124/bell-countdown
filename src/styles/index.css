@@ -17,7 +17,7 @@
 }
 
 :root {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     --nav-height: 50px;
     --footer-height: 1rem;
     --main-height: calc(100vh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
@@ -232,7 +232,7 @@ hr {
 
 .container.center {
     margin: auto;
-    width: min(700px, 100vw - 2rem);
+    width: min(800px, 100vw - 2rem);
 }
 
 .oneline {

@@ -32,7 +32,7 @@ function getClock() {
 }
 
 function getCountdown(schedule) {
-  if (!schedule || !schedule.periods) {
+  if (!schedule || !schedule.periods || schedule.periods.length == []) {
     return {
       school: false,
       reason: "There is no schedule for today"
@@ -224,7 +224,7 @@ class BellCountdown extends React.Component {
         <h1>{this.state.clock}</h1>
         {this.state.countdown.school ? (
           <>
-            <h1>{this.state.countdown.current}</h1>
+            <span>{this.state.schedule.name}</span>
             <div className="counters-container">
               <div className="progressbar-container">
                 <CircularProgressbar
@@ -246,6 +246,7 @@ class BellCountdown extends React.Component {
               </div>
             </div>
             <p><i className="fa fa-clock"></i> {to12hrTime(this.state.countdown.start)} - {to12hrTime(this.state.countdown.end)}</p>
+            <p><i className="fa fa-chalkboard"></i> {this.state.countdown.current}</p>
             {this.state.countdown.next ? (
               <p><i className="fa fa-angles-right"></i> {this.state.countdown.next}</p>
             ) : null}
@@ -256,7 +257,8 @@ class BellCountdown extends React.Component {
             <p>{this.state.countdown.reason}</p>
           </>
         )}
-        {this.schedule && (
+
+        {this.state.schedule && (
           <>
             <p>
               <a
@@ -268,7 +270,7 @@ class BellCountdown extends React.Component {
                 }}
               >
                 <i className="fa fa-calendar"></i>{" "}
-                <span className="underline">{this.schedule.name}</span>
+                <span className="underline">view schedule</span>
               </a>
             </p>
 
@@ -278,6 +280,7 @@ class BellCountdown extends React.Component {
                 title="Schedule"
                 close={() => this.setState(() => ({ schedulemodal: false }))}
               >
+
                 <table>
                   <tbody>
                     <tr>
@@ -285,7 +288,7 @@ class BellCountdown extends React.Component {
                       <th>Start</th>
                       <th>End</th>
                     </tr>
-                    {this.schedule.periods
+                    {this.state.schedule.periods
                       .toSorted(
                         (a, b) =>
                           toMins(a.time[0]) - toMins(b.time[0])

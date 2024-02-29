@@ -10,7 +10,6 @@ export default class ScheduleInput extends React.Component {
 
     this.state = {
       schedule: props.schedule || [],
-      unsaved: false,
       errors: [],
       dragging: false,
       mobile: window.innerWidth <= 1000,
@@ -36,10 +35,15 @@ export default class ScheduleInput extends React.Component {
     return d;
   }
 
-  saveSchedule(t) {
+  saveSchedule(schedule, checkErrors) {
+    console.log(schedule)
+
+    this.setState(({ schedule }));
+
+    if(!checkErrors){return;}
 
     //check for blank class periods - we can't sort if so
-    let blank = t.map((x) => {
+    let blank = schedule.map((x) => {
       if (!x.name || !x.time.length || !x.time[0] || !x.time[1]) {
         console.log("blank");
         return "Please fill in all fields";
@@ -53,9 +57,9 @@ export default class ScheduleInput extends React.Component {
       console.log("returning");
       return;
     }
-
+    
     //sort the schedule
-    let sr = t.sort((a, b) => this.dTime(a.time[0]) - this.dTime(b.time[0]));
+    let sr = schedule.sort((a, b) => this.dTime(a.time[0]) - this.dTime(b.time[0]));
     console.log(sr);
     //if problems persist, list them here
     let time = sr.map((x, i, a) => {
@@ -65,15 +69,15 @@ export default class ScheduleInput extends React.Component {
         i > 0 &&
         a[i - 1].time[1] &&
         this.dTime(x.time[0]) < this.dTime(a[i - 1].time[1])
-      ) {
-        return "Invalid times. Start time must be after previous end time";
-      }
+        ) {
+          return "Invalid times. Start time must be after previous end time";
+        }
+        
+        return "";
+      });
+      
+      this.setState({ errors: time });
 
-      return "";
-    });
-
-
-    this.setState({ errors: time });
 
     this.props.setSchedule(sr);
   }
@@ -84,14 +88,12 @@ export default class ScheduleInput extends React.Component {
         <React.Fragment>
           <p>Period Name</p>{" "}
           <input
-            onChange={(e) =>
-              this.setState((s) => {
-                var t = s.schedule.concat();
-                t[i].name = e.target.value;
-                this.saveSchedule(t);
-                return { schedule: t, unsaved: true };
-              })
-            }
+            onChange={(e) => {
+              let t = this.state.schedule.concat();
+              t[i].name = e.target.value;
+              this.saveSchedule(t,true);
+
+            }}
             type="text"
             placeholder="1st Period"
             value={x.name || ""}
@@ -99,27 +101,21 @@ export default class ScheduleInput extends React.Component {
           <p>Start Time</p>
           <input
             type="time"
-            onChange={(e) =>
-              this.setState((s) => {
-                var t = s.schedule.concat();
-                t[i].time[0] = e.target.value;
-                this.saveSchedule(t);
-                return { schedule: t };
-              })
-            }
+            onChange={(e) => {
+              let t = this.state.schedule.concat();
+              t[i].time[0] = e.target.value;
+              this.saveSchedule(t,true);
+            }}
             value={x.time[0] || ""}
           />
           <p>End Time</p>
           <input
             type="time"
-            onChange={(e) =>
-              this.setState((s) => {
-                var t = s.schedule.concat();
-                t[i].time[1] = e.target.value;
-                this.saveSchedule(t);
-                return { schedule: t };
-              })
-            }
+            onChange={(e) => {
+              var t = this.state.schedule.concat();
+              t[i].time[1] = e.target.value;
+              this.saveSchedule(t,true);
+            }}
             value={x.time[1] || ""}
           />
           <span className="error">{this.state.errors[i]}</span>
@@ -129,14 +125,11 @@ export default class ScheduleInput extends React.Component {
           <tr>
             <td>
               <input
-                onChange={(e) =>
-                  this.setState((s) => {
-                    var t = s.schedule.concat();
-                    t[i].name = e.target.value;
-                    this.saveSchedule(t);
-                    return { schedule: t };
-                  })
-                }
+                onChange={(e) => {
+                  let t = this.state.schedule.concat();
+                  t[i].name = e.target.value;
+                  this.saveSchedule(t,true);
+                }}
                 type="text"
                 placeholder="1st Period"
                 value={x.name || ""}
@@ -145,42 +138,33 @@ export default class ScheduleInput extends React.Component {
             <td>
               <input
                 type="time"
-                onChange={(e) =>
-                  this.setState((s) => {
-                    var t = s.schedule.concat();
-                    t[i].time[0] = e.target.value;
-                    this.saveSchedule(t);
-                    return { schedule: t };
-                  })
-                }
+                onChange={(e) => {
+                  let t = this.state.schedule.concat();
+                  t[i].time[0] = e.target.value;
+                  this.saveSchedule(t,true);
+                }}
                 value={x.time[0] || ""}
               />
             </td>
             <td>
               <input
                 type="time"
-                onChange={(e) =>
-                  this.setState((s) => {
-                    var t = s.schedule.concat();
-                    t[i].time[1] = e.target.value;
-                    this.saveSchedule(t);
-                    return { schedule: t };
-                  })
-                }
+                onChange={(e) => {
+                  let t = this.state.schedule.concat();
+                  t[i].time[1] = e.target.value;
+                  this.saveSchedule(t,true);
+                }}
                 value={x.time[1] || ""}
               />
             </td>
             <td>
               <button
                 className="inline"
-                onClick={() =>
-                  this.setState((s) => {
-                    var t = s.schedule.concat();
-                    t.splice(i, 1);
-                    this.saveSchedule(t);
-                    return { schedule: t };
-                  })
-                }
+                onClick={() => {
+                  var t = this.state.schedule.concat();
+                  t.splice(i, 1);
+                  this.saveSchedule(t,true);
+                }}
                 title="Remove Class Period"
               >
                 <i className="fa fa-x"></i>
@@ -210,17 +194,14 @@ export default class ScheduleInput extends React.Component {
                 className="icon-with-text"
                 title="delete this period"
                 disabled={this.state.schedule.length == 0}
-                onClick={() =>
-                  this.setState((s) => {
-                    if (!confirm("Delete this class period?")) {
-                      return;
-                    }
-                    var t = s.schedule.concat();
-                    t.splice(s.index, 1);
-                    this.saveSchedule(t);
-                    return { schedule: t, index: 0 };
-                  })
-                }
+                onClick={() => {
+                  if (!confirm("Delete this class period?")) {
+                    return;
+                  }
+
+                  let t = this.state.schedule.concat();
+                  t.splice(s.index, 1);
+                }}
               >
                 <i className="fa fa-x"></i>
                 Delete Period
@@ -275,13 +256,12 @@ export default class ScheduleInput extends React.Component {
         <button
           className="icon-with-text width-third"
           title="New Class Period"
-          onClick={() =>
-            this.setState((s) => {
-              var e = s.schedule.concat();
-              e.push({ name: "", time: [] });
-              return { schedule: e, index: e.length - 1 };
-            })
-          }
+          onClick={() => {
+            let e = this.state.schedule.concat();
+            e.push({ name: "", time: [] });
+            this.saveSchedule(e,false);
+            this.setState((s) => ({ index: e.length - 1 }));
+          }}
         >
           <i className="fa fa-plus-circle"></i>
           Add Class
@@ -293,15 +273,14 @@ export default class ScheduleInput extends React.Component {
             if (!confirm("Delete your entire schedule?")) {
               return;
             }
-            this.setState({ schedule: [] });
-            this.saveSchedule([]);
+            this.saveSchedule([],false);
           }}
           disabled={this.state.schedule.length == 0}
         >
           <i className="fa fa-trash"></i>
           Clear Schedule
         </button>
-        <button onClick={()=>this.props.saveAction()} className="icon-with-text width-third"><i className="fa fa-save"></i> Save</button>
+        <button onClick={() => this.props.saveAction()} className="icon-with-text width-third"><i className="fa fa-save"></i> Save</button>
       </>
     );
   }
