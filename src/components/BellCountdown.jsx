@@ -224,7 +224,7 @@ class BellCountdown extends React.Component {
         <h1>{this.state.clock}</h1>
         {this.state.countdown.school ? (
           <>
-            <span>{this.state.schedule.name}</span>
+            <span>{this.state.schedule?.name}</span>
             <div className="counters-container">
               <div className="progressbar-container">
                 <CircularProgressbar
@@ -247,64 +247,65 @@ class BellCountdown extends React.Component {
             </div>
             <p><i className="fa fa-clock"></i> {to12hrTime(this.state.countdown.start)} - {to12hrTime(this.state.countdown.end)}</p>
             <p><i className="fa fa-chalkboard"></i> {this.state.countdown.current}</p>
-            {this.state.countdown.next ? (
+            {this.state.countdown.next &&
               <p><i className="fa fa-angles-right"></i> {this.state.countdown.next}</p>
-            ) : null}
+            }
+            {this.state.schedule && (
+              <>
+                <p>
+                  <a
+                    href="#"
+                    className="normal no-underline"
+                    onClick={() => {
+                      console.log("schedule modal")
+                      this.setState(() => ({ schedulemodal: true }))
+                    }}
+                  >
+                    <i className="fa fa-calendar"></i>{" "}
+                    <span className="underline">view schedule</span>
+                  </a>
+                </p>
+              </>
+            )}
           </>
         ) : (
           <>
-            <h1>No School Right Now</h1>
+
             <p>{this.state.countdown.reason}</p>
-          </>
+           </>
         )}
 
-        {this.state.schedule && (
-          <>
-            <p>
-              <a
-                href="#"
-                className="normal no-underline"
-                onClick={() => {
-                  console.log("schedule modal")
-                  this.setState(() => ({ schedulemodal: true }))
-                }}
-              >
-                <i className="fa fa-calendar"></i>{" "}
-                <span className="underline">view schedule</span>
-              </a>
-            </p>
+        {this.state.schedulemodal &&
+          <Modal
+            open={this.state.schedulemodal}
+            title="Schedule"
+            close={() => this.setState(() => ({ schedulemodal: false }))}
+          >
 
-            {this.state.schedulemodal &&
-              <Modal
-                open={this.state.schedulemodal}
-                title="Schedule"
-                close={() => this.setState(() => ({ schedulemodal: false }))}
-              >
-
-                <table>
-                  <tbody>
-                    <tr>
-                      <th>Name</th>
-                      <th>Start</th>
-                      <th>End</th>
+            <table>
+              <tbody>
+                <tr>
+                  <th>Name</th>
+                  <th>Start</th>
+                  <th>End</th>
+                </tr>
+                {this.state.schedule.periods
+                  .toSorted(
+                    (a, b) =>
+                      toMins(a.time[0]) - toMins(b.time[0])
+                  )
+                  .map((x, i) => (
+                    <tr key={i}>
+                      <td>{x.name}</td>
+                      <td>{to12hrTime(x.time[0])}</td>
+                      <td>{to12hrTime(x.time[1])}</td>
                     </tr>
-                    {this.state.schedule.periods
-                      .toSorted(
-                        (a, b) =>
-                          toMins(a.time[0]) - toMins(b.time[0])
-                      )
-                      .map((x, i) => (
-                        <tr key={i}>
-                          <td>{x.name}</td>
-                          <td>{to12hrTime(x.time[0])}</td>
-                          <td>{to12hrTime(x.time[1])}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </Modal>}
-          </>
-        )}
+                  ))}
+              </tbody>
+            </table>
+          </Modal>}
+
+
 
         {/* {this.props.lunch && <p><i className="fa fa-hamburger"></i> {config.schedule.lunches[this.props.lunch].name} Lunch</p>} */}
       </div>

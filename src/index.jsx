@@ -44,7 +44,8 @@ class App extends React.Component {
       lunch: this.lunch || null,
       scheduleFile: null,
       settingsPage: null,
-      installPrompt: null
+      installPrompt: null,
+      scrolledTop: true
     };
 
     //pages for nav
@@ -144,6 +145,15 @@ class App extends React.Component {
         this.setState({ installPrompt: event });
       });
     }
+
+    window.addEventListener("scroll", () => {
+      const isAtTop = window.scrollY === 0;
+      console.log(isAtTop);
+
+      this.setState({
+        scrolledTop: isAtTop
+      })
+    });
   }
 
   setCountdownList(obj) {
@@ -214,7 +224,7 @@ class App extends React.Component {
   render() {
     return (
       <>
-        <nav className="home-nav">
+        <nav className={"home-nav" + (this.state.scrolledTop ? "" : " shadow")}>
           <ul>
             {this.pages.map((x) => (
               <li
@@ -275,9 +285,9 @@ class App extends React.Component {
           {this.state.page == "updates" && <Updates />}
           {this.state.page == "lunchmenu" && <LunchMenu />}
         </main>
-        <footer>
+        {/* <footer>
           &copy; {new Date().getFullYear()} by hman124. (Version {this.version})
-        </footer>
+        </footer> */}
       </>
     );
   }

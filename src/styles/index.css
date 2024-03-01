@@ -17,9 +17,9 @@
 }
 
 :root {
-    font-size: 1.6rem;
-    --nav-height: 50px;
-    --footer-height: 1rem;
+    font-size: 2rem;
+    --nav-height: 2rem;
+    --footer-height: 0;
     --main-height: calc(100vh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
     --main-height: calc(100svh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
 
@@ -48,9 +48,17 @@ nav.home-nav {
     height: var(--nav-height);
     display: grid;
     place-items: center;
-    box-shadow: 0px 0px 18px 5px rgba(0, 0, 0, 0.3);
-    position: relative;
+    position: fixed;
+    top:0;
+    left:0;
     z-index: 4;
+
+    background-color: var(--theme-background);
+    transition: box-shadow 0.3s;
+}
+
+nav.home-nav.shadow {
+    box-shadow: 0px 0px 18px 5px rgba(0, 0, 0, 0.3);
 }
 
 nav.home-nav ul li {
@@ -82,10 +90,9 @@ nav.home-nav ul li.current::after {
 }
 
 main {
+    margin-top: var(--nav-height);
     height: var(--main-height);
     padding: 1rem;
-    padding-bottom: 0;
-    /* padding-right: 0; */
     overflow: auto;
 }
 
@@ -232,7 +239,7 @@ hr {
 
 .container.center {
     margin: auto;
-    width: min(800px, 100vw - 2rem);
+    width: min(20rem, 100vw - 2rem);
 }
 
 .oneline {
@@ -286,9 +293,15 @@ hr {
     }
 }
 
+@media (max-width: 1500px) or (max-height: 1000px) {
+    :root {
+        font-size: 1.4rem;
+    }
+}
+
 @media screen and (max-width: 1000px) {
-    body {
-        font-size: 0.8rem;
+    :root {
+        font-size: 1.2rem;
     }
 
     table {
