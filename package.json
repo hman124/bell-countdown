@@ -8,7 +8,6 @@
   },
   "author": "hman124",
   "dependencies": {
-    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-circular-progressbar": "hman124/react-circular-progressbar",
     "react-dom": "^18.0.0",
