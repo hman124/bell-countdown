@@ -1,6 +1,6 @@
 [
     {"main": "#990000", "text": "black", "background": "white", "contrast": "white", "type": "light", "name": "Crimson Light"},
-    {"main": "#ff9900", "text": "black", "background": "white", "contrast": "black", "type": "light", "name": "Orange Light"},
+    {"main": "#ff9900", "text": "black", "background": "white", "contrast": "white", "type": "light", "name": "Orange Light"},
     {"main": "#00cc99", "text": "black", "background": "white", "contrast": "white", "type": "light", "name": "Mint Light"},
     {"main": "#006666", "text": "black", "background": "white", "contrast": "white", "type": "light", "name": "Forest Light"},
     {"main": "#5F9EA0", "text": "black", "background": "white", "contrast": "white", "type": "light", "name": "Turquoise Light"},

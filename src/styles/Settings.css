@@ -112,13 +112,14 @@ div.color {
 }
 
 .mobilenavitems {
-  position:absolute;
+  /* position:absolute; */
   width: 100%;
   background-color:var(--theme-background);
   padding: 1rem;
-  z-index: 80000;
+  z-index: 800;
   height: calc(var(--main-height) - (2.5rem));
-  left:0;
+  /* left:0; */
+  /* top: var(--nav-height); */
   bottom: 1rem;
   font-size: 1rem;
 }
@@ -143,6 +144,9 @@ div.color {
     border:none;
     height:auto;
     border-bottom: 2px var(--theme-main) solid;
+
+    position: relative;
+    z-index: 4000;
   }
   .settings-main {
     margin-top:0;

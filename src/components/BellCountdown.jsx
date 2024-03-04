@@ -177,9 +177,17 @@ class BellCountdown extends React.Component {
       document.title = `Bell Countdown`;
     }
 
+    const styles = buildStyles({
+      pathColor: props.theme.main,
+      textColor: props.theme.main,
+      trailColor: props.theme.type == "light" ? "#aaa" : "#fff",
+      backgroundColor: "#aaaaaa",
+    });
+
     return {
       clock: getClock(),
-      countdown: count
+      countdown: count,
+      styles
     };
   }
 

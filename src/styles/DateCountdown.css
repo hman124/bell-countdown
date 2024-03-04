@@ -28,7 +28,7 @@ ul.DateCountdown li p {
   float:right;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 600px) {
   ul.DateCountdown li {
     width:100%;
     display: block;

@@ -10,7 +10,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 300;
+  z-index: 9999999999999;
   
   display: grid;
   place-items: center;

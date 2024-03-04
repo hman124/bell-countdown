@@ -19,9 +19,9 @@
 :root {
     font-size: 2rem;
     --nav-height: 2rem;
-    --footer-height: 0;
-    --main-height: calc(100vh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
-    --main-height: calc(100svh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
+    --footer-height: 0rem;
+    --main-height: calc(100vh - (var(--nav-height) + var(--footer-height)));
+    --main-height: calc(100svh - (var(--nav-height) + var(--footer-height)));
 
     --theme-main: rgb(57, 107, 243);
     --theme-text: black;
@@ -52,7 +52,7 @@ nav.home-nav {
     top:0;
     left:0;
     z-index: 4;
-
+    border-bottom: 1px #ccc solid;
     background-color: var(--theme-background);
     transition: box-shadow 0.3s;
 }
@@ -239,7 +239,7 @@ hr {
 
 .container.center {
     margin: auto;
-    width: min(20rem, 100vw - 2rem);
+    width: min(800px, 100vw - 2rem);
 }
 
 .oneline {

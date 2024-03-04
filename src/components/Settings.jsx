@@ -335,8 +335,6 @@ export default class Settings extends React.Component {
             ) : (
               <p>Nothing yet. Add a countdown below.</p>
             )}
-            <hr />
-            <h3 className="heading">Create</h3>
             <button onClick={() => this.setState(s => ({ countdownModal: { open: true } }))}>
               <i className="fa fa-plus-circle"></i> Add Countdown
             </button>
@@ -542,7 +540,7 @@ export default class Settings extends React.Component {
     return (
       <div className="container Settings">
         {this.renderNav()}
-        <div className="settings-main">{this.renderPage()}</div>
+        <div className="settings-main"  style={this.state.navopen?{display:"none"}:{}}>{this.renderPage()}</div>
         <ToastContainer></ToastContainer>
       </div>
     );
