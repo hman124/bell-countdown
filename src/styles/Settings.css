@@ -73,7 +73,7 @@ nav.settings-nav ul li span {
   display:inline-block;
 }
 
-nav.settings-nav ul li span::first-letter {
+nav.settings-nav ul li span, nav.settings-nav > span {
   text-transform:capitalize;
 }
 
