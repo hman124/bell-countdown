@@ -122,6 +122,9 @@ div.color {
   /* top: var(--nav-height); */
   bottom: 1rem;
   font-size: 1rem;
+
+  /* border-top: 2px var(--theme-main) solid; */
+  margin-top: 5px;
 }
 
 .mobilenavopen {

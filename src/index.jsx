@@ -62,6 +62,7 @@ class App extends React.Component {
     this.setScheduleList = this.setScheduleList.bind(this);
     this.setTheme = this.setTheme.bind(this);
     this.setLunch = this.setLunch.bind(this);
+    this.checkScroll = this.checkScroll.bind(this);
   }
 
   componentDidMount() {
@@ -145,14 +146,14 @@ class App extends React.Component {
         this.setState({ installPrompt: event });
       });
     }
+  }
 
-    window.addEventListener("scroll", () => {
-      const isAtTop = window.scrollY === 0;
-      console.log(isAtTop);
+  checkScroll(event){
+    const isAtTop = event.currentTarget.scrollTop === 0;
+    console.log(isAtTop);
 
-      this.setState({
-        scrolledTop: isAtTop
-      })
+    this.setState({
+      scrolledTop: isAtTop
     });
   }
 
@@ -237,7 +238,7 @@ class App extends React.Component {
             ))}
           </ul>
         </nav>
-        <main>
+        <main onScroll={this.checkScroll} onTouchMove={this.checkScroll}>
           <BellCountdown
             visible={this.state.page == "schedule" && this.state.scheduleList.length > 0}
             lunch={this.state.lunch}

@@ -233,9 +233,9 @@ hr {
     text-align: center;
 }
 
-.container {
+/* .container {
     height: 100%;
-}
+} */
 
 .container.center {
     margin: auto;
