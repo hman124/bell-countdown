@@ -131,7 +131,6 @@ function getTimeLeft(diff) {
 class BellCountdown extends React.Component {
   constructor(props) {
     super(props);
-    this.schedule = props.schedule;
 
     const days = ["su", "mo", "tu", "we", "th", "fr", "sa"];
     const d = new Date();
@@ -187,7 +186,7 @@ class BellCountdown extends React.Component {
     return {
       clock: getClock(),
       countdown: count,
-      styles
+      styles, schedule
     };
   }
 
@@ -209,7 +208,7 @@ class BellCountdown extends React.Component {
   }
 
   tick() {
-    const count = getCountdown(this.schedule);
+    const count = getCountdown(this.state.schedule);
     this.setState({
       clock: getClock(),
       countdown: count,
