@@ -35,12 +35,14 @@ class App extends React.Component {
     this.apiEndpoint = config.apiEndpoint;
     this.version = config.version;
 
+    const theme = this.theme ? themes.find((x) => x.name == this.theme) : false;
+
     this.state = {
       page: "schedule",
       countdownList: this.countdownList ? JSON.parse(this.countdownList) : [],
       scheduleList: this.scheduleList ? JSON.parse(this.scheduleList) : [],
       scheduleType: this.scheduleType,
-      theme: this.theme ? themes.find((x) => x.name == this.theme) : themes[0],
+      theme: theme ? theme  : themes[0],
       lunch: this.lunch || null,
       scheduleFile: null,
       settingsPage: null,

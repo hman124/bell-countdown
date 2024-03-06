@@ -3,14 +3,12 @@
     {"main": "#ff9900", "text": "black", "background": "white", "contrast": "white", "type": "light", "name": "Orange Light"},
     {"main": "#00cc99", "text": "black", "background": "white", "contrast": "white", "type": "light", "name": "Mint Light"},
     {"main": "#006666", "text": "black", "background": "white", "contrast": "white", "type": "light", "name": "Forest Light"},
-    {"main": "#5F9EA0", "text": "black", "background": "white", "contrast": "white", "type": "light", "name": "Turquoise Light"},
     {"main": "rgb(57, 107, 243)", "text": "black", "background": "white", "contrast": "white", "type": "light", "name": "Blue Light"},
     {"main": "#993399", "text": "black", "background": "white", "contrast": "white", "name": "Purple Light"},
-    {"main": "#ed2d2d", "text": "white", "background": "#222222", "contrast": "white", "type": "dark", "name": "Crimson Dark" },
-    {"main": "#ff9900", "text": "white", "background": "#222222", "contrast": "white", "type": "dark", "name": "Orange Dark"},
-    {"main": "#00cc99", "text": "white", "background": "#444444", "contrast": "white", "type": "dark", "name": "Mint Dark"},
-    {"main": "#009999", "text": "white", "background": "#444444", "contrast": "white", "type": "dark", "name": "Forest Dark"},
-    {"main": "#5F9EA0", "text": "white", "background": "#444444", "contrast": "white", "type": "dark",  "name": "Turquoise Dark"},
-    {"main": "#3399ff", "text": "white", "background": "#222222", "contrast": "white", "type": "dark",  "name": "Blue Dark"},
-    {"main": "#cc00cc", "text": "white", "background": "#222222", "contrast": "white", "type": "dark",  "name": "Purple Dark"}
+    {"main": "#ed2d2d", "text": "white", "background": "#121212", "contrast": "white", "type": "dark", "name": "Crimson Dark" },
+    {"main": "#ff9900", "text": "white", "background": "#121212", "contrast": "white", "type": "dark", "name": "Orange Dark"},
+    {"main": "#00cc99", "text": "white", "background": "#121212", "contrast": "white", "type": "dark", "name": "Mint Dark"},
+    {"main": "#009999", "text": "white", "background": "#121212", "contrast": "white", "type": "dark", "name": "Forest Dark"},
+    {"main": "#3399ff", "text": "white", "background": "#121212", "contrast": "white", "type": "dark",  "name": "Blue Dark"},
+    {"main": "#cc00cc", "text": "white", "background": "#121212", "contrast": "white", "type": "dark",  "name": "Purple Dark"}
 ]
