@@ -28,13 +28,18 @@ export default class Settings extends React.Component {
       }, devOptions: window.localStorage.getItem("devOptions") == "true",
       scheduleUploadModal: {
         open: false
-      }, installButton: !!props.installPrompt
+      }, installButton: !!props.installPrompt,
+      notificationPermission: Notification.permission,
+      notificationOptions: props.notificationOptions,
+      notificationAlertDraft: { amount: "", units: "", mode: "" }
     };
 
     this.pages = [
       { t: "countdown", i: "fa-clock" },
       { t: "theme", i: "fa-paint-brush" },
       { t: "schedule", i: "fa-calendar" },
+      { t: "notifications", i: "fa-bell" },
+      { t: "Sync", i: "fa-sync" },
       { t: "about", i: "fa-info-circle" }
     ];
 
@@ -52,6 +57,7 @@ export default class Settings extends React.Component {
     this.addSchedule = this.addSchedule.bind(this);
     this.setScheduleList = this.setScheduleList.bind(this);
     this.toggleSchedule = this.toggleSchedule.bind(this);
+    this.requestNotificationPermission = this.requestNotificationPermission.bind(this);
   }
 
   componentDidMount() {
@@ -118,6 +124,27 @@ export default class Settings extends React.Component {
         )}
       </>
     );
+  }
+
+  requestNotificationPermission() {
+    if (!(Notification in window)) {
+      alert("This browser doesn't support notifications!");
+      return;
+    }
+
+    // if the permission is granted or denied, just update the state
+    if (
+      Notification.permission == "granted" ||
+      Notification.permission == "denied"
+    ) {
+      this.setState({ notificationPermission: Notification.permission });
+      return;
+    }
+
+    // request permission and update the state accordingly
+    Notification.requestPermission().then(permission => {
+      this.setState({ notificationPermission: permission });
+    });
   }
 
   close() {
@@ -230,6 +257,19 @@ export default class Settings extends React.Component {
     };
     reader.readAsText(file);
 
+  }
+
+  toggleNotifications() {
+    this.setState(s => ({
+      notificationOptions: {
+        ...s.notificationOptions,
+        enabled: !s.notificationOptions.enabled
+      }
+    }), this.saveNotificationOptions);
+  }
+
+  saveNotificationOptions() {
+    this.props.setNotificationOptions(this.state.notificationOptions);
   }
 
   renderPage() {
@@ -531,6 +571,106 @@ export default class Settings extends React.Component {
 
           </>
         );
+      case "notifications":
+        return (<>
+          <h1>Notifications</h1>
+          <hr />
+          {this.state.notificationPermission == "default" &&
+            <button onClick={this.requestNotificationPermission}>Allow Notifications</button>
+          }
+
+          {this.state.notificationPermission == "denied" &&
+            <span style={{ color: "red" }}>Notification permission has been denied. <br /> Click the lock or options icon to allow notification access.</span>
+          }
+
+          {this.state.notificationPermission == "granted" && <>
+            <ToggleSlider active={this.state.notificationOptions.enabled} onChange={() => this.toggleNotifications()}></ToggleSlider> <span>Enable Notifications</span>
+
+            <h3>Active Alerts</h3>
+
+            {this.state.notificationOptions.alerts.length == 0 ?
+              <span>No alerts yet. Add one below</span> :
+              <table>
+                <tbody>
+                  {this.state.notificationOptions.alerts.map((x, i) => 
+                  <tr key={x.formatted}>
+                    <td>{x.formatted}</td>
+                    <td>
+                      <button className="inline" onClick={() => {
+                        this.setState(s => { 
+                          const alerts = s.notificationOptions.alerts.concat()
+                          alerts.splice(i, 1); 
+                          console.log(i, alerts);
+                          return { notificationOptions: { ...s.notificationOptions, alerts  } };
+                        }, this.saveNotificationOptions);
+                       }}>
+                        <i className="fa fa-trash"></i>
+                        </button>
+                    </td>
+                  </tr>)}
+                </tbody>
+              </table>
+            }
+
+            <h3>Create Alert</h3>
+
+            <select
+              className="inline"
+              onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, amount: evt.target.value } }))}
+              value={this.state.notificationAlertDraft.amount}>
+              <option value="">Choose one</option>
+              <option value="1">1</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="25">25</option>
+              <option value="30">30</option>
+              <option value="45">45</option>
+            </select>
+
+            <select
+              className="inline"
+              onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, units: evt.target.value } }))}
+              value={this.state.notificationAlertDraft.units}>
+              <option value="">Choose one</option>
+              <option value="minutes">minute(s)</option>
+              <option value="seconds">second(s)</option>
+            </select>
+
+            <select
+              className="inline"
+              onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, mode: evt.target.value } }))}
+              value={this.state.notificationAlertDraft.mode}>
+              <option value="">Choose one</option>
+              <option value="before_end">before class end</option>
+              <option value="after_start">after class start</option>
+            </select>
+
+            <button onClick={() => {
+              this.setState(s => {
+                const draft = s.notificationAlertDraft;
+
+                if (Object.values(draft).includes("")) { return s; }
+
+                const alerts = s.notificationOptions.alerts.concat();
+                alerts.push({
+                  ...draft,
+                  formatted: draft.amount + draft.units.slice(0, 1) + " " +
+                    (draft.mode == "before_end" ? " before class end" : "after class start")
+                });
+
+                
+
+                return {
+                  notificationOptions: { ...s.notificationOptions, alerts },
+                  notificationAlertDraft: { mode: "", amount: "", units: "" }
+                }
+              }, this.saveNotificationOptions);
+            }}>Create</button>
+          </>}
+
+        </>);
     }
   }
 
@@ -542,7 +682,11 @@ export default class Settings extends React.Component {
     return (
       <div className="container Settings">
         {this.renderNav()}
+<<<<<<< Updated upstream
         <div className="settings-main">{this.renderPage()}</div>
+=======
+        <div className="settings-main" style={this.state.navopen ? { display: "none" } : {}}>{this.renderPage()}</div>
+>>>>>>> Stashed changes
         <ToastContainer></ToastContainer>
       </div>
     );

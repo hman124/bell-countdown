@@ -10,6 +10,7 @@
     border: 2px var(--theme-main) solid;
 
     display: inline-block;
+    vertical-align: sub;
 }
 
 .toggle-handle {

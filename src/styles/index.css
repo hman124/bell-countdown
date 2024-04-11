@@ -38,6 +38,11 @@ body {
     color: var(--theme-text);
 }
 
+h3 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
 nav.home-nav,
 main,
 footer {
@@ -119,12 +124,13 @@ select:last-of-type {
 }
 
 input.inline,
-button.inline {
+button.inline,
+select.inline {
     display: inline-block;
     width: initial;
     /* height:initial; */
     min-width: 0;
-    margin-bottom: 0;
+    /* margin-bottom: 0; */
 }
 
 input[type=button],
@@ -295,9 +301,8 @@ hr {
         width: 100%;
     }
 
-    input:not([type=checkbox], [type=radio]),
-    button,
-    select {
+    input:not([type=checkbox], [type=radio], .inline),
+    button:not(.inline), select:not(.inline) {
         width: 100%;
         margin-right: 0;
     }

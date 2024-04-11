@@ -49,7 +49,7 @@ function getCountdown(schedule) {
   const first_st = toMins(periods[0].time[0]);
   const last_nd = toMins(periods[periods.length - 1].time[1]);
 
-  if (mins < first_st || mins > last_nd) {
+  if (mins < first_st || mins >= last_nd) {
     return {
       school: false,
       reason: mins < first_st ? "School has not started yet" : "School is over for the day"
@@ -211,6 +211,24 @@ class BellCountdown extends React.Component {
       document.title = `${count.time.minutes}:${count.time.seconds} - Bell Countdown`;
     } else {
       document.title = `Bell Countdown`;
+      return;
+    }
+
+    // Notifications
+    if(Notification.permission !== "granted" || !this.props.notificationOptions.enabled){return;}
+    for(let i = 0; i < this.props.notificationOptions.alerts.length; i++){
+      const alert = this.props.notificationOptions.alerts[i];
+      
+      if(alert.units == "seconds" && count.time.minutes != 0){ continue; }
+      if(alert.units == "minutes" && count.time.seconds != 0){ continue; }
+
+      console.log(count.time[alert.units], alert.amount);
+
+      if(count.time[alert.units] == alert.amount){
+        const message = alert.amount + alert.units.slice(0,1) + " " + (alert.mode=="before_end"?"until class ends":"since class started"); 
+        new Notification(message);
+      }
+                
     }
   }
 
@@ -252,7 +270,10 @@ class BellCountdown extends React.Component {
           </>
         ) : (
           <>
+<<<<<<< Updated upstream
             <h1>No School Right Now</h1>
+=======
+>>>>>>> Stashed changes
             <p>{this.state.countdown.reason}</p>
           </>
         )}
