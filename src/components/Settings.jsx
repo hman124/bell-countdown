@@ -519,7 +519,6 @@ export default class Settings extends React.Component {
                   }}
                 />
 
-                <p>Applies to:</p>
                 <WeekdayInput
                   days={this.state.scheduleList[this.state.scheduleModal.index].days}
                   onChange={(s) => {

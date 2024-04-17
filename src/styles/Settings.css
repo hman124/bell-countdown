@@ -120,9 +120,9 @@ div.color {
   padding: 1rem;
   font-size: 1rem;
 
-  animation-name: slide-in;
+  /* animation-name: slide-in;
   animation-duration: 0.4s;
-  animation-play-state: running;
+  animation-play-state: running; */
 
   width: min(200px, 80vw);
   background-color: var(--theme-background);
@@ -136,7 +136,7 @@ div.color {
   animation-play-state: running;
 }
 
-@keyframes slide-in {
+/* @keyframes slide-in {
   from{transform: translate(calc(-1 * min(200px, 80vw)));}
   to{transform: translate(0);}
 }
@@ -165,8 +165,9 @@ div.color {
 }
 .mobilenavopen {
   display:inline-block;
-  margin-right: 0.5rem;
+  margin-right: 0.5rem; 
 }
+*/
 
 
 @media screen and (max-width: 1000px) {

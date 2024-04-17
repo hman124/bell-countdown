@@ -135,6 +135,11 @@ select.inline {
     /* margin-bottom: 0; */
 }
 
+input.transparent,
+button.transparent {
+    background-color: unset;
+}
+
 input[type=button],
 input[type=submit],
 button,
@@ -288,6 +293,11 @@ hr {
 .width-third {
     width: calc((100% / 3) - (var(--input-margin) * (2/3)));
     display: inline-block;
+}
+
+.width-full {
+    display: block;
+    width: 100%;
 }
 
 @keyframes underline {

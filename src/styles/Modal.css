@@ -107,21 +107,30 @@
 
 @keyframes rollout {
   0% {
-    transform: scale(0.0000001);
+    /* transform: scale(0.0000001); */
+    transform: translate(10px, 10px);
+    opacity: 0;
   }
-
+  
   100% {
-    transform: scale(1);
+    /* transform: scale(1); */
+    transform: translate(0, 0);
+    opacity: 1;
   }
 }
 
 @keyframes rollback {
   0% {
-    transform: scale(1);
+    /* transform: scale(1); */
+    transform: translate(0, 0);
+    opacity: 1;
   }
-
+  
   100% {
-    transform: scale(0.0000001);
+    /* transform: scale(0.0000001); */
+    
+    transform: translate(10px, 10px);
+    opacity: 0;
   }
 }
 
