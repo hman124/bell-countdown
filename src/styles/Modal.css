@@ -25,12 +25,33 @@
   border-radius: 10px;
   background-color: var(--theme-background);
 
-  padding-left: 1rem;
-  padding-right: 1rem;
 
   max-height: calc(100vh - 2rem);
   min-width: min(600px, 100vw);
   max-width: 100vw;
+
+  
+  animation-fill-mode: forwards;
+  animation-duration: var(--_anim-duration);
+}
+
+.popup.inline .content {
+  min-width: unset;
+
+}
+
+/* hide the scrollbar */
+.popup .content::-webkit-scrollbar {
+  display: none;
+}
+
+.popup .content .body {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1rem;
+
+  /* width: 100%; */
+  max-height: calc(100vh - 2rem - var(--header-height));
 
   overflow: auto;
   /* hide the scrollbar */
@@ -39,20 +60,14 @@
   scrollbar-width: none;
   /* Firefox */
   overflow-x: hidden;
-
-  animation-fill-mode: forwards;
-  animation-duration: var(--_anim-duration);
-}
-
-/* hide the scrollbar */
-.popup .content::-webkit-scrollbar {
-  display: none;
+  margin-top: var(--header-height);
 }
 
 .popup .content .header {
-  position: sticky;
-  top: 0;
+
+  width: 100%;
   
+  position: absolute;
   display: flex;
   align-items: center;
 
@@ -64,12 +79,8 @@
   box-shadow: 0px 0px 18px 5px rgba(0, 0, 0, 0.3);
   
   height: var(--header-height);
-  width: calc(100% + 2rem);
   
   padding: 1rem;
-  margin-left: -1rem;
-  margin-bottom: 1rem;
-  
 }
 
 .popup .content table {

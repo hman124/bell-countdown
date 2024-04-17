@@ -112,17 +112,57 @@ div.color {
 }
 
 .mobilenavitems {
-  position:absolute;
+  position: relative;
+
+  z-index: 9999;
+  top: 5px;
   width: 100%;
-  background-color:var(--theme-background);
   padding: 1rem;
-  z-index: 80000;
-  height: calc(var(--main-height) - (2.5rem));
-  left:0;
-  bottom: 1rem;
   font-size: 1rem;
+
+  animation-name: slide-in;
+  animation-duration: 0.4s;
+  animation-play-state: running;
+
+  width: min(200px, 80vw);
+  background-color: var(--theme-background);
+
+  border-right: 2px var(--theme-main) solid;
+
 }
 
+.mobilenavitems.fadeout {
+  animation-direction: reverse;
+  animation-play-state: running;
+}
+
+@keyframes slide-in {
+  from{transform: translate(calc(-1 * min(200px, 80vw)));}
+  to{transform: translate(0);}
+}
+
+@keyframes hide {
+  from {transform: scale(1); filter:blur(0); opacity: 1;}
+  to {transform: scale(0.9); filter:blur(12px); opacity: 0.8;}
+}
+
+@keyframes show {
+  from {transform: scale(0.9); filter:blur(12px); opacity: 0.8;}
+  to {transform: scale(1); filter:blur(0); opacity: 1;}
+}
+
+@keyframes slide-out {
+  from{transform: translate(0);}
+  to{transform: translate(calc(-1 * min(200px, 80vw)));}
+}
+
+
+.settings-main.hide {
+  animation: hide 0.4s forwards;
+}
+.settings-main.show {
+  animation: show 0.4s forwards;
+}
 .mobilenavopen {
   display:inline-block;
   margin-right: 0.5rem;

@@ -8,13 +8,13 @@ export default function WeekdayInput(props) {
   const list = ["mo", "tu", "we", "th", "fr", "sa", "su"]
   return <>
     <div className="weekday-container">
-      <button className="inline" onClick={()=>{
+      {/* <button className="inline" onClick={()=>{
         const d = days.length == list.length ? [] : list;
         setDays(d);
         props.onChange(d);
         }}>
         <p>Any Day</p>
-      </button>
+      </button> */}
       {list.map(x =>
         <div key={x} onClick={() => {
           const d = days.concat();

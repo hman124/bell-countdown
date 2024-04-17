@@ -35,12 +35,9 @@ class App extends React.Component {
     this.apiEndpoint = config.apiEndpoint;
     this.version = config.version;
 
-<<<<<<< Updated upstream
-=======
     const theme = this.theme ? themes.find((x) => x.name == this.theme) : false;
     const notificationOptions = window.localStorage.getItem("notificationOptions");
 
->>>>>>> Stashed changes
     this.state = {
       page: "schedule",
       countdownList: this.countdownList ? JSON.parse(this.countdownList) : [],
@@ -50,15 +47,11 @@ class App extends React.Component {
       lunch: this.lunch || null,
       scheduleFile: null,
       settingsPage: null,
-<<<<<<< Updated upstream
-      installPrompt: null
-=======
       installPrompt: null,
       scrolledTop: true,
       notificationOptions: notificationOptions ?
           JSON.parse(notificationOptions) :
           { enabled: true, alerts: [] }
->>>>>>> Stashed changes
     };
 
     //pages for nav
@@ -75,11 +68,7 @@ class App extends React.Component {
     this.setScheduleList = this.setScheduleList.bind(this);
     this.setTheme = this.setTheme.bind(this);
     this.setLunch = this.setLunch.bind(this);
-<<<<<<< Updated upstream
-=======
-    this.checkScroll = this.checkScroll.bind(this);
     this.setNotificationOptions = this.setNotificationOptions.bind(this);
->>>>>>> Stashed changes
   }
 
   componentDidMount() {
@@ -302,9 +291,6 @@ class App extends React.Component {
           {this.state.page == "updates" && <Updates />}
           {this.state.page == "lunchmenu" && <LunchMenu />}
         </main>
-        <footer>
-          &copy; {new Date().getFullYear()} by hman124. (Version {this.version})
-        </footer>
       </>
     );
   }

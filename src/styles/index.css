@@ -17,11 +17,11 @@
 }
 
 :root {
-    font-size: 1.5rem;
-    --nav-height: 50px;
-    --footer-height: 1rem;
-    --main-height: calc(100vh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
-    --main-height: calc(100svh - (var(--nav-height) + var(--footer-height) + env(safe-area-inset-bottom)));
+    font-size: 2rem;
+    --nav-height: 2rem;
+    --footer-height: 0rem;
+    --main-height: calc(100vh - (var(--nav-height) + var(--footer-height)));
+    --main-height: calc(100svh - (var(--nav-height) + var(--footer-height)));
 
     --theme-main: rgb(57, 107, 243);
     --theme-text: black;
@@ -38,11 +38,6 @@ body {
     color: var(--theme-text);
 }
 
-h3 {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-}
-
 nav.home-nav,
 main,
 footer {
@@ -53,9 +48,17 @@ nav.home-nav {
     height: var(--nav-height);
     display: grid;
     place-items: center;
-    box-shadow: 0px 0px 18px 5px rgba(0, 0, 0, 0.3);
-    position: relative;
+    position: fixed;
+    top:0;
+    left:0;
     z-index: 4;
+    border-bottom: 1px #ccc solid;
+    background-color: var(--theme-background);
+    transition: box-shadow 0.3s;
+}
+
+nav.home-nav.shadow {
+    box-shadow: 0px 0px 18px 5px rgba(0, 0, 0, 0.3);
 }
 
 nav.home-nav ul li {
@@ -87,10 +90,9 @@ nav.home-nav ul li.current::after {
 }
 
 main {
+    margin-top: var(--nav-height);
     height: var(--main-height);
     padding: 1rem;
-    padding-bottom: 0;
-    /* padding-right: 0; */
     overflow: auto;
 }
 
@@ -176,6 +178,12 @@ table th {
     padding: 0.25rem;
 }
 
+/* low padding  */
+table.thin td,
+table.thin th {
+    padding: 0.125rem;
+}
+
 table td button {
     width: 4rem;
 }
@@ -232,13 +240,13 @@ hr {
     text-align: center;
 }
 
-.container {
+/* .container {
     height: 100%;
-}
+} */
 
 .container.center {
     margin: auto;
-    width: min(700px, 100vw - 2rem);
+    width: min(800px, 100vw - 2rem);
 }
 
 .oneline {
@@ -292,9 +300,15 @@ hr {
     }
 }
 
+@media (max-width: 1500px) or (max-height: 1000px) {
+    :root {
+        font-size: 1.4rem;
+    }
+}
+
 @media screen and (max-width: 1000px) {
-    body {
-        font-size: 0.8rem;
+    :root {
+        font-size: 1.2rem;
     }
 
     table {
@@ -302,7 +316,8 @@ hr {
     }
 
     input:not([type=checkbox], [type=radio], .inline),
-    button:not(.inline), select:not(.inline) {
+    button:not(.inline),
+    select:not(.inline) {
         width: 100%;
         margin-right: 0;
     }

@@ -28,7 +28,8 @@ export default class Settings extends React.Component {
       }, devOptions: window.localStorage.getItem("devOptions") == "true",
       scheduleUploadModal: {
         open: false
-      }, installButton: !!props.installPrompt,
+      }, notificationModal:{open:false}, 
+      installButton: !!props.installPrompt,
       notificationPermission: Notification.permission,
       notificationOptions: props.notificationOptions,
       notificationAlertDraft: { amount: "", units: "", mode: "" }
@@ -38,13 +39,17 @@ export default class Settings extends React.Component {
       { t: "countdown", i: "fa-clock" },
       { t: "theme", i: "fa-paint-brush" },
       { t: "schedule", i: "fa-calendar" },
-      { t: "notifications", i: "fa-bell" },
-      { t: "Sync", i: "fa-sync" },
       { t: "about", i: "fa-info-circle" }
     ];
 
+    // if this is a preset schedule, add the lunch option
     if (config.schedule.use) {
       this.pages.splice(2, 0, { t: "lunch", i: "fa-hamburger" });
+    }
+
+    // if notifications are supported, add in the nav item
+    if ('Notification' in window) {
+      this.pages.splice(this.pages.length - 2, 0, { t: "notifications", i: "fa-bell" });
     }
 
     this.themes = themes;
@@ -586,88 +591,97 @@ export default class Settings extends React.Component {
           {this.state.notificationPermission == "granted" && <>
             <ToggleSlider active={this.state.notificationOptions.enabled} onChange={() => this.toggleNotifications()}></ToggleSlider> <span>Enable Notifications</span>
 
-            <h3>Active Alerts</h3>
 
-            {this.state.notificationOptions.alerts.length == 0 ?
-              <span>No alerts yet. Add one below</span> :
+            {this.state.notificationOptions.alerts.length > 0 && <>
+              <h3>Active Alerts</h3>
               <table>
                 <tbody>
-                  {this.state.notificationOptions.alerts.map((x, i) => 
-                  <tr key={x.formatted}>
-                    <td>{x.formatted}</td>
-                    <td>
-                      <button className="inline" onClick={() => {
-                        this.setState(s => { 
-                          const alerts = s.notificationOptions.alerts.concat()
-                          alerts.splice(i, 1); 
-                          console.log(i, alerts);
-                          return { notificationOptions: { ...s.notificationOptions, alerts  } };
-                        }, this.saveNotificationOptions);
-                       }}>
-                        <i className="fa fa-trash"></i>
+                  {this.state.notificationOptions.alerts.map((x, i) =>
+                    <tr key={x.formatted}>
+                      <td>{x.formatted}</td>
+                      <td>
+                        <button className="inline" onClick={() => {
+                          this.setState(s => {
+                            const alerts = s.notificationOptions.alerts.concat()
+                            alerts.splice(i, 1);
+                            console.log(i, alerts);
+                            return { notificationOptions: { ...s.notificationOptions, alerts } };
+                          }, this.saveNotificationOptions);
+                        }}>
+                          <i className="fa fa-trash"></i>
                         </button>
-                    </td>
-                  </tr>)}
+                      </td>
+                    </tr>)}
                 </tbody>
-              </table>
+              </table></>
             }
 
-            <h3>Create Alert</h3>
-
-            <select
+            {this.state.notificationModal.open && <Modal
+              title="Create Alert"
+              onLoad={(cb)=>this.setState(s=>({notificationModal: { close: cb, ...s.notificationModal }}))}
+              close={() => this.setState({ notificationModal: { open: false } })}
               className="inline"
-              onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, amount: evt.target.value } }))}
-              value={this.state.notificationAlertDraft.amount}>
-              <option value="">Choose one</option>
-              <option value="1">1</option>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="25">25</option>
-              <option value="30">30</option>
-              <option value="45">45</option>
-            </select>
+              >
+              <select
+                className="inline"
+                onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, amount: evt.target.value } }))}
+                value={this.state.notificationAlertDraft.amount}>
+                <option value="">Choose one</option>
+                <option value="1">1</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="45">45</option>
+              </select>
 
-            <select
-              className="inline"
-              onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, units: evt.target.value } }))}
-              value={this.state.notificationAlertDraft.units}>
-              <option value="">Choose one</option>
-              <option value="minutes">minute(s)</option>
-              <option value="seconds">second(s)</option>
-            </select>
+              <select
+                className="inline"
+                onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, units: evt.target.value } }))}
+                value={this.state.notificationAlertDraft.units}>
+                <option value="">Choose one</option>
+                <option value="minutes">minute(s)</option>
+                <option value="seconds">second(s)</option>
+              </select>
 
-            <select
-              className="inline"
-              onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, mode: evt.target.value } }))}
-              value={this.state.notificationAlertDraft.mode}>
-              <option value="">Choose one</option>
-              <option value="before_end">before class end</option>
-              <option value="after_start">after class start</option>
-            </select>
+              <select
+                className="inline"
+                onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, mode: evt.target.value } }))}
+                value={this.state.notificationAlertDraft.mode}>
+                <option value="">Choose one</option>
+                <option value="before_end">before class end</option>
+                <option value="after_start">after class start</option>
+              </select>
 
-            <button onClick={() => {
-              this.setState(s => {
-                const draft = s.notificationAlertDraft;
 
-                if (Object.values(draft).includes("")) { return s; }
 
-                const alerts = s.notificationOptions.alerts.concat();
-                alerts.push({
-                  ...draft,
-                  formatted: draft.amount + draft.units.slice(0, 1) + " " +
-                    (draft.mode == "before_end" ? " before class end" : "after class start")
-                });
+              <button onClick={() => {
+                this.setState(s => {
+                  const draft = s.notificationAlertDraft;
 
-                
+                  if (Object.values(draft).includes("")) { return s; }
 
-                return {
-                  notificationOptions: { ...s.notificationOptions, alerts },
-                  notificationAlertDraft: { mode: "", amount: "", units: "" }
-                }
-              }, this.saveNotificationOptions);
-            }}>Create</button>
+                  const alerts = s.notificationOptions.alerts.concat();
+                  alerts.push({
+                    ...draft,
+                    formatted: draft.amount + draft.units.slice(0, 1) + " " +
+                      (draft.mode == "before_end" ? " before class end" : "after class start")
+                  });
+
+
+
+                  return {
+                    notificationOptions: { ...s.notificationOptions, alerts },
+                    notificationAlertDraft: { mode: "", amount: "", units: "" }
+                  }
+                }, this.saveNotificationOptions);
+
+                this.state.notificationModal.close();
+              }}>Create</button></Modal>}
+
+              <button onClick={()=>this.setState({notificationModal:{open:true}})}>Add Alert</button>
           </>}
 
         </>);
@@ -682,11 +696,7 @@ export default class Settings extends React.Component {
     return (
       <div className="container Settings">
         {this.renderNav()}
-<<<<<<< Updated upstream
-        <div className="settings-main">{this.renderPage()}</div>
-=======
-        <div className="settings-main" style={this.state.navopen ? { display: "none" } : {}}>{this.renderPage()}</div>
->>>>>>> Stashed changes
+        <div className={"settings-main"+(this.state.navopen ? " hide" : " show")}>{this.renderPage()}</div>
         <ToastContainer></ToastContainer>
       </div>
     );
