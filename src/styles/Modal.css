@@ -1,12 +1,11 @@
 .popup {
   --header-height: 3rem;
   
-  animation-duration: var(--_anim-duration);
-  animation-fill-mode: forwards;
-
   width: 100vw;
   height: 100vh;
 
+  background-color: rgba(0, 0, 0, 0.7);
+  
   position: fixed;
   top: 0;
   left: 0;
@@ -14,6 +13,7 @@
   
   display: grid;
   place-items: center;
+  
 }
 
 .popup .content {
@@ -29,10 +29,6 @@
   max-height: calc(100vh - 2rem);
   min-width: min(600px, 100vw);
   max-width: 100vw;
-
-  
-  animation-fill-mode: forwards;
-  animation-duration: var(--_anim-duration);
 }
 
 .popup.inline .content {
@@ -49,10 +45,10 @@
   padding-left: 1rem;
   padding-right: 1rem;
   padding-top: 1rem;
-
+  
   /* width: 100%; */
   max-height: calc(100vh - 2rem - var(--header-height));
-
+  
   overflow: auto;
   /* hide the scrollbar */
   -ms-overflow-style: none;
@@ -64,13 +60,13 @@
 }
 
 .popup .content .header {
-
+  
   width: 100%;
   
   position: absolute;
   display: flex;
   align-items: center;
-
+  
   border-radius: inherit;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
@@ -114,7 +110,7 @@
   
   100% {
     /* transform: scale(1); */
-    transform: translate(0, 0);
+    transform: unset;
     opacity: 1;
   }
 }
@@ -163,10 +159,16 @@
 
 .popup.fadein {
   animation-name: fadein;
+  
+  animation-duration: var(--_anim-duration);
+  animation-fill-mode: forwards;
 }
 
 .popup.fadein .content {
   animation-name: rollout;
+  
+  animation-duration: var(--_anim-duration);
+  animation-fill-mode: forwards;
 }
 
 .popup.fadeout .content {

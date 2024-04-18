@@ -138,6 +138,7 @@ select.inline {
 input.transparent,
 button.transparent {
     background-color: unset;
+    color: var(--theme-text);
 }
 
 input[type=button],

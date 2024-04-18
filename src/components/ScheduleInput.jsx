@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ToggleSlider from "./ToggleSlider";
+import Modal from "./Modal.jsx";
 
 //this file is very erroneous, long, and repetitive
 //but it works
@@ -46,8 +47,8 @@ function ScheduleInput(props) {
   // render the component
   return <>
       {classModalOpen && <Modal
-        open={this.state.classModalOpen}
-        onLoad={(cb) => { this.classModalClose = cb; }}
+        open={classModalOpen}
+        onLoad={(cb) => { classModalCb = cb; }}
         title="Edit Class">
 
         <input type="text" placeholder="class name" />
@@ -60,6 +61,7 @@ function ScheduleInput(props) {
             {schedule.map((x, i) =>
             (
               <tr key={i}>
+                <td><i className="fa fa-grip-lines"></i></td>
                 <td>
                   {x.name || "Untitled"}
                 </td>
@@ -92,9 +94,10 @@ function ScheduleInput(props) {
         className="icon-with-text width-full"
         title="New Class Period"
         onClick={() => {
-          let e = schedule.concat();
-          e.push({ name: "", time: [] });
-          saveSchedule(e, false);
+          // let e = schedule.concat();
+          // e.push({ name: "", time: [] });
+          // saveSchedule(e, false);
+          setClassModalOpen(true);
         }}
       >
         <i className="fa fa-plus-circle"></i>
