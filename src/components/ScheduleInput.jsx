@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ToggleSlider from "./ToggleSlider";
 import Modal from "./Modal.jsx";
 
@@ -6,6 +6,7 @@ import Modal from "./Modal.jsx";
 //but it works
 
 function to12hrTime(time) {
+  if(typeof time !== "string"){return "";}
   return (
     (((+time.split(":")[0] + 11) % 12) + 1).toString() +
     ":" +
@@ -28,9 +29,32 @@ function ScheduleInput(props) {
   let [schedule, setSchedule] = useState(props.schedule);
   let [classModalOpen, setClassModalOpen] = useState(false);
   let [tooltipOpen, setTooltipOpen] = useState(false);
-  let [tooltipIdx, setTooltipIdx] = useState(null);
+  let [tooltipCoords, setTooltipCoords] = useState(null);
 
+
+  let tooltipEl = useRef(0);
+
+  let tooltipIdx = null;
   let classModalCb = null;
+
+  function checkTooltipFocus(event) {
+    console.log(tooltipOpen, event.target, tooltipEl.current);
+    const menu = tooltipEl.current;
+    if (menu && !menu.contains(event.target)) {
+      setTooltipOpen(false);
+    }
+  }
+
+  useEffect(() => {
+
+    console.log("useeffect")
+    window.addEventListener("mousedown", checkTooltipFocus);
+
+    return () => {
+      console.log("removing");
+      // window.removeEventListener("click", checkTooltipFocus);
+    }
+  }, []);
 
   function saveSchedule(schedule) {
     setSchedule(schedule);
@@ -43,67 +67,69 @@ function ScheduleInput(props) {
     saveSchedule(t, true);
   }
 
+  function contextMenu(idx, evt) {
+    const rect = evt.currentTarget.getBoundingClientRect();
+    tooltipIdx = idx;
+    const left = evt.clientX;
+    const top = evt.clientY;
+
+    setTooltipOpen(true);
+    setTooltipCoords({left, top});
+  }
+
 
   // render the component
   return <>
-      {classModalOpen && <Modal
-        open={classModalOpen}
-        onLoad={(cb) => { classModalCb = cb; }}
-        title="Edit Class">
+    {schedule.length > 0 ? (
+      <table className="no-border thin">
+        <thead></thead>
+        <tbody>
+          {schedule.map((x, i) =>
+          (
+            <tr key={i}>
+              <td><i className="fa fa-grip-lines"></i></td>
+              <td>
+                {x.name || "Untitled"}
+              </td>
+              <td>
+                {to12hrTime(x.time[0])}{" - "}
+                {to12hrTime(x.time[1])}
+              </td>
+              <td>
+                <button
+                  className="inline transparent"
+                  onClick={(evt) => contextMenu(i, evt)}
+                  title="Options"
+                >
+                  <i className="fa fa-ellipsis-vertical"></i>
+                </button>
+              </td>
+            </tr>
+          ))}
 
-        <input type="text" placeholder="class name" />
-      </Modal>}
+        </tbody>
+      </table>
+    ) : (
+      <>
+        <p>No classes yet.</p>
+        <small>Click the <i className="fa fa-plus-circle"></i> icon to add a class period.</small>
+      </>
+    )}
 
-      {schedule.length > 0 ? (
-        <table className="no-border thin">
-          <thead></thead>
-          <tbody>
-            {schedule.map((x, i) =>
-            (
-              <tr key={i}>
-                <td><i className="fa fa-grip-lines"></i></td>
-                <td>
-                  {x.name || "Untitled"}
-                </td>
-                <td>
-                  {to12hrTime(x.time[0])}{" - "}
-                  {to12hrTime(x.time[1])}
-                </td>
-                <td>
-                  <button
-                    className="inline transparent"
-                    onClick={() => removeClass(i)}
-                    title="Remove Class"
-                  >
-                    <i className="fa fa-ellipsis-vertical"></i>
-                  </button>
-                </td>
-              </tr>
-            ))}
-
-          </tbody>
-        </table>
-      ) : (
-        <>
-          <p>No class classes yet.</p>
-          <small>Click the <i className="fa fa-plus-circle"></i> icon to add a class period.</small>
-        </>
-      )}
-
-      <button
-        className="icon-with-text width-full"
-        title="New Class Period"
-        onClick={() => {
-          // let e = schedule.concat();
-          // e.push({ name: "", time: [] });
-          // saveSchedule(e, false);
-          setClassModalOpen(true);
-        }}
-      >
-        <i className="fa fa-plus-circle"></i>
-        Add Class
-      </button>
-      {/* <button
+    <button
+      className="icon-with-text width-full"
+      title="New Class Period"
+      onClick={() => {
+        // let e = schedule.concat();
+        // e.push({ name: "", time: [] });
+        // saveSchedule(e, false);
+        props.createClass();
+      }}
+    >
+      <i className="fa fa-plus-circle"></i>
+      Add Class
+    </button>
+    {/* <button
         className="icon-with-text width-third"
         title="Reset Schedule"
         onClick={() => {
@@ -118,6 +144,16 @@ function ScheduleInput(props) {
         Clear Schedule
       </button>
       <button onClick={() => props.saveAction()} className="icon-with-text width-third"><i className="fa fa-save"></i> Save</button> */}
+
+    {tooltipOpen &&
+      <div className="context-menu"
+        ref={tooltipEl}
+        style={{ "--_left": tooltipCoords.left + "px", "--_top": tooltipCoords.top + "px" }}>
+        <ul>
+          <li><i className="fa fa-edit"></i> Edit</li>
+          <li><i className="fa fa-trash"></i> Delete</li>
+        </ul>
+      </div>}
   </>
 
 }

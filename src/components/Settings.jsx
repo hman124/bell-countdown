@@ -28,11 +28,22 @@ export default class Settings extends React.Component {
       }, devOptions: window.localStorage.getItem("devOptions") == "true",
       scheduleUploadModal: {
         open: false
-      }, notificationModal:{open:false}, 
+      }, notificationModal: { open: false },
       installButton: !!props.installPrompt,
       notificationPermission: Notification.permission,
       notificationOptions: props.notificationOptions,
-      notificationAlertDraft: { amount: "", units: "", mode: "" }
+      notificationAlertDraft: { amount: "", units: "", mode: "" },
+
+      createClassModal: {
+        open: false,
+        scheduleIdx: 0,
+        time: [],
+        title: ""
+      }, editClassModal: {
+        open: false,
+        scheduleIdx: 0,
+        classIdx: 0
+      }
     };
 
     this.pages = [
@@ -440,61 +451,129 @@ export default class Settings extends React.Component {
               (<table>
                 <tbody>
                   {this.state.scheduleList.map((x, i) => (
-                    <React.Fragment key={i}>
-                      <tr>
-                        <td>{x.name || "untitled schedule"}</td>
+                    <tr key={i}>
+                      <td>{x.name || "untitled schedule"}</td>
 
-                        <td>
-                          <button
-                            disabled={x.preset}
-                            title="Edit this schedule"
-                            className="inline"
-                            onClick={() =>
-                              this.setState({ scheduleModal: { open: true, index: i } })
+                      <td>
+                        <button
+                          disabled={x.preset}
+                          title="Edit this schedule"
+                          className="inline"
+                          onClick={() =>
+                            this.setState({ scheduleModal: { open: true, index: i } })
+                          }
+                        >
+                          <i className="fa fa-pencil"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          disabled={x.preset}
+                          title="Delete this schedule"
+                          className="inline"
+                          onClick={() => {
+                            const c = confirm(
+                              "Are you sure you want to delete this schedule?"
+                            );
+                            if (!c) {
+                              return;
                             }
-                          >
-                            <i className="fa fa-pencil"></i>
-                          </button>
-                        </td>
-                        <td>
-                          <button
-                            disabled={x.preset}
-                            title="Delete this schedule"
-                            className="inline"
-                            onClick={() => {
-                              const c = confirm(
-                                "Are you sure you want to delete this schedule?"
-                              );
-                              if (!c) {
-                                return;
-                              }
-                              const s = this.state.scheduleList.concat();
-                              s.splice(i, 1);
-                              this.setState({ scheduleList: s });
-                              this.props.setScheduleList(s);
-                            }}
-                          >
-                            <i className="fa fa-trash"></i>
-                          </button>
-                        </td>
-                        {this.state.devOptions && <td>
-                          <button
-                            className="inline"
-                            title="Download Schedule"
-                            onClick={() => this.downloadSchedule(i)}
-                          >
-                            <i className="fa fa-file-arrow-down"></i>
-                          </button>
-                        </td>}
+                            const s = this.state.scheduleList.concat();
+                            s.splice(i, 1);
+                            this.setState({ scheduleList: s });
+                            this.props.setScheduleList(s);
+                          }}
+                        >
+                          <i className="fa fa-trash"></i>
+                        </button>
+                      </td>
+                      {this.state.devOptions && <td>
+                        <button
+                          className="inline"
+                          title="Download Schedule"
+                          onClick={() => this.downloadSchedule(i)}
+                        >
+                          <i className="fa fa-file-arrow-down"></i>
+                        </button>
+                      </td>}
 
-                        <td title="Toggle this Schedule">
-                          <ToggleSlider active={!("active" in x) || x.active} onChange={(val) => this.toggleSchedule(i, val)}></ToggleSlider>
-                        </td>
-                      </tr>
-                    </React.Fragment>
+                      <td title="Toggle this Schedule">
+                        <ToggleSlider active={!("active" in x) || x.active} onChange={(val) => this.toggleSchedule(i, val)}></ToggleSlider>
+                      </td>
+                    </tr>
                   ))}
                 </tbody>
               </table>) : <p>No schedules yet. Add one below.</p>}
+
+            {this.state.createClassModal.open && (
+              <Modal
+                title="New Class"
+                closeIcon="fa-arrow-left"
+                onLoad={cb => this.setState(s => ({ createClassModal: { ...s.createClassModal, close: cb } }))}
+                close={() => this.setState({ createClassModal: { open: false } })}
+                onCloseStart={() => this.setState(s => ({ scheduleModal: { open: true, index: s.createClassModal.scheduleIdx } }))}
+              >
+                <label>
+                  Class Name
+                  <input type="text" placeholder="1st Period" onChange={evt => {
+                    this.setState(s => ({
+                      createClassModal: {
+                        ...s.createClassModal,
+                        title: evt.target.value
+                      }
+                    }))
+                  }} />
+                </label>
+                <label>
+                  Start time
+                  <input type="time" onChange={evt => {
+                    this.setState(s => {
+                      const t = s.createClassModal.time.concat();
+                      t[0] = evt.target.value;
+                      return {
+                        createClassModal: {
+                          ...s.createClassModal,
+                          time:t
+                        }
+                      }
+                    });
+                  }} />
+                </label>
+
+                <label>
+                  End time
+                  <input type="time" onChange={evt => {
+                    this.setState(s => {
+                      const t = s.createClassModal.time.concat();
+                      t[1] = evt.target.value;
+                      return {
+                        createClassModal: {
+                          ...s.createClassModal,
+                          time:t
+                        }
+                      }
+                    });
+                  }}/>
+                </label>
+
+                <button className="width-full" onClick={(evt)=>{
+                  // evt.stopImmediatePropagation();
+                  // evt.preventDefault();
+                  const scheduleList = this.state.scheduleList.concat();
+                  const schedule = scheduleList[this.state.createClassModal.scheduleIdx];
+                  schedule.periods.push({ name: this.state.createClassModal.title, time: this.state.createClassModal.time });
+                  this.setState(s=>({
+                      scheduleList,
+                      createClassModal: {open: false},
+                      scheduleModal: {open: true, index: s.createClassModal.scheduleIdx}
+                  }));
+                }}>
+                  <i className="fa fa-save"></i> Save
+                </button>
+
+              </Modal>)}
+
+
             {this.state.scheduleModal.open && (
               <Modal
                 title="Schedule"
@@ -538,6 +617,12 @@ export default class Settings extends React.Component {
                   setSchedule={(sc) =>
                     this.saveTimes(this.state.scheduleModal.index, sc)
                   }
+                  createClass={() => {
+                    this.state.scheduleModal.close();
+                    this.setState(s => ({
+                      createClassModal: { open: true, scheduleIdx: s.scheduleModal.index, time: [], title: "" }
+                    }));
+                  }}
                   saveAction={this.state.scheduleModal.close}
                 ></ScheduleInput>
 
@@ -617,10 +702,10 @@ export default class Settings extends React.Component {
 
             {this.state.notificationModal.open && <Modal
               title="Create Alert"
-              onLoad={(cb)=>this.setState(s=>({notificationModal: { close: cb, ...s.notificationModal }}))}
+              onLoad={(cb) => this.setState(s => ({ notificationModal: { close: cb, ...s.notificationModal } }))}
               close={() => this.setState({ notificationModal: { open: false } })}
               className="inline"
-              >
+            >
               <select
                 className="inline"
                 onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, amount: evt.target.value } }))}
@@ -680,7 +765,7 @@ export default class Settings extends React.Component {
                 this.state.notificationModal.close();
               }}>Create</button></Modal>}
 
-              <button onClick={()=>this.setState({notificationModal:{open:true}})}>Add Alert</button>
+            <button onClick={() => this.setState({ notificationModal: { open: true } })}>Add Alert</button>
           </>}
 
         </>);
@@ -695,7 +780,7 @@ export default class Settings extends React.Component {
     return (
       <div className="container Settings">
         {this.renderNav()}
-        <div className={"settings-main"+(this.state.navopen ? " hide" : " show")}>{this.renderPage()}</div>
+        <div className={"settings-main" + (this.state.navopen ? " hide" : " show")}>{this.renderPage()}</div>
         <ToastContainer></ToastContainer>
       </div>
     );

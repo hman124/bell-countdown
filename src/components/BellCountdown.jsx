@@ -31,7 +31,7 @@ function getClock() {
 }
 
 function getCountdown(schedule) {
-  if (!schedule || !schedule.periods) {
+  if (!schedule || !schedule.periods || schedule.periods.length == 0) {
     return {
       school: false,
       reason: "There is no schedule for today"
@@ -216,14 +216,12 @@ class BellCountdown extends React.Component {
   }
 
   tick() {
-    console.log("tick");
     const count = getCountdown(this.schedule);
     this.setState({
       clock: getClock(),
       countdown: count,
     });
 
-    console.log("tick2", count);
 
     if (count.school) {
       document.title = `${count.time.minutes}:${count.time.seconds} - Bell Countdown`;
@@ -234,7 +232,6 @@ class BellCountdown extends React.Component {
 
     // Notifications
 
-    console.log("tick3");
     if(
       Notification.permission !== "granted" || 
       !this.props.notificationOptions.enabled ||
@@ -242,15 +239,12 @@ class BellCountdown extends React.Component {
         return; 
     }
 
-    console.log("NOTIFICATIONS");
 
     for(let i = 0; i < this.props.notificationOptions.alerts.length; i++){
       const alert = this.props.notificationOptions.alerts[i];
       
       if(alert.units == "seconds" && count.time.minutes != 0){ continue; }
       if(alert.units == "minutes" && count.time.seconds != 0){ continue; }
-
-      console.log(count.time[alert.units], alert.amount);
 
       if(count.time[alert.units] == alert.amount){
         const message = alert.amount + alert.units.slice(0,1) + " " + (alert.mode=="before_end"?"until class ends":"since class started"); 
@@ -301,14 +295,13 @@ class BellCountdown extends React.Component {
             <p>{this.state.countdown.reason}</p>
           </>
         )}
-        {this.schedule && (
+        {this.schedule && this.state.countdown.school && (
           <>
             <p>
               <a
                 href="#"
                 className="normal no-underline"
                 onClick={() => {
-                  console.log("schedule modal")
                   this.setState(() => ({ schedulemodal: true }))
                 }}
               >

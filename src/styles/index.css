@@ -17,7 +17,7 @@
 }
 
 :root {
-    font-size: 2rem;
+    font-size: 1.8rem;
     --nav-height: 2rem;
     --footer-height: 0rem;
     --main-height: calc(100vh - (var(--nav-height) + var(--footer-height)));
@@ -343,4 +343,43 @@ hr {
     width: auto;
     height: auto;
     margin:0;
+}
+
+
+.context-menu {
+    font-size: 0.8rem;
+    --_width: 6rem;
+    position: fixed;
+    width: var(--_width);
+
+    border-radius: 5px;
+    background-color: var(--theme-background);
+    color: var(--theme-text);
+    
+    border: 2px #000 solid;
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    top: calc(var(--_top));
+    left: calc((var(--_left) - var(--_width)) + 0rem);
+
+    box-shadow: 0 0 5px var(--theme-text);
+
+}
+
+.context-menu ul li {
+    list-style:none;
+    padding: 0.25rem;
+    padding-left: 0.5rem;
+    cursor:pointer;
+}
+
+.context-menu ul li:hover {
+    background-color: var(--theme-background);
+    color: var(--theme-main)
+}
+
+.context-menu ul li i {
+    margin-left: 0.25rem;
 }

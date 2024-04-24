@@ -1,19 +1,26 @@
 .popup {
   --header-height: 3rem;
-  
+
+
+  --backdrop-blur: 5px;
+  --background-color: rgba(0, 0, 0, 0.5);
+
   width: 100vw;
   height: 100vh;
 
   background-color: rgba(0, 0, 0, 0.7);
-  
+
   position: fixed;
   top: 0;
   left: 0;
   z-index: 300;
-  
+
   display: grid;
   place-items: center;
-  
+
+  backdrop-filter: blur(var(--backdrop-blur));
+  background-color: var(--background-color);
+
 }
 
 .popup .content {
@@ -27,7 +34,7 @@
 
 
   max-height: calc(100vh - 2rem);
-  min-width: min(600px, 100vw);
+  min-width: min(700px, 100vw);
   max-width: 100vw;
 }
 
@@ -45,10 +52,10 @@
   padding-left: 1rem;
   padding-right: 1rem;
   padding-top: 1rem;
-  
+
   /* width: 100%; */
   max-height: calc(100vh - 2rem - var(--header-height));
-  
+
   overflow: auto;
   /* hide the scrollbar */
   -ms-overflow-style: none;
@@ -60,22 +67,22 @@
 }
 
 .popup .content .header {
-  
+
   width: 100%;
-  
+
   position: absolute;
   display: flex;
   align-items: center;
-  
+
   border-radius: inherit;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   background-color: var(--theme-main);
   color: var(--theme-contrast);
   box-shadow: 0px 0px 18px 5px rgba(0, 0, 0, 0.3);
-  
+
   height: var(--header-height);
-  
+
   padding: 1rem;
 }
 
@@ -107,7 +114,7 @@
     transform: translate(10px, 10px);
     opacity: 0;
   }
-  
+
   100% {
     /* transform: scale(1); */
     transform: unset;
@@ -121,10 +128,10 @@
     transform: translate(0, 0);
     opacity: 1;
   }
-  
+
   100% {
     /* transform: scale(0.0000001); */
-    
+
     transform: translate(10px, 10px);
     opacity: 0;
   }
@@ -134,23 +141,33 @@
 @keyframes fadein {
   from {
     background-color: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0);
   }
 
   to {
-    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(var(--backdrop-blur));
+    background-color: var(--background-color);
   }
 
 }
 
 @keyframes fadeout {
   from {
-    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(var(--backdrop-blur));
+    background-color: var(--background-color);
   }
 
   to {
     background-color: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0);
   }
 
+}
+
+.popup,
+.popup .content {
+  animation-duration: var(--_anim-duration);
+  animation-fill-mode: forwards;
 }
 
 .popup.fadeout {
@@ -159,16 +176,10 @@
 
 .popup.fadein {
   animation-name: fadein;
-  
-  animation-duration: var(--_anim-duration);
-  animation-fill-mode: forwards;
 }
 
 .popup.fadein .content {
   animation-name: rollout;
-  
-  animation-duration: var(--_anim-duration);
-  animation-fill-mode: forwards;
 }
 
 .popup.fadeout .content {
