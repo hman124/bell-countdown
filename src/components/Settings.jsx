@@ -505,6 +505,137 @@ export default class Settings extends React.Component {
                 </tbody>
               </table>) : <p>No schedules yet. Add one below.</p>}
 
+            {this.state.editClassModal.open && (
+              <Modal
+                title="Edit Class"
+                closeIcon="fa-arrow-left"
+                onLoad={cb => this.setState(s => ({ editClassModal: { ...s.editClassModal, close: cb } }))}
+                close={() => this.setState({ editClassModal: { open: false } })}
+                onCloseStart={() => this.setState(s => ({ scheduleModal: { open: true, index: s.editClassModal.scheduleIdx } }))}>
+
+                <label>
+                  Class Name
+                  <input type="text" placeholder="1st Period" onChange={evt => {
+                    this.setState(s => ({
+                      editClassModal: {
+                        ...s.editClassModal,
+                        title: evt.target.value
+                      }
+                    }))
+                  }} />
+                </label>
+                <label>
+                  Start time
+                  <input type="time" onChange={evt => {
+                    this.setState(s => {
+                      const t = s.editClassModal.time ? s.editClassModal.concat() : [];
+                      t[0] = evt.target.value;
+                      return {
+                        createClassModal: {
+                          ...s.createClassModal,
+                          time: t
+                        }
+                      }
+                    });
+                  }} />
+                </label>
+
+                <label>
+                  End time
+                  <input type="time" onChange={evt => {
+                    this.setState(s => {
+                      const t = s.editClassModal.time ? s.editClassModal.concat() : [];
+                      t[1] = evt.target.value;
+                      return {
+                        editClassModal: {
+                          ...s.editClassModal,
+                          time: t
+                        }
+                      }
+                    });
+                  }} />
+                </label>
+
+                <button className="width-full" onClick={(evt) => {
+                  // evt.stopImmediatePropagation();
+                  // evt.preventDefault();
+                  this.setState(s => {
+
+                    const scheduleList = s.scheduleList.concat();
+                    const schedule = scheduleList[s.editClassModal.scheduleIdx];
+
+                    // set the class
+                    schedule.periods[s.editClassModal.classIdx] = {
+                      name: s.editClassModal.title,
+                      time: s.editClassModal.time
+                    }
+
+                    return {
+                      scheduleList,
+                      editClassModal: { open: false },
+                      scheduleModal: { open: true, index: s.editClassModal.scheduleIdx }
+                    }
+                  }, () => {
+                    this.props.setScheduleList(this.state.scheduleList);
+                  });
+                }}>
+                  <i className="fa fa-save"></i> Save
+                </button>
+
+                {/* <label>
+                  Class Name
+                  <input type="text" defaultValue={this.state.scheduleList[this.state.editClassModal.scheduleIdx].periods[this.state.editClassModal.classIdx].name} placeholder="1st Period" onChange={evt => {
+                    this.setState(s => {
+                      const t = s.scheduleList.concat();
+                      const p = t[s.editClassModal.scheduleIdx].periods.concat();
+                      p[s.editClassModal.classIdx].name = evt.target.value;
+                      return {
+                        scheduleList: t
+                      }
+                    })
+                  }} />
+                </label>
+                <label>
+                  Start time
+                  <input type="time" defaultValue={this.state.scheduleList[this.state.editClassModal.scheduleIdx].periods[this.state.editClassModal.classIdx].time[0]} onChange={evt => {
+                    this.setState(s => {
+                      const t = s.scheduleList.concat();
+                      const p = t[s.editClassModal.scheduleIdx].periods.concat();
+                      p[s.editClassModal.classIdx].time[0] = evt.target.value;
+                      return {
+                        scheduleList: t
+                      }
+                    });
+                  }} />
+                </label>
+
+                <label>
+                  End time
+                  <input type="time" defaultValue={this.state.scheduleList[this.state.editClassModal.scheduleIdx].periods[this.state.editClassModal.classIdx].time[1]} onChange={evt => {
+                    this.setState(s => {
+                      const t = s.scheduleList.concat();
+                      const p = t[s.editClassModal.scheduleIdx].periods.concat();
+                      p[s.editClassModal.classIdx].time[1] = evt.target.value;
+                      return {
+                        scheduleList: t
+                      }
+                    });
+                  }} />
+                </label>
+
+                <button className="width-full" onClick={(evt) => {
+                  this.props.setScheduleList(this.state.scheduleList);
+                  this.setState(s => ({
+                    editClassModal: { open: false },
+                    scheduleModal: { open: true, index: s.editClassModal.scheduleIdx }
+                  }));
+                }}>
+                  <i className="fa fa-save"></i> Save
+                </button> */}
+
+              </Modal>
+            )}
+
             {this.state.createClassModal.open && (
               <Modal
                 title="New Class"
@@ -533,7 +664,7 @@ export default class Settings extends React.Component {
                       return {
                         createClassModal: {
                           ...s.createClassModal,
-                          time:t
+                          time: t
                         }
                       }
                     });
@@ -549,24 +680,25 @@ export default class Settings extends React.Component {
                       return {
                         createClassModal: {
                           ...s.createClassModal,
-                          time:t
+                          time: t
                         }
                       }
                     });
-                  }}/>
+                  }} />
                 </label>
 
-                <button className="width-full" onClick={(evt)=>{
+                <button className="width-full" onClick={(evt) => {
                   // evt.stopImmediatePropagation();
                   // evt.preventDefault();
                   const scheduleList = this.state.scheduleList.concat();
                   const schedule = scheduleList[this.state.createClassModal.scheduleIdx];
                   schedule.periods.push({ name: this.state.createClassModal.title, time: this.state.createClassModal.time });
-                  this.setState(s=>({
-                      scheduleList,
-                      createClassModal: {open: false},
-                      scheduleModal: {open: true, index: s.createClassModal.scheduleIdx}
+                  this.setState(s => ({
+                    scheduleList,
+                    createClassModal: { open: false },
+                    scheduleModal: { open: true, index: s.createClassModal.scheduleIdx }
                   }));
+                  this.props.setScheduleList(scheduleList);
                 }}>
                   <i className="fa fa-save"></i> Save
                 </button>
@@ -623,6 +755,25 @@ export default class Settings extends React.Component {
                       createClassModal: { open: true, scheduleIdx: s.scheduleModal.index, time: [], title: "" }
                     }));
                   }}
+
+                  editClass={(idx) => {
+                    this.state.scheduleModal.close();
+                    this.setState(s => {
+
+                      const p = s.scheduleList[s.scheduleModal.index].periods[idx];
+
+                      return {
+                        editClassModal: {
+                          open: true,
+                          scheduleIdx: s.scheduleModal.index,
+                          classIdx: idx,
+                          time: p.time,
+                          title: p.name
+                        }
+                      }
+                    });
+                  }}
+
                   saveAction={this.state.scheduleModal.close}
                 ></ScheduleInput>
 

@@ -34,7 +34,7 @@ function ScheduleInput(props) {
 
   let tooltipEl = useRef(0);
 
-  let tooltipIdx = null;
+  let [tooltipIdx, setTooltipIdx] = useState(null);
   let classModalCb = null;
 
   function checkTooltipFocus(event) {
@@ -69,9 +69,11 @@ function ScheduleInput(props) {
 
   function contextMenu(idx, evt) {
     const rect = evt.currentTarget.getBoundingClientRect();
-    tooltipIdx = idx;
+    setTooltipIdx(idx);
     const left = evt.clientX;
     const top = evt.clientY;
+
+    console.log("IDX", tooltipIdx);
 
     setTooltipOpen(true);
     setTooltipCoords({left, top});
@@ -150,8 +152,8 @@ function ScheduleInput(props) {
         ref={tooltipEl}
         style={{ "--_left": tooltipCoords.left + "px", "--_top": tooltipCoords.top + "px" }}>
         <ul>
-          <li><i className="fa fa-edit"></i> Edit</li>
-          <li><i className="fa fa-trash"></i> Delete</li>
+          <li onClick={()=>{setTooltipOpen(false); props.editClass(tooltipIdx);}}><i className="fa fa-edit"></i> Edit</li>
+          <li onClick={()=>{setTooltipOpen(false); removeClass(tooltipIdx);}}><i className="fa fa-trash"></i> Delete</li>
         </ul>
       </div>}
   </>
