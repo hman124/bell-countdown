@@ -285,7 +285,7 @@ class BellCountdown extends React.Component {
             <div className="counters-container">
               <div className="progressbar-container">
                 <CircularProgressbar
-                  styles={this.styles}
+                  styles={this.state.styles}
                   value={this.state.countdown.time.minutes}
                   maxValue={this.state.countdown.length}
                   text={this.state.countdown.time.minutes.toString()}
@@ -294,7 +294,7 @@ class BellCountdown extends React.Component {
               </div>
               <div className="progressbar-container">
                 <CircularProgressbar
-                  styles={this.styles}
+                  styles={this.state.styles}
                   value={this.state.countdown.time.seconds}
                   maxValue={60}
                   text={this.state.countdown.time.seconds.toString()}
@@ -329,24 +329,6 @@ class BellCountdown extends React.Component {
           <>
             <p>{this.state.countdown.reason}</p>
           </>
-        )}
-        {this.schedule && this.state.countdown.school && (
-          <>
-            <p>
-              <a
-                href="#"
-                className="normal no-underline"
-                onClick={() => {
-                  this.setState(() => ({ schedulemodal: true }))
-                }}
-              >
-                <i className="fa fa-calendar"></i>{" "}
-                <span className="underline">{this.schedule.name}</span>
-              </a>
-            </p>
-
-            <p>{this.state.countdown.reason}</p>
-           </>
         )}
 
         {this.state.schedulemodal &&
