@@ -17,7 +17,7 @@
 }
 
 :root {
-    font-size: 2rem;
+    font-size: 1.8rem;
     --nav-height: 2rem;
     --footer-height: 0rem;
     --main-height: calc(100vh - (var(--nav-height) + var(--footer-height)));
@@ -126,12 +126,19 @@ select:last-of-type {
 }
 
 input.inline,
-button.inline {
+button.inline,
+select.inline {
     display: inline-block;
     width: initial;
     /* height:initial; */
     min-width: 0;
-    margin-bottom: 0;
+    /* margin-bottom: 0; */
+}
+
+input.transparent,
+button.transparent {
+    background-color: unset;
+    color: var(--theme-text);
 }
 
 input[type=button],
@@ -175,6 +182,12 @@ table td,
 table th {
     text-align: center;
     padding: 0.25rem;
+}
+
+/* low padding  */
+table.thin td,
+table.thin th {
+    padding: 0.125rem;
 }
 
 table td button {
@@ -283,6 +296,11 @@ hr {
     display: inline-block;
 }
 
+.width-full {
+    display: block;
+    width: 100%;
+}
+
 @keyframes underline {
     from {
         width: 0;
@@ -308,9 +326,9 @@ hr {
         width: 100%;
     }
 
-    input:not([type=checkbox], [type=radio]),
-    button,
-    select {
+    input:not([type=checkbox], [type=radio], .inline),
+    button:not(.inline),
+    select:not(.inline) {
         width: 100%;
         margin-right: 0;
     }
@@ -325,4 +343,43 @@ hr {
     width: auto;
     height: auto;
     margin:0;
+}
+
+
+.context-menu {
+    font-size: 0.8rem;
+    --_width: 6rem;
+    position: fixed;
+    width: var(--_width);
+
+    border-radius: 5px;
+    background-color: var(--theme-background);
+    color: var(--theme-text);
+    
+    border: 2px #000 solid;
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    top: calc(var(--_top));
+    left: calc((var(--_left) - var(--_width)) + 0rem);
+
+    box-shadow: 0 0 5px var(--theme-text);
+
+}
+
+.context-menu ul li {
+    list-style:none;
+    padding: 0.25rem;
+    padding-left: 0.5rem;
+    cursor:pointer;
+}
+
+.context-menu ul li:hover {
+    background-color: var(--theme-background);
+    color: var(--theme-main)
+}
+
+.context-menu ul li i {
+    margin-left: 0.25rem;
 }

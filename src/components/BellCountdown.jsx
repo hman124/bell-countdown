@@ -5,7 +5,6 @@ import "react-circular-progressbar/dist/styles.css";
 import "../styles/BellCountdown.css";
 import Modal from "./Modal.jsx";
 
-
 // helper functions for use in the BellCountdown class
 function toMins(time) {
   const pattern = /[0-9]{1,2}:[0-9]{1,2}/;
@@ -32,7 +31,7 @@ function getClock() {
 }
 
 function getCountdown(schedule) {
-  if (!schedule || !schedule.periods || schedule.periods.length == []) {
+  if (!schedule || !schedule.periods || schedule.periods.length == 0) {
     return {
       school: false,
       reason: "There is no schedule for today"
@@ -49,7 +48,7 @@ function getCountdown(schedule) {
   const first_st = toMins(periods[0].time[0]);
   const last_nd = toMins(periods[periods.length - 1].time[1]);
 
-  if (mins < first_st || mins > last_nd) {
+  if (mins < first_st || mins >= last_nd) {
     return {
       school: false,
       reason: mins < first_st ? "School has not started yet" : "School is over for the day"
@@ -138,8 +137,9 @@ class BellCountdown extends React.Component {
     this.weekday = days[d.getDay()];
 
     const schedule = (props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(this.weekday)) || null);
+    this.schedule = schedule;
 
-    const styles = buildStyles({
+    this.styles = buildStyles({
       pathColor: props.theme.main,
       textColor: props.theme.main,
       trailColor: props.theme.type == "light" ? "#aaa" : "#fff",
@@ -150,7 +150,7 @@ class BellCountdown extends React.Component {
       countdown: {},
       clock: getClock(),
       schedulemodal: false,
-      schedule, styles
+      schedule, //styles,
     };
 
     this.tick = this.tick.bind(this);
@@ -190,6 +190,31 @@ class BellCountdown extends React.Component {
     };
   }
 
+  // static getDerivedStateFromProps(nextProps, prevState) {
+
+
+  //   console.log("state");
+  //   const days = ["su", "mo", "tu", "we", "th", "fr", "sa"];
+  //   const d = new Date();
+
+  //   const weekday = days[d.getDay()];
+
+  //   const schedule = (props.scheduleList.find(x => (!("active" in x) || x.active) && x.days.includes(weekday)) || null);
+  //   const count = getCountdown(schedule);
+
+  //   if (count.school) {
+  //     document.title = `${count.time.minutes}:${count.time.seconds} - Bell Countdown`;
+  //   } else {
+  //     document.title = `Bell Countdown`;
+  //   }
+
+  //   return {
+  //     clock: getClock(),
+  //     countdown: count,
+  //     needsUpdate: false
+  //   };
+  // }
+
   // UNSAFE_componentWillReceiveProps() {
 
   //   this.styles = buildStyles({
@@ -214,10 +239,35 @@ class BellCountdown extends React.Component {
       countdown: count,
     });
 
+
     if (count.school) {
       document.title = `${count.time.minutes}:${count.time.seconds} - Bell Countdown`;
     } else {
       document.title = `Bell Countdown`;
+      return;
+    }
+
+    // Notifications
+
+    if(
+      Notification.permission !== "granted" || 
+      !this.props.notificationOptions.enabled ||
+      (count.time.minutes > 0 && count.time.seconds > 0)) { 
+        return; 
+    }
+
+
+    for(let i = 0; i < this.props.notificationOptions.alerts.length; i++){
+      const alert = this.props.notificationOptions.alerts[i];
+      
+      if(alert.units == "seconds" && count.time.minutes != 0){ continue; }
+      if(alert.units == "minutes" && count.time.seconds != 0){ continue; }
+
+      if(count.time[alert.units] == alert.amount){
+        const message = alert.amount + alert.units.slice(0,1) + " " + (alert.mode=="before_end"?"until class ends":"since class started"); 
+        new Notification(message);
+      }
+                
     }
   }
 
@@ -235,7 +285,7 @@ class BellCountdown extends React.Component {
             <div className="counters-container">
               <div className="progressbar-container">
                 <CircularProgressbar
-                  styles={this.state.styles}
+                  styles={this.styles}
                   value={this.state.countdown.time.minutes}
                   maxValue={this.state.countdown.length}
                   text={this.state.countdown.time.minutes.toString()}
@@ -244,7 +294,7 @@ class BellCountdown extends React.Component {
               </div>
               <div className="progressbar-container">
                 <CircularProgressbar
-                  styles={this.state.styles}
+                  styles={this.styles}
                   value={this.state.countdown.time.seconds}
                   maxValue={60}
                   text={this.state.countdown.time.seconds.toString()}
@@ -277,6 +327,23 @@ class BellCountdown extends React.Component {
           </>
         ) : (
           <>
+            <p>{this.state.countdown.reason}</p>
+          </>
+        )}
+        {this.schedule && this.state.countdown.school && (
+          <>
+            <p>
+              <a
+                href="#"
+                className="normal no-underline"
+                onClick={() => {
+                  this.setState(() => ({ schedulemodal: true }))
+                }}
+              >
+                <i className="fa fa-calendar"></i>{" "}
+                <span className="underline">{this.schedule.name}</span>
+              </a>
+            </p>
 
             <p>{this.state.countdown.reason}</p>
            </>

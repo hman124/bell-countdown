@@ -12,7 +12,8 @@
     border: 2px var(--theme-main) solid;
     color: var(--theme-main);
     background-color: var(--theme-background);
-    transition: background 0.2s;
+    transition: background-color 0.2s;
+    
     display:grid; 
     place-items:center;
     float:left;
@@ -43,7 +44,10 @@
 }
 @media screen and (max-width:1000px){
     .weekday {
-        width: 1.5rem;
-        height: 1.5rem;
+        /* width: 1.5rem;
+        height: 1.5rem; */
+
+
+
     }
 }

@@ -36,6 +36,7 @@ class App extends React.Component {
     this.version = config.version;
 
     const theme = this.theme ? themes.find((x) => x.name == this.theme) : false;
+    const notificationOptions = window.localStorage.getItem("notificationOptions");
 
     this.state = {
       page: "schedule",
@@ -47,7 +48,10 @@ class App extends React.Component {
       scheduleFile: null,
       settingsPage: null,
       installPrompt: null,
-      scrolledTop: true
+      scrolledTop: true,
+      notificationOptions: notificationOptions ?
+          JSON.parse(notificationOptions) :
+          { enabled: true, alerts: [] }
     };
 
     //pages for nav
@@ -65,6 +69,7 @@ class App extends React.Component {
     this.setTheme = this.setTheme.bind(this);
     this.setLunch = this.setLunch.bind(this);
     this.checkScroll = this.checkScroll.bind(this);
+    this.setNotificationOptions = this.setNotificationOptions.bind(this);
   }
 
   componentDidMount() {
@@ -224,6 +229,11 @@ class App extends React.Component {
     }
   }
 
+  setNotificationOptions(s){
+    this.setState(e=>({notificationOptions:s}));
+    window.localStorage.setItem("notificationOptions", JSON.stringify(s));
+  }
+
   render() {
     return (
       <>
@@ -248,6 +258,7 @@ class App extends React.Component {
             scheduleType={this.state.scheduleType}
             setLunch={this.setLunch}
             theme={this.state.theme}
+            notificationOptions={this.state.notificationOptions}
           />
 
           {this.state.page == "schedule" && !this.state.scheduleList.length > 0 &&
@@ -283,14 +294,13 @@ class App extends React.Component {
               countdownList={this.state.countdownList}
               setCountdownList={this.setCountdownList}
               installPrompt={this.state.installPrompt}
+              notificationOptions={this.state.notificationOptions}
+              setNotificationOptions={this.setNotificationOptions}
             />
           )}
           {this.state.page == "updates" && <Updates />}
           {this.state.page == "lunchmenu" && <LunchMenu />}
         </main>
-        {/* <footer>
-          &copy; {new Date().getFullYear()} by hman124. (Version {this.version})
-        </footer> */}
       </>
     );
   }

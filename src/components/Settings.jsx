@@ -28,7 +28,22 @@ export default class Settings extends React.Component {
       }, devOptions: window.localStorage.getItem("devOptions") == "true",
       scheduleUploadModal: {
         open: false
-      }, installButton: !!props.installPrompt
+      }, notificationModal: { open: false },
+      installButton: !!props.installPrompt,
+      notificationPermission: Notification.permission,
+      notificationOptions: props.notificationOptions,
+      notificationAlertDraft: { amount: "", units: "", mode: "" },
+
+      createClassModal: {
+        open: false,
+        scheduleIdx: 0,
+        time: [],
+        title: ""
+      }, editClassModal: {
+        open: false,
+        scheduleIdx: 0,
+        classIdx: 0
+      }
     };
 
     this.pages = [
@@ -38,8 +53,14 @@ export default class Settings extends React.Component {
       { t: "about", i: "fa-info-circle" }
     ];
 
+    // if this is a preset schedule, add the lunch option
     if (config.schedule.use) {
       this.pages.splice(2, 0, { t: "lunch", i: "fa-hamburger" });
+    }
+
+    // if notifications are supported, add in the nav item
+    if ('Notification' in window) {
+      this.pages.splice(this.pages.length - 2, 0, { t: "notifications", i: "fa-bell" });
     }
 
     this.themes = themes;
@@ -52,6 +73,7 @@ export default class Settings extends React.Component {
     this.addSchedule = this.addSchedule.bind(this);
     this.setScheduleList = this.setScheduleList.bind(this);
     this.toggleSchedule = this.toggleSchedule.bind(this);
+    this.requestNotificationPermission = this.requestNotificationPermission.bind(this);
   }
 
   componentDidMount() {
@@ -118,6 +140,27 @@ export default class Settings extends React.Component {
         )}
       </>
     );
+  }
+
+  requestNotificationPermission() {
+    if (!(Notification in window)) {
+      alert("This browser doesn't support notifications!");
+      return;
+    }
+
+    // if the permission is granted or denied, just update the state
+    if (
+      Notification.permission == "granted" ||
+      Notification.permission == "denied"
+    ) {
+      this.setState({ notificationPermission: Notification.permission });
+      return;
+    }
+
+    // request permission and update the state accordingly
+    Notification.requestPermission().then(permission => {
+      this.setState({ notificationPermission: permission });
+    });
   }
 
   close() {
@@ -230,6 +273,19 @@ export default class Settings extends React.Component {
     };
     reader.readAsText(file);
 
+  }
+
+  toggleNotifications() {
+    this.setState(s => ({
+      notificationOptions: {
+        ...s.notificationOptions,
+        enabled: !s.notificationOptions.enabled
+      }
+    }), this.saveNotificationOptions);
+  }
+
+  saveNotificationOptions() {
+    this.props.setNotificationOptions(this.state.notificationOptions);
   }
 
   renderPage() {
@@ -393,61 +449,261 @@ export default class Settings extends React.Component {
               (<table>
                 <tbody>
                   {this.state.scheduleList.map((x, i) => (
-                    <React.Fragment key={i}>
-                      <tr>
-                        <td>{x.name || "untitled schedule"}</td>
+                    <tr key={i}>
+                      <td>{x.name || "untitled schedule"}</td>
 
-                        <td>
-                          <button
-                            disabled={x.preset}
-                            title="Edit this schedule"
-                            className="inline"
-                            onClick={() =>
-                              this.setState({ scheduleModal: { open: true, index: i } })
+                      <td>
+                        <button
+                          disabled={x.preset}
+                          title="Edit this schedule"
+                          className="inline"
+                          onClick={() =>
+                            this.setState({ scheduleModal: { open: true, index: i } })
+                          }
+                        >
+                          <i className="fa fa-pencil"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          disabled={x.preset}
+                          title="Delete this schedule"
+                          className="inline"
+                          onClick={() => {
+                            const c = confirm(
+                              "Are you sure you want to delete this schedule?"
+                            );
+                            if (!c) {
+                              return;
                             }
-                          >
-                            <i className="fa fa-pencil"></i>
-                          </button>
-                        </td>
-                        <td>
-                          <button
-                            disabled={x.preset}
-                            title="Delete this schedule"
-                            className="inline"
-                            onClick={() => {
-                              const c = confirm(
-                                "Are you sure you want to delete this schedule?"
-                              );
-                              if (!c) {
-                                return;
-                              }
-                              const s = this.state.scheduleList.concat();
-                              s.splice(i, 1);
-                              this.setState({ scheduleList: s });
-                              this.props.setScheduleList(s);
-                            }}
-                          >
-                            <i className="fa fa-trash"></i>
-                          </button>
-                        </td>
-                        {this.state.devOptions && <td>
-                          <button
-                            className="inline"
-                            title="Download Schedule"
-                            onClick={() => this.downloadSchedule(i)}
-                          >
-                            <i className="fa fa-file-arrow-down"></i>
-                          </button>
-                        </td>}
+                            const s = this.state.scheduleList.concat();
+                            s.splice(i, 1);
+                            this.setState({ scheduleList: s });
+                            this.props.setScheduleList(s);
+                          }}
+                        >
+                          <i className="fa fa-trash"></i>
+                        </button>
+                      </td>
+                      {this.state.devOptions && <td>
+                        <button
+                          className="inline"
+                          title="Download Schedule"
+                          onClick={() => this.downloadSchedule(i)}
+                        >
+                          <i className="fa fa-file-arrow-down"></i>
+                        </button>
+                      </td>}
 
-                        <td title="Toggle this Schedule">
-                          <ToggleSlider active={!("active" in x) || x.active} onChange={(val) => this.toggleSchedule(i, val)}></ToggleSlider>
-                        </td>
-                      </tr>
-                    </React.Fragment>
+                      <td title="Toggle this Schedule">
+                        <ToggleSlider active={!("active" in x) || x.active} onChange={(val) => this.toggleSchedule(i, val)}></ToggleSlider>
+                      </td>
+                    </tr>
                   ))}
                 </tbody>
               </table>) : <p>No schedules yet. Add one below.</p>}
+
+            {this.state.editClassModal.open && (
+              <Modal
+                title="Edit Class"
+                closeIcon="fa-arrow-left"
+                onLoad={cb => this.setState(s => ({ editClassModal: { ...s.editClassModal, close: cb } }))}
+                close={() => this.setState({ editClassModal: { open: false } })}
+                onCloseStart={() => this.setState(s => ({ scheduleModal: { open: true, index: s.editClassModal.scheduleIdx } }))}>
+
+                <label>
+                  Class Name
+                  <input type="text" placeholder="1st Period" onChange={evt => {
+                    this.setState(s => ({
+                      editClassModal: {
+                        ...s.editClassModal,
+                        title: evt.target.value
+                      }
+                    }))
+                  }} />
+                </label>
+                <label>
+                  Start time
+                  <input type="time" onChange={evt => {
+                    this.setState(s => {
+                      const t = s.editClassModal.time ? s.editClassModal.concat() : [];
+                      t[0] = evt.target.value;
+                      return {
+                        createClassModal: {
+                          ...s.createClassModal,
+                          time: t
+                        }
+                      }
+                    });
+                  }} />
+                </label>
+
+                <label>
+                  End time
+                  <input type="time" onChange={evt => {
+                    this.setState(s => {
+                      const t = s.editClassModal.time ? s.editClassModal.concat() : [];
+                      t[1] = evt.target.value;
+                      return {
+                        editClassModal: {
+                          ...s.editClassModal,
+                          time: t
+                        }
+                      }
+                    });
+                  }} />
+                </label>
+
+                <button className="width-full" onClick={(evt) => {
+                  // evt.stopImmediatePropagation();
+                  // evt.preventDefault();
+                  this.setState(s => {
+
+                    const scheduleList = s.scheduleList.concat();
+                    const schedule = scheduleList[s.editClassModal.scheduleIdx];
+
+                    // set the class
+                    schedule.periods[s.editClassModal.classIdx] = {
+                      name: s.editClassModal.title,
+                      time: s.editClassModal.time
+                    }
+
+                    return {
+                      scheduleList,
+                      editClassModal: { open: false },
+                      scheduleModal: { open: true, index: s.editClassModal.scheduleIdx }
+                    }
+                  }, () => {
+                    this.props.setScheduleList(this.state.scheduleList);
+                  });
+                }}>
+                  <i className="fa fa-save"></i> Save
+                </button>
+
+                {/* <label>
+                  Class Name
+                  <input type="text" defaultValue={this.state.scheduleList[this.state.editClassModal.scheduleIdx].periods[this.state.editClassModal.classIdx].name} placeholder="1st Period" onChange={evt => {
+                    this.setState(s => {
+                      const t = s.scheduleList.concat();
+                      const p = t[s.editClassModal.scheduleIdx].periods.concat();
+                      p[s.editClassModal.classIdx].name = evt.target.value;
+                      return {
+                        scheduleList: t
+                      }
+                    })
+                  }} />
+                </label>
+                <label>
+                  Start time
+                  <input type="time" defaultValue={this.state.scheduleList[this.state.editClassModal.scheduleIdx].periods[this.state.editClassModal.classIdx].time[0]} onChange={evt => {
+                    this.setState(s => {
+                      const t = s.scheduleList.concat();
+                      const p = t[s.editClassModal.scheduleIdx].periods.concat();
+                      p[s.editClassModal.classIdx].time[0] = evt.target.value;
+                      return {
+                        scheduleList: t
+                      }
+                    });
+                  }} />
+                </label>
+
+                <label>
+                  End time
+                  <input type="time" defaultValue={this.state.scheduleList[this.state.editClassModal.scheduleIdx].periods[this.state.editClassModal.classIdx].time[1]} onChange={evt => {
+                    this.setState(s => {
+                      const t = s.scheduleList.concat();
+                      const p = t[s.editClassModal.scheduleIdx].periods.concat();
+                      p[s.editClassModal.classIdx].time[1] = evt.target.value;
+                      return {
+                        scheduleList: t
+                      }
+                    });
+                  }} />
+                </label>
+
+                <button className="width-full" onClick={(evt) => {
+                  this.props.setScheduleList(this.state.scheduleList);
+                  this.setState(s => ({
+                    editClassModal: { open: false },
+                    scheduleModal: { open: true, index: s.editClassModal.scheduleIdx }
+                  }));
+                }}>
+                  <i className="fa fa-save"></i> Save
+                </button> */}
+
+              </Modal>
+            )}
+
+            {this.state.createClassModal.open && (
+              <Modal
+                title="New Class"
+                closeIcon="fa-arrow-left"
+                onLoad={cb => this.setState(s => ({ createClassModal: { ...s.createClassModal, close: cb } }))}
+                close={() => this.setState({ createClassModal: { open: false } })}
+                onCloseStart={() => this.setState(s => ({ scheduleModal: { open: true, index: s.createClassModal.scheduleIdx } }))}
+              >
+                <label>
+                  Class Name
+                  <input type="text" placeholder="1st Period" onChange={evt => {
+                    this.setState(s => ({
+                      createClassModal: {
+                        ...s.createClassModal,
+                        title: evt.target.value
+                      }
+                    }))
+                  }} />
+                </label>
+                <label>
+                  Start time
+                  <input type="time" onChange={evt => {
+                    this.setState(s => {
+                      const t = s.createClassModal.time.concat();
+                      t[0] = evt.target.value;
+                      return {
+                        createClassModal: {
+                          ...s.createClassModal,
+                          time: t
+                        }
+                      }
+                    });
+                  }} />
+                </label>
+
+                <label>
+                  End time
+                  <input type="time" onChange={evt => {
+                    this.setState(s => {
+                      const t = s.createClassModal.time.concat();
+                      t[1] = evt.target.value;
+                      return {
+                        createClassModal: {
+                          ...s.createClassModal,
+                          time: t
+                        }
+                      }
+                    });
+                  }} />
+                </label>
+
+                <button className="width-full" onClick={(evt) => {
+                  // evt.stopImmediatePropagation();
+                  // evt.preventDefault();
+                  const scheduleList = this.state.scheduleList.concat();
+                  const schedule = scheduleList[this.state.createClassModal.scheduleIdx];
+                  schedule.periods.push({ name: this.state.createClassModal.title, time: this.state.createClassModal.time });
+                  this.setState(s => ({
+                    scheduleList,
+                    createClassModal: { open: false },
+                    scheduleModal: { open: true, index: s.createClassModal.scheduleIdx }
+                  }));
+                  this.props.setScheduleList(scheduleList);
+                }}>
+                  <i className="fa fa-save"></i> Save
+                </button>
+
+              </Modal>)}
+
+
             {this.state.scheduleModal.open && (
               <Modal
                 title="Schedule"
@@ -472,7 +728,6 @@ export default class Settings extends React.Component {
                   }}
                 />
 
-                <p>Applies to:</p>
                 <WeekdayInput
                   days={this.state.scheduleList[this.state.scheduleModal.index].days}
                   onChange={(s) => {
@@ -492,6 +747,31 @@ export default class Settings extends React.Component {
                   setSchedule={(sc) =>
                     this.saveTimes(this.state.scheduleModal.index, sc)
                   }
+                  createClass={() => {
+                    this.state.scheduleModal.close();
+                    this.setState(s => ({
+                      createClassModal: { open: true, scheduleIdx: s.scheduleModal.index, time: [], title: "" }
+                    }));
+                  }}
+
+                  editClass={(idx) => {
+                    this.state.scheduleModal.close();
+                    this.setState(s => {
+
+                      const p = s.scheduleList[s.scheduleModal.index].periods[idx];
+
+                      return {
+                        editClassModal: {
+                          open: true,
+                          scheduleIdx: s.scheduleModal.index,
+                          classIdx: idx,
+                          time: p.time,
+                          title: p.name
+                        }
+                      }
+                    });
+                  }}
+
                   saveAction={this.state.scheduleModal.close}
                 ></ScheduleInput>
 
@@ -529,6 +809,115 @@ export default class Settings extends React.Component {
 
           </>
         );
+      case "notifications":
+        return (<>
+          <h1>Notifications</h1>
+          <hr />
+          {this.state.notificationPermission == "default" &&
+            <button onClick={this.requestNotificationPermission}>Allow Notifications</button>
+          }
+
+          {this.state.notificationPermission == "denied" &&
+            <span style={{ color: "red" }}>Notification permission has been denied. <br /> Click the lock or options icon to allow notification access.</span>
+          }
+
+          {this.state.notificationPermission == "granted" && <>
+            <ToggleSlider active={this.state.notificationOptions.enabled} onChange={() => this.toggleNotifications()}></ToggleSlider> <span>Enable Notifications</span>
+
+
+            {this.state.notificationOptions.alerts.length > 0 && <>
+              <h3>Active Alerts</h3>
+              <table>
+                <tbody>
+                  {this.state.notificationOptions.alerts.map((x, i) =>
+                    <tr key={x.formatted}>
+                      <td>{x.formatted}</td>
+                      <td>
+                        <button className="inline" onClick={() => {
+                          this.setState(s => {
+                            const alerts = s.notificationOptions.alerts.concat()
+                            alerts.splice(i, 1);
+                            console.log(i, alerts);
+                            return { notificationOptions: { ...s.notificationOptions, alerts } };
+                          }, this.saveNotificationOptions);
+                        }}>
+                          <i className="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>)}
+                </tbody>
+              </table></>
+            }
+
+            {this.state.notificationModal.open && <Modal
+              title="Create Alert"
+              onLoad={(cb) => this.setState(s => ({ notificationModal: { close: cb, ...s.notificationModal } }))}
+              close={() => this.setState({ notificationModal: { open: false } })}
+              className="inline"
+            >
+              <select
+                className="inline"
+                onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, amount: evt.target.value } }))}
+                value={this.state.notificationAlertDraft.amount}>
+                <option value="">Choose one</option>
+                <option value="1">1</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="45">45</option>
+              </select>
+
+              <select
+                className="inline"
+                onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, units: evt.target.value } }))}
+                value={this.state.notificationAlertDraft.units}>
+                <option value="">Choose one</option>
+                <option value="minutes">minute(s)</option>
+                <option value="seconds">second(s)</option>
+              </select>
+
+              <select
+                className="inline"
+                onInput={(evt) => this.setState(s => ({ notificationAlertDraft: { ...s.notificationAlertDraft, mode: evt.target.value } }))}
+                value={this.state.notificationAlertDraft.mode}>
+                <option value="">Choose one</option>
+                <option value="before_end">before class end</option>
+                <option value="after_start">after class start</option>
+              </select>
+
+
+
+              <button onClick={() => {
+                this.setState(s => {
+                  const draft = s.notificationAlertDraft;
+
+                  if (Object.values(draft).includes("")) { return s; }
+
+                  const alerts = s.notificationOptions.alerts.concat();
+                  alerts.push({
+                    ...draft,
+                    formatted: draft.amount + draft.units.slice(0, 1) + " " +
+                      (draft.mode == "before_end" ? " before class end" : "after class start")
+                  });
+
+
+
+                  return {
+                    notificationOptions: { ...s.notificationOptions, alerts },
+                    notificationAlertDraft: { mode: "", amount: "", units: "" }
+                  }
+                }, this.saveNotificationOptions);
+
+                this.state.notificationModal.close();
+              }}>Create</button></Modal>}
+
+            <button onClick={() => this.setState({ notificationModal: { open: true } })}>Add Alert</button>
+          </>}
+
+        </>);
     }
   }
 
@@ -540,7 +929,7 @@ export default class Settings extends React.Component {
     return (
       <div className="container Settings">
         {this.renderNav()}
-        <div className="settings-main"  style={this.state.navopen?{display:"none"}:{}}>{this.renderPage()}</div>
+        <div className={"settings-main" + (this.state.navopen ? " hide" : " show")}>{this.renderPage()}</div>
         <ToastContainer></ToastContainer>
       </div>
     );
