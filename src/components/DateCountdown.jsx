@@ -64,7 +64,7 @@ export default class DateCountdown extends React.Component {
 
       const twelve = new Date();
       twelve.setDate(twelve.getDate()+1);
-      twelve.setHours(12);
+      twelve.setHours(0);
       twelve.setMinutes(0);
       twelve.setSeconds(0);
 
